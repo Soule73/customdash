@@ -1,73 +1,166 @@
-# React + TypeScript + Vite
+# CustomDash
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend React pour la plateforme de visualisation de donnees CustomDash.
 
-Currently, two official plugins are available:
+## Stack Technique
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** + **TypeScript 5.9**
+- **Vite 7** - Build tool
+- **Tailwind CSS 4** - Styling
+- **Zustand** - State management
+- **React Query** - Data fetching
+- **React Router DOM 7** - Routing
+- **Chart.js** + **react-chartjs-2** - Visualisations
+- **React Grid Layout** - Dashboard layouts
 
-## React Compiler
+## Architecture
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+Le projet suit une **Clean Architecture** avec separation des responsabilites :
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  core/           # Types, constantes, utilitaires
+  application/    # Stores Zustand, hooks metier
+  data/           # Services HTTP, repositories
+  domain/         # Entites et regles metier
+  infrastructure/ # Implementations externes
+  presentation/   # Composants React, pages
+  styles/         # CSS et Tailwind
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Packages Workspace
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Le projet utilise des workspaces Yarn pour les packages partages :
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **[@customdash/ui](packages/ui/README.md)** - Composants UI reutilisables (Button, Input, Card, Modal, Spinner)
+- **[@customdash/visualizations](packages/visualizations/README.md)** - Graphiques et widgets (BarChart, LineChart, PieChart, KPI)
+- **[@customdash/utils](packages/utils/README.md)** - Utilitaires partages (formatters, helpers, validators)
+
+## Installation
+
+```bash
+# Installation des dependances
+yarn install
+
+# Demarrage en developpement
+yarn dev
+
+# Build production
+yarn build
 ```
+
+## Scripts
+
+| Script | Description |
+|--------|-------------|
+| `yarn dev` | Serveur de developpement Vite |
+| `yarn build` | Build de production |
+| `yarn preview` | Preview du build |
+| `yarn test` | Tests unitaires Vitest |
+| `yarn test:e2e` | Tests E2E Playwright |
+| `yarn storybook` | Documentation des composants |
+| `yarn lint` | Linting ESLint |
+| `yarn format` | Formatage Prettier |
+
+## Configuration API
+
+Le frontend communique avec deux APIs :
+
+```typescript
+// src/core/constants/index.ts
+export const CORE_API_URL = 'http://localhost:3002/api/v1';
+export const PROCESSING_API_URL = 'http://localhost:3003';
+```
+
+Configurez les URLs via les variables d'environnement :
+
+```env
+VITE_CORE_API_URL=http://localhost:3002/api/v1
+VITE_PROCESSING_API_URL=http://localhost:3003
+```
+
+## Docker
+
+### Developpement
+
+```bash
+docker build -f Dockerfile.dev -t customdash-dev .
+docker run -p 5173:5173 -v $(pwd):/app customdash-dev
+```
+
+### Production
+
+```bash
+docker build -t customdash .
+docker run -p 80:80 customdash
+```
+
+## Tests
+
+### Tests Unitaires (Vitest)
+
+```bash
+yarn test           # Mode watch
+yarn test --run     # Execution unique
+yarn test:coverage  # Avec couverture
+```
+
+### Tests E2E (Playwright)
+
+```bash
+yarn test:e2e       # Execution
+yarn test:e2e:ui    # Mode interactif
+```
+
+## Storybook
+
+Documentation interactive des composants :
+
+```bash
+yarn storybook
+```
+
+Accessible sur http://localhost:6006
+
+## Path Aliases
+
+```typescript
+@/              -> src/
+@components/    -> src/presentation/components/
+@pages/         -> src/presentation/pages/
+@stores/        -> src/application/stores/
+@hooks/         -> src/application/hooks/
+@services/      -> src/data/services/
+@type/          -> src/core/types/
+@utils/         -> src/core/utils/
+@customdash/ui  -> packages/ui/src/
+@customdash/visualizations -> packages/visualizations/src/
+@customdash/utils -> packages/utils/src/
+```
+
+## Qualite de Code
+
+- **ESLint** - Linting TypeScript/React
+- **Prettier** - Formatage automatique
+- **Husky** - Git hooks (pre-commit)
+- **Commitlint** - Validation des messages de commit
+- **lint-staged** - Linting des fichiers stages
+
+## Conventional Commits
+
+Format des messages de commit :
+
+```
+<type>(<scope>): <subject>
+
+Types: feat, fix, docs, style, refactor, perf, test, chore, ci, build
+```
+
+Exemples :
+- `feat(dashboard): add widget drag and drop`
+- `fix(auth): resolve token refresh issue`
+- `docs: update README with Docker instructions`
+
+## Licence
+
+MIT

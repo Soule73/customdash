@@ -1,0 +1,21 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S vite -u 1001
+
+COPY package*.json ./
+COPY yarn.lock ./
+
+RUN yarn install --frozen-lockfile
+
+COPY --chown=vite:nodejs . .
+
+RUN chown -R vite:nodejs /app
+
+USER vite
+
+EXPOSE 5173
+
+CMD ["yarn", "dev", "--host", "0.0.0.0"]

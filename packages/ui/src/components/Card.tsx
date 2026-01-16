@@ -20,6 +20,9 @@ const shadowClasses = {
   lg: 'shadow-lg',
 };
 
+/**
+ * Card container component with padding and shadow options
+ */
 export function Card({
   children,
   padding = 'md',
@@ -29,7 +32,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`rounded-lg border border-gray-200 bg-white ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
+      className={`rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
       {...props}
     >
       {children}
@@ -47,8 +50,8 @@ Card.Header = function CardHeader({ title, subtitle, action }: CardHeaderProps) 
   return (
     <div className="mb-4 flex items-start justify-between">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-        {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+        {subtitle && <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>}
       </div>
       {action && <div>{action}</div>}
     </div>
@@ -62,7 +65,7 @@ Card.Body = function CardBody({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={className}>{children}</div>;
+  return <div className={`text-gray-700 dark:text-gray-300 ${className}`}>{children}</div>;
 };
 
 Card.Footer = function CardFooter({
@@ -72,5 +75,9 @@ Card.Footer = function CardFooter({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={`mt-4 border-t border-gray-100 pt-4 ${className}`}>{children}</div>;
+  return (
+    <div className={`mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 ${className}`}>
+      {children}
+    </div>
+  );
 };

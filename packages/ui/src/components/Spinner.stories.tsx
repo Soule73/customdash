@@ -4,6 +4,9 @@ import { Spinner } from './Spinner';
 const meta: Meta<typeof Spinner> = {
   title: 'UI/Spinner',
   component: Spinner,
+  parameters: {
+    layout: 'padded',
+  },
   argTypes: {
     size: {
       control: 'select',

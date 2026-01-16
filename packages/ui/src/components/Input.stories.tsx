@@ -4,6 +4,9 @@ import { Input } from './Input';
 const meta: Meta<typeof Input> = {
   title: 'UI/Input',
   component: Input,
+  parameters: {
+    layout: 'padded',
+  },
   argTypes: {
     type: {
       control: 'select',

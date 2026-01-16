@@ -6,6 +6,9 @@ import { Button } from './Button';
 const meta: Meta<typeof Modal> = {
   title: 'UI/Modal',
   component: Modal,
+  parameters: {
+    layout: 'padded',
+  },
   argTypes: {
     size: {
       control: 'select',

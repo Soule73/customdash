@@ -4,6 +4,9 @@ import { Button } from './Button';
 
 const meta: Meta<typeof Card> = {
   title: 'UI/Card',
+  parameters: {
+    layout: 'padded',
+  },
   component: Card,
   argTypes: {
     padding: {
@@ -67,17 +70,6 @@ export const WithFooter: Story = {
       </Card.Footer>
     </Card>
   ),
-};
-
-export const NoPadding: Story = {
-  args: {
-    padding: 'none',
-    children: (
-      <div className="p-4 bg-blue-50">
-        <p>Carte sans padding avec contenu personnalise</p>
-      </div>
-    ),
-  },
 };
 
 export const LargeShadow: Story = {

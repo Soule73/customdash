@@ -3,6 +3,9 @@ import { Button } from './Button';
 
 const meta: Meta<typeof Button> = {
   title: 'UI/Button',
+  parameters: {
+    layout: 'padded',
+  },
   component: Button,
   argTypes: {
     variant: {

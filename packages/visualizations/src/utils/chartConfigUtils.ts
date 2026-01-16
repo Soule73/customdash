@@ -1,0 +1,218 @@
+import type { ChartOptions, TooltipItem } from 'chart.js';
+import type { ChartType, WidgetParams, ChartStyles } from '../types';
+import { isIsoTimestamp, allSameDay, formatXTicksLabel } from './chartUtils';
+
+type ChartOptionsType = ChartOptions<'bar' | 'line' | 'pie' | 'scatter' | 'bubble' | 'radar'>;
+
+interface BaseDataset {
+  label: string;
+  data: number[];
+  backgroundColor?: string | string[];
+  borderColor?: string | string[];
+  borderWidth?: number;
+  [key: string]: unknown;
+}
+
+/**
+ * Cree un dataset par defaut selon le type de chart
+ */
+export function createDefaultDataset(
+  chartType: ChartType,
+  baseDataset: BaseDataset & Partial<ChartStyles>,
+): Record<string, unknown> {
+  const typeSpecific: Record<ChartType, Record<string, unknown>> = {
+    bar: {
+      barThickness: baseDataset.barThickness,
+      borderRadius: baseDataset.borderRadius || 0,
+      borderSkipped: false,
+    },
+    line: {
+      fill: baseDataset.fill !== undefined ? baseDataset.fill : false,
+      tension: baseDataset.tension || 0,
+      pointStyle: baseDataset.pointStyle || 'circle',
+      borderDash: [],
+      pointRadius: baseDataset.pointRadius || 3,
+      pointHoverRadius: baseDataset.pointHoverRadius || 5,
+      pointBackgroundColor: baseDataset.backgroundColor,
+      pointBorderColor: baseDataset.borderColor,
+    },
+    pie: {
+      hoverOffset: 4,
+      borderAlign: 'inner',
+      cutout: baseDataset.cutout || '0%',
+    },
+    scatter: {
+      pointStyle: baseDataset.pointStyle || 'circle',
+      showLine: false,
+      pointRadius: baseDataset.pointRadius || 5,
+      pointHoverRadius: baseDataset.pointHoverRadius || 7,
+    },
+    bubble: {
+      pointStyle: baseDataset.pointStyle || 'circle',
+      pointRadius: baseDataset.pointRadius || 5,
+      pointHoverRadius: baseDataset.pointHoverRadius || 7,
+    },
+    radar: {
+      fill: baseDataset.fill !== false,
+      pointStyle: baseDataset.pointStyle || 'circle',
+      pointRadius: baseDataset.pointRadius || 4,
+      pointHoverRadius: baseDataset.pointHoverRadius || 6,
+      tension: 0.1,
+    },
+  };
+
+  return {
+    ...baseDataset,
+    ...typeSpecific[chartType],
+  };
+}
+
+/**
+ * Cree les options de base pour un chart
+ */
+export function createBaseOptions(
+  chartType: ChartType,
+  params: WidgetParams,
+  labels: string[],
+): ChartOptionsType {
+  const baseOptions: ChartOptionsType = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: params.legend !== false,
+        position: params.legendPosition || 'top',
+      },
+      title: {
+        display: !!params.title,
+        text: params.title || '',
+        align: params.titleAlign || 'center',
+        color: params.labelColor || '#000000',
+        font: { size: params.labelFontSize || 12 },
+      },
+      tooltip: {
+        callbacks: {
+          label: (
+            context: TooltipItem<'bar' | 'line' | 'pie' | 'scatter' | 'bubble' | 'radar'>,
+          ) => {
+            const value = context.parsed.y ?? context.parsed;
+            const format = params.tooltipFormat || '{label}: {value}';
+            return format
+              .replace('{label}', context.dataset.label || '')
+              .replace('{value}', String(value));
+          },
+        },
+      },
+    },
+  };
+
+  if (chartType === 'bar' || chartType === 'line') {
+    const isTimeSeries = labels.length > 0 && isIsoTimestamp(labels[0]);
+    const isSameDay = isTimeSeries && allSameDay(labels);
+
+    baseOptions.scales = {
+      x: {
+        display: true,
+        title: {
+          display: !!params.xLabel,
+          text: params.xLabel || '',
+          color: params.labelColor || '#000000',
+          font: { size: params.labelFontSize || 12 },
+        },
+        stacked: params.stacked === true,
+        grid: { display: params.showGrid !== false },
+        ticks: isTimeSeries
+          ? {
+              callback: function (_: unknown, index: number) {
+                return formatXTicksLabel(labels[index], isSameDay);
+              },
+              maxRotation: 45,
+              minRotation: 0,
+            }
+          : { maxRotation: 45, minRotation: 0 },
+      },
+      y: {
+        display: true,
+        title: {
+          display: !!params.yLabel,
+          text: params.yLabel || '',
+          color: params.labelColor || '#000000',
+          font: { size: params.labelFontSize || 12 },
+        },
+        beginAtZero: true,
+        stacked: params.stacked === true,
+        grid: { display: params.showGrid !== false },
+      },
+    };
+
+    if (params.horizontal) {
+      baseOptions.indexAxis = 'y';
+    }
+  }
+
+  if (chartType === 'scatter' || chartType === 'bubble') {
+    baseOptions.scales = {
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        title: {
+          display: !!params.xLabel,
+          text: params.xLabel || '',
+          color: params.labelColor || '#000000',
+          font: { size: params.labelFontSize || 12 },
+        },
+        grid: { display: params.showGrid !== false },
+      },
+      y: {
+        title: {
+          display: !!params.yLabel,
+          text: params.yLabel || '',
+          color: params.labelColor || '#000000',
+          font: { size: params.labelFontSize || 12 },
+        },
+        grid: { display: params.showGrid !== false },
+      },
+    };
+  }
+
+  return baseOptions;
+}
+
+/**
+ * Cree les options specifiques pour un pie chart
+ */
+export function createPieOptions(params: WidgetParams): ChartOptions<'pie'> {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: params.legend !== false,
+        position: params.legendPosition || 'right',
+      },
+      title: {
+        display: !!params.title,
+        text: params.title || '',
+        align: params.titleAlign || 'center',
+      },
+      tooltip: {
+        callbacks: {
+          label: context => {
+            const label = context.label || '';
+            const value = context.parsed || 0;
+            const total = (context.dataset.data as number[]).reduce(
+              (sum: number, val: number) => sum + val,
+              0,
+            );
+            const percentage = ((value / total) * 100).toFixed(1);
+            const format = params.labelFormat || '{label}: {value} ({percent}%)';
+            return format
+              .replace('{label}', label)
+              .replace('{value}', String(value))
+              .replace('{percent}', percentage);
+          },
+        },
+      },
+    },
+  };
+}

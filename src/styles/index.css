@@ -1,1 +1,127 @@
 @import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --color-background: 255 255 255;
+    --color-foreground: 17 24 39;
+    --color-card: 255 255 255;
+    --color-card-foreground: 17 24 39;
+    --color-primary: 59 130 246;
+    --color-primary-foreground: 255 255 255;
+    --color-secondary: 241 245 249;
+    --color-secondary-foreground: 30 41 59;
+    --color-muted: 241 245 249;
+    --color-muted-foreground: 100 116 139;
+    --color-accent: 241 245 249;
+    --color-accent-foreground: 30 41 59;
+    --color-border: 226 232 240;
+    --color-ring: 59 130 246;
+    --color-success: 34 197 94;
+    --color-warning: 245 158 11;
+    --color-error: 239 68 68;
+  }
+
+  .dark {
+    --color-background: 17 24 39;
+    --color-foreground: 248 250 252;
+    --color-card: 30 41 59;
+    --color-card-foreground: 248 250 252;
+    --color-primary: 96 165 250;
+    --color-primary-foreground: 17 24 39;
+    --color-secondary: 51 65 85;
+    --color-secondary-foreground: 248 250 252;
+    --color-muted: 51 65 85;
+    --color-muted-foreground: 148 163 184;
+    --color-accent: 51 65 85;
+    --color-accent-foreground: 248 250 252;
+    --color-border: 71 85 105;
+    --color-ring: 96 165 250;
+    --color-success: 74 222 128;
+    --color-warning: 251 191 36;
+    --color-error: 248 113 113;
+  }
+
+  body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+}
+
+@theme {
+  --color-background: rgb(var(--color-background));
+  --color-foreground: rgb(var(--color-foreground));
+  --color-card: rgb(var(--color-card));
+  --color-card-foreground: rgb(var(--color-card-foreground));
+  --color-primary: rgb(var(--color-primary));
+  --color-primary-foreground: rgb(var(--color-primary-foreground));
+  --color-secondary: rgb(var(--color-secondary));
+  --color-secondary-foreground: rgb(var(--color-secondary-foreground));
+  --color-muted: rgb(var(--color-muted));
+  --color-muted-foreground: rgb(var(--color-muted-foreground));
+  --color-accent: rgb(var(--color-accent));
+  --color-accent-foreground: rgb(var(--color-accent-foreground));
+  --color-border: rgb(var(--color-border));
+  --color-ring: rgb(var(--color-ring));
+  --color-success: rgb(var(--color-success));
+  --color-warning: rgb(var(--color-warning));
+  --color-error: rgb(var(--color-error));
+}
+
+/* Storybook Docs dark mode styles */
+.dark .sbdocs-wrapper,
+.dark .sbdocs-content,
+.dark .sbdocs,
+.dark .docs-story {
+  background-color: #111827 !important;
+  color: #f9fafb !important;
+}
+
+.dark .sbdocs h1,
+.dark .sbdocs h2,
+.dark .sbdocs h3,
+.dark .sbdocs h4,
+.dark .sbdocs p,
+.dark .sbdocs span,
+.dark .sbdocs li {
+  color: #f9fafb !important;
+}
+
+.dark .sbdocs a {
+  color: #60a5fa !important;
+}
+
+.dark .docblock-argstable,
+.dark .docblock-argstable th,
+.dark .docblock-argstable td {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+  border-color: #374151 !important;
+}
+
+.dark .docblock-argstable thead {
+  background-color: #374151 !important;
+}
+
+.dark pre,
+.dark code {
+  background-color: #1f2937 !important;
+  color: #e5e7eb !important;
+}
+
+.dark .docblock-code-toggle {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.dark .sbdocs-preview {
+  background-color: #111827 !important;
+  border-color: #374151 !important;
+}
+
+.dark .os-content {
+  background-color: #111827 !important;
+}
+

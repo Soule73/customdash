@@ -1,6 +1,13 @@
 import { useMemo } from 'react';
-import type { ChartData, ChartOptions, TooltipItem } from 'chart.js';
-import type { ScatterMetricConfig, ScatterChartConfig, MetricStyle, WidgetParams } from '../types';
+import type { ChartData, ChartOptions, ScatterDataPoint, TooltipItem } from 'chart.js';
+import type {
+  ScatterMetricConfig,
+  ScatterChartConfig,
+  MetricStyle,
+  WidgetParams,
+  ScatterScales,
+  ScatterValidationResult,
+} from '../interfaces';
 import { createScatterChartDataset, prepareMetricStyles } from '../utils/chartDatasetUtils';
 import { createBaseOptions } from '../utils/chartConfigUtils';
 import { mergeWidgetParams } from '../utils/widgetParamsUtils';
@@ -10,9 +17,6 @@ import {
   validateScatterConfiguration,
   generateScatterMetricLabel,
   calculateScatterScales,
-  type ScatterDataPoint,
-  type ScatterValidationResult,
-  type ScatterScales,
 } from '../utils/scatterChartUtils';
 
 export interface ScatterChartVM {
@@ -30,7 +34,12 @@ export interface ScatterChartWidgetProps {
 }
 
 /**
- * Hook pour la logique du ScatterChart
+ * Hook to create the ViewModel for a Scatter Chart
+ * @param props - The properties for the Scatter Chart widget
+ * @returns The ViewModel containing chart data, options, valid datasets, and validation info
+ *
+ * @example
+ * const scatterChartVM = useScatterChartVM({ data, config });
  */
 export function useScatterChartVM({ data, config }: ScatterChartWidgetProps): ScatterChartVM {
   const widgetParams = useMemo<WidgetParams>(() => {

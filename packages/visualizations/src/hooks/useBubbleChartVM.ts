@@ -1,6 +1,13 @@
 import { useMemo } from 'react';
-import type { ChartData, ChartOptions, TooltipItem } from 'chart.js';
-import type { BubbleMetricConfig, BubbleChartConfig, MetricStyle, WidgetParams } from '../types';
+import type { BubbleDataPoint, ChartData, ChartOptions, TooltipItem } from 'chart.js';
+import type {
+  BubbleMetricConfig,
+  BubbleChartConfig,
+  MetricStyle,
+  WidgetParams,
+  BubbleScales,
+  BubbleValidationResult,
+} from '../interfaces';
 import { createBubbleChartDataset, prepareMetricStyles } from '../utils/chartDatasetUtils';
 import { createBaseOptions } from '../utils/chartConfigUtils';
 import { mergeWidgetParams } from '../utils/widgetParamsUtils';
@@ -10,9 +17,6 @@ import {
   validateBubbleConfiguration,
   generateBubbleMetricLabel,
   calculateBubbleScales,
-  type BubbleDataPoint,
-  type BubbleValidationResult,
-  type BubbleScales,
 } from '../utils/bubbleChartUtils';
 
 export interface BubbleChartVM {
@@ -30,7 +34,12 @@ export interface BubbleChartWidgetProps {
 }
 
 /**
- * Hook pour la logique du BubbleChart
+ * Hook to create the ViewModel for a Bubble Chart
+ * @param props - The properties for the Bubble Chart widget
+ * @returns The ViewModel containing chart data, options, valid datasets, and validation info
+ *
+ * @example
+ * const bubbleChartVM = useBubbleChartVM({ data, config });
  */
 export function useBubbleChartVM({ data, config }: BubbleChartWidgetProps): BubbleChartVM {
   const widgetParams = useMemo<WidgetParams>(() => {

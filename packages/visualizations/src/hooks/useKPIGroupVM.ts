@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { Metric, Filter, MetricStyle, KPIGroupConfig } from '../types';
+import type { Metric, Filter, MetricStyle, KPIGroupConfig } from '../interfaces';
 
 export interface KPIGroupWidgetVM {
   gridColumns: number;
@@ -17,6 +17,28 @@ export interface KPIGroupWidgetProps {
 
 /**
  * ViewModel hook for KPIGroupWidget managing grid layout and individual KPI configurations
+ * @param config - The configuration for the KPI Group widget
+ * @returns The ViewModel containing grid columns, metrics, styles, filters, title, and widget parameters list
+ *
+ * @example
+ * const config: KPIGroupConfig = {
+ *   metrics: [
+ *     { field: 'revenue', agg: 'sum', label: 'Total Revenue' },
+ *     { field: 'orders', agg: 'sum', label: 'Total Orders' },
+ *   ],
+ *   metricStyles: [
+ *    { color: '#34d399' },
+ *    { color: '#60a5fa' },
+ *   ],
+ *    globalFilters: [
+ *    { field: 'region', operator: 'equals', value: 'North America' },
+ *   ],
+ *   widgetParams: {
+ *     columns: 2,
+ *     title: 'Sales KPIs',
+ *   },
+ * };
+ * const kpiGroupVM = useKPIGroupVM(config);
  */
 export function useKPIGroupVM(config: KPIGroupConfig): KPIGroupWidgetVM {
   const [gridColumns, setGridColumns] = useState(1);

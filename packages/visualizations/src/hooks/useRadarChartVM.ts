@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { ChartData, ChartOptions } from 'chart.js';
-import type { RadarChartConfig, RadarMetricConfig, WidgetParams } from '../types';
+import type { RadarChartConfig, RadarMetricConfig, WidgetParams } from '../interfaces';
 import { createRadarChartDataset, prepareMetricStyles } from '../utils/chartDatasetUtils';
 import { createBaseOptions } from '../utils/chartConfigUtils';
 import { mergeWidgetParams } from '../utils/widgetParamsUtils';
@@ -28,6 +28,11 @@ export interface RadarChartWidgetProps {
 
 /**
  * ViewModel hook for RadarChart widget handling data processing, validation and chart configuration
+ * @param props - The properties for the Radar Chart widget
+ * @returns The ViewModel containing chart data, options, valid datasets, and validation info
+ *
+ * @example
+ * const radarChartVM = useRadarChartVM({ data, config });
  */
 export function useRadarChartVM({ data, config }: RadarChartWidgetProps): RadarChartVM {
   const widgetParams: WidgetParams = useMemo(

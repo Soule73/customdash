@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react';
-import type { TableWidgetConfig, TableColumn } from '../types';
+import type { TableWidgetConfig, TableColumn } from '../interfaces';
 import {
   detectTableConfigType,
   processRawData,
@@ -40,6 +40,11 @@ export interface TableWidgetProps {
 
 /**
  * ViewModel hook for TableWidget with optimized sorting, searching and pagination
+ * @param props - The properties for the Table widget
+ * @returns The ViewModel containing columns, display data, paginated data, title, validity, pagination and sorting info
+ *
+ * @example
+ * const tableWidgetVM = useTableWidgetVM({ data, config });
  */
 export function useTableWidgetVM({ data, config }: TableWidgetProps): TableWidgetVM {
   const [currentPage, setCurrentPage] = useState(0);

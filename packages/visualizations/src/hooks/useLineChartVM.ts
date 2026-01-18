@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { ChartData, ChartOptions } from 'chart.js';
-import type { ChartConfig, WidgetParams, Metric, MetricStyle, ProcessedData } from '../types';
+import type { ChartConfig, WidgetParams, Metric, MetricStyle, ProcessedData } from '../interfaces';
 import { applyAllFilters } from '../utils/filterUtils';
 import { aggregate, getLabels } from '../utils/chartUtils';
 import { getDatasetColor } from '../utils/chartColorUtils';
@@ -21,7 +21,12 @@ export interface LineChartWidgetProps {
 }
 
 /**
- * Hook pour la logique du LineChart
+ * Hook to create the ViewModel for a Line Chart
+ * @param props - The properties for the Line Chart widget
+ * @returns The ViewModel containing chart data, options, labels, and processed data
+ *
+ * @example
+ * const lineChartVM = useLineChartVM({ data, config, widgetParams });
  */
 export function useLineChartVM({
   data,

@@ -1,8 +1,28 @@
 import type { ChartOptions } from 'chart.js';
-import type { ChartType, WidgetParams } from '../types';
+import type { WidgetParams } from '../interfaces';
+import type { ChartType } from '../types';
 
 /**
- * Cree les options personnalisees pour bar chart
+ * Create custom options for a bar chart
+ * @param params - Widget parameters
+ * @returns Custom options for a bar chart
+ *
+ * @example
+ * const params: WidgetParams = {
+ *   stacked: true,
+ *   horizontal: false,
+ *   showGrid: true,
+ *  // other params...
+ * };
+ * createBarChartCustomOptions(params);
+ * //Result:
+ * {
+ *  scales: {
+ *     x: { stacked: true },
+ *    y: { stacked: true }
+ *  },
+ *  indexAxis: 'x'
+ * }
  */
 export function createBarChartCustomOptions(params: WidgetParams): Partial<ChartOptions<'bar'>> {
   return {
@@ -19,7 +39,28 @@ export function createBarChartCustomOptions(params: WidgetParams): Partial<Chart
 }
 
 /**
- * Cree les options personnalisees pour line chart
+ * Create custom options for a line chart
+ * @param params - Widget parameters
+ * @returns Custom options for a line chart
+ *
+ * @example
+ * const params: WidgetParams = {
+ *   stacked: false,
+ *   showPoints: true,
+ *   pointRadius: 4,
+ *  // other params...
+ * };
+ * createLineChartCustomOptions(params);
+ * // Result:
+ * {
+ *  scales: {
+ *     x: { stacked: false },
+ *    y: { stacked: false }
+ *  },
+ *  elements: {
+ *    point: { radius: 4 }
+ *  }
+ * }
  */
 export function createLineChartCustomOptions(params: WidgetParams): Partial<ChartOptions<'line'>> {
   return {
@@ -40,7 +81,18 @@ export function createLineChartCustomOptions(params: WidgetParams): Partial<Char
 }
 
 /**
- * Cree les options personnalisees pour scatter chart
+ * Create custom options for a scatter chart
+ * @returns Custom options for a scatter chart
+ *
+ * @example
+ * createScatterChartCustomOptions();
+ * //Result:
+ * {
+ *  scales: {
+ *     x: { type: 'linear', position: 'bottom' },
+ *    y: {}
+ *  }
+ * }
  */
 export function createScatterChartCustomOptions(): Partial<ChartOptions<'scatter'>> {
   return {
@@ -55,7 +107,18 @@ export function createScatterChartCustomOptions(): Partial<ChartOptions<'scatter
 }
 
 /**
- * Cree les options personnalisees pour bubble chart
+ * Create custom options for a bubble chart
+ * @returns Custom options for a bubble chart
+ *
+ * @example
+ * createBubbleChartCustomOptions();
+ * //Result:
+ * {
+ *  scales: {
+ *     x: { type: 'linear', position: 'bottom' },
+ *    y: {}
+ *  }
+ * }
  */
 export function createBubbleChartCustomOptions(): Partial<ChartOptions<'bubble'>> {
   return {
@@ -70,7 +133,28 @@ export function createBubbleChartCustomOptions(): Partial<ChartOptions<'bubble'>
 }
 
 /**
- * Cree les options personnalisees pour radar chart
+ * Create custom options for a radar chart
+ * @param params - Widget parameters
+ * @returns Custom options for a radar chart
+ *
+ * @example
+ * const params: WidgetParams = {
+ *   showGrid: true,
+ *   showTicks: true,
+ *   pointRadius: 3,
+ *   borderWidth: 1,
+ *  // other params...
+ * };
+ * createRadarChartCustomOptions(params);
+ * //Result:
+ * {
+ *  scales: {
+ *     r: {
+ *       beginAtZero: true,
+ *       grid: { display: true },
+ *       ticks: { display: true }
+ *     }
+ *  },
  */
 export function createRadarChartCustomOptions(
   params: WidgetParams,
@@ -99,7 +183,47 @@ export function createRadarChartCustomOptions(
 }
 
 /**
- * Factory function pour obtenir les bonnes options selon le type de chart
+ * Factory function to get the appropriate options based on chart type
+ * @param chartType - The chart type
+ * @param params - Widget parameters
+ * @returns Custom options for the specified chart type
+ *
+ * @example
+ * const params: WidgetParams = {
+ *   stacked: true,
+ *   horizontal: false,
+ *   showGrid: true,
+ *   pointRadius: 4,
+ *   borderWidth: 2,
+ *   // other params...
+ * };
+ * getCustomChartOptions('bar', params);
+ * //Result:
+ * {
+ *  scales: {
+ *     x: { stacked: true },
+ *    y: { stacked: true }
+ *  },
+ *  indexAxis: 'x'
+ * }
+ *
+ * const params: WidgetParams = {
+ *   stacked: false,
+ *   showPoints: true,
+ *   pointRadius: 4,
+ *   // other params...
+ * };
+ * getCustomChartOptions('line', params);
+ * //Result:
+ * {
+ *  scales: {
+ *     x: { stacked: false },
+ *    y: { stacked: false }
+ *  },
+ *  elements: {
+ *    point: { radius: 4 }
+ *  }
+ * }
  */
 export function getCustomChartOptions(
   chartType: ChartType,
@@ -122,7 +246,16 @@ export function getCustomChartOptions(
 }
 
 /**
- * Fusionne deux objets d'options de chart en profondeur
+ * Deep merge two chart options objects
+ * @param baseOptions - Base options
+ * @param customOptions - Custom options to merge
+ * @returns Merged options
+ *
+ * @example
+ * const baseOptions = { plugins: { legend: { display: true } } };
+ * const customOptions = { plugins: { legend: { position: 'bottom' } } };
+ * const merged = mergeOptions(baseOptions, customOptions);
+ * // Result: { plugins: { legend: { display: true, position: 'bottom' } } }
  */
 export function mergeOptions<T extends Record<string, unknown>>(
   baseOptions: T,

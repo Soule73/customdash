@@ -6,19 +6,31 @@ import type {
   SplitData,
   SplitItem,
   ChartConfig,
-} from '../types';
+} from '../interfaces';
+import type { MultiBucketCompatibleConfig } from '../interfaces';
+import { getLocal } from './config';
 
-export interface MultiBucketCompatibleConfig {
-  buckets?: MultiBucketConfig[];
-  metrics?: Array<{ field: string; agg: string }>;
-}
-
+/**
+ * Ensures that the configuration has a valid buckets array.
+ *
+ * @param config - The multi-bucket compatible configuration.
+ * @returns The buckets array from the configuration, or an empty array if not present.
+ *
+ * @example
+ * const config: MultiBucketCompatibleConfig = {
+ *   metrics: [{ field: 'sales', agg: 'sum' }],
+ * };
+ * const buckets = ensureMultiBuckets(config);
+ * // Result: []
+ */
 function ensureMultiBuckets(config: MultiBucketCompatibleConfig): MultiBucketConfig[] {
   return config.buckets || [];
 }
 
 /**
- * Processeur de donnees pour les buckets multiples
+ * The MultiBucketDataProcessor class is responsible for processing data using multiple bucket configurations.
+ * It supports various bucket types such as terms, histogram, date_histogram, and range.
+ * The processed data includes grouped data, labels, bucket hierarchy, and split data.
  */
 export class MultiBucketDataProcessor {
   private data: Record<string, unknown>[];
@@ -60,6 +72,24 @@ export class MultiBucketDataProcessor {
     return { groupedData: processedData, labels, bucketHierarchy: hierarchy, splitData };
   }
 
+  /**
+   * Processes a specific bucket level based on the bucket type.
+   *
+   * @param data - The data to be processed at the current bucket level.
+   * @param bucket - The configuration for the current bucket.
+   * @param level - The level of the bucket in the hierarchy.
+   * @returns The processed bucket level, including grouped data and metadata.
+   *
+   * @example
+   * const data = [
+   *  { category: 'A', value: 10 },
+   *  { category: 'B', value: 20 },
+   *  { category: 'A', value: 30 },
+   * ];
+   * const bucket: MultiBucketConfig = { type: 'terms', field: 'category', size: 10 };
+   * const level = processBucketLevel(data, bucket, 0);
+   * // { bucket: { ... }, level: 0, buckets: [ ... ], data: [ ... ] }
+   */
   private processBucketLevel(
     data: Record<string, unknown>[],
     bucket: MultiBucketConfig,
@@ -83,6 +113,14 @@ export class MultiBucketDataProcessor {
     }
   }
 
+  /**
+   * Processes a terms bucket by grouping data based on the specified field.
+   *
+   * @param data - The data to be grouped.
+   * @param bucket - The configuration for the terms bucket.
+   * @param level - The level of the bucket in the hierarchy.
+   * @returns The processed bucket level, including grouped data and metadata.
+   */
   private processTermsBucket(
     data: Record<string, unknown>[],
     bucket: MultiBucketConfig,
@@ -95,7 +133,10 @@ export class MultiBucketDataProcessor {
       if (!grouped.has(value)) {
         grouped.set(value, []);
       }
-      grouped.get(value)!.push(row);
+      const group = grouped.get(value);
+      if (group) {
+        group.push(row);
+      }
     });
 
     const sortedEntries = Array.from(grouped.entries())
@@ -115,6 +156,14 @@ export class MultiBucketDataProcessor {
     return { bucket, level, buckets: bucketData, data };
   }
 
+  /**
+   * Processes a histogram bucket by grouping data into numerical ranges.
+   *
+   * @param data - The data to be grouped.
+   * @param bucket - The configuration for the histogram bucket.
+   * @param level - The level of the bucket in the hierarchy.
+   * @returns The processed bucket level, including grouped data and metadata.
+   */
   private processHistogramBucket(
     data: Record<string, unknown>[],
     bucket: MultiBucketConfig,
@@ -130,7 +179,10 @@ export class MultiBucketDataProcessor {
       if (!grouped.has(bucketKey)) {
         grouped.set(bucketKey, []);
       }
-      grouped.get(bucketKey)!.push(row);
+      const group = grouped.get(bucketKey);
+      if (group) {
+        group.push(row);
+      }
     });
 
     const sortedEntries = Array.from(grouped.entries())
@@ -147,6 +199,14 @@ export class MultiBucketDataProcessor {
     return { bucket, level, buckets: bucketData, data };
   }
 
+  /**
+   * Processes a date histogram bucket by grouping data into date intervals.
+   *
+   * @param data - The data to be grouped.
+   * @param bucket - The configuration for the date histogram bucket.
+   * @param level - The level of the bucket in the hierarchy.
+   * @returns The processed bucket level, including grouped data and metadata.
+   */
   private processDateHistogramBucket(
     data: Record<string, unknown>[],
     bucket: MultiBucketConfig,
@@ -193,7 +253,10 @@ export class MultiBucketDataProcessor {
       if (!grouped.has(bucketKey)) {
         grouped.set(bucketKey, []);
       }
-      grouped.get(bucketKey)!.push(row);
+      const group = grouped.get(bucketKey);
+      if (group) {
+        group.push(row);
+      }
     });
 
     const sortedEntries = Array.from(grouped.entries())
@@ -211,6 +274,14 @@ export class MultiBucketDataProcessor {
     return { bucket, level, buckets: bucketData, data };
   }
 
+  /**
+   * Processes a range bucket by grouping data into specified ranges.
+   *
+   * @param data - The data to be grouped.
+   * @param bucket - The configuration for the range bucket.
+   * @param level - The level of the bucket in the hierarchy.
+   * @returns The processed bucket level, including grouped data and metadata.
+   */
   private processRangeBucket(
     data: Record<string, unknown>[],
     bucket: MultiBucketConfig,
@@ -238,6 +309,19 @@ export class MultiBucketDataProcessor {
     return { bucket, level, buckets: bucketData, data };
   }
 
+  /**
+   * Processes a split bucket by distributing its items into the appropriate split data structure.
+   *
+   * @param bucket - The configuration for the split bucket.
+   * @param level - The current bucket level being processed.
+   * @param splitData - The overall split data structure to populate.
+   *
+   * @example
+   * const bucket: MultiBucketConfig = { type: 'split_series', field: 'category' };
+   * const level = processBucketLevel(data, bucket, 0);
+   * handleSplitBucket(bucket, level, splitData);
+   * // splitData will be populated with series based on the bucket items
+   */
   private handleSplitBucket(
     bucket: MultiBucketConfig,
     level: BucketLevel,
@@ -263,6 +347,16 @@ export class MultiBucketDataProcessor {
     });
   }
 
+  /**
+   * Generates labels for the processed data based on the bucket hierarchy.
+   * @param hierarchy - The hierarchy of bucket levels.
+   * @returns An array of labels as strings.
+   *
+   * @example
+   * const hierarchy: BucketLevel[] = [ ... ];
+   * const labels = generateLabels(hierarchy);
+   * // Returns an array of labels based on the first bucket level
+   */
   private generateLabels(hierarchy: BucketLevel[]): string[] {
     if (hierarchy.length === 0) return ['Total'];
 
@@ -270,6 +364,17 @@ export class MultiBucketDataProcessor {
     return firstLevel.buckets.map(bucket => bucket.keyAsString || bucket.key);
   }
 
+  /**
+   * Calculates the ISO week number for a given date.
+   *
+   * @param date - The date for which to calculate the week number.
+   * @returns The ISO week number.
+   *
+   * @example
+   * const date = new Date('2023-03-15');
+   * const weekNumber = getWeekNumber(date);
+   * // Returns the ISO week number for March 15, 2023
+   */
   private getWeekNumber(date: Date): number {
     const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     const dayNum = d.getUTCDay() || 7;
@@ -278,8 +383,22 @@ export class MultiBucketDataProcessor {
     return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
   }
 
-  private formatDateLabel(key: string, interval?: string): string {
+  /**
+   * Formats a date label based on the specified interval.
+   *
+   * @param key - The raw date key as a string.
+   * @param interval - The date interval type.
+   * @param locale - The locale string to use for formatting (e.g., 'fr-FR').
+   * @returns The formatted date label.
+   *
+   * @example
+   * formatDateLabel('2023-03', 'month', 'fr-FR'); // "mars 2023"
+   * formatDateLabel('2023-W11', 'week'); // "Week 11, 2023"
+   */
+  private formatDateLabel(key: string, interval?: string, locale?: string): string {
     if (!interval) return key;
+
+    const localValue = getLocal(locale);
 
     try {
       switch (interval) {
@@ -288,17 +407,17 @@ export class MultiBucketDataProcessor {
         case 'month': {
           const [year, month] = key.split('-');
           const date = new Date(parseInt(year), parseInt(month) - 1);
-          return date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
+          return date.toLocaleDateString(localValue, { year: 'numeric', month: 'long' });
         }
         case 'week': {
           const weekMatch = key.match(/(\d+)-W(\d+)/);
-          if (weekMatch) return `Semaine ${weekMatch[2]}, ${weekMatch[1]}`;
+          if (weekMatch) return `Week ${weekMatch[2]}, ${weekMatch[1]}`;
           return key;
         }
         case 'day': {
           const dayDate = new Date(key);
           if (!isNaN(dayDate.getTime())) {
-            return dayDate.toLocaleDateString('fr-FR', {
+            return dayDate.toLocaleDateString(localValue, {
               day: 'numeric',
               month: 'long',
               year: 'numeric',
@@ -310,11 +429,11 @@ export class MultiBucketDataProcessor {
           const hourDate = new Date(key);
           if (!isNaN(hourDate.getTime())) {
             return (
-              hourDate.toLocaleDateString('fr-FR', {
+              hourDate.toLocaleDateString(localValue, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
-              }) + `, ${hourDate.getHours()}h`
+              }) + `, ${hourDate.getHours()}:00`
             );
           }
           return key;
@@ -323,11 +442,11 @@ export class MultiBucketDataProcessor {
           const minuteDate = new Date(key);
           if (!isNaN(minuteDate.getTime())) {
             return (
-              minuteDate.toLocaleDateString('fr-FR', {
+              minuteDate.toLocaleDateString(localValue, {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
-              }) + `, ${minuteDate.getHours()}h${String(minuteDate.getMinutes()).padStart(2, '0')}`
+              }) + `, ${minuteDate.getHours()}:${String(minuteDate.getMinutes()).padStart(2, '0')}`
             );
           }
           return key;
@@ -342,7 +461,11 @@ export class MultiBucketDataProcessor {
 }
 
 /**
- * Fonction utilitaire pour traiter les donnees avec des buckets multiples
+ * Processes data using multiple bucket configurations.
+ *
+ * @param data - The data to be processed.
+ * @param config - The multi-bucket compatible configuration.
+ * @returns The processed data including grouped data, labels, bucket hierarchy, and split data.
  */
 export function processMultiBucketData(
   data: Record<string, unknown>[],
@@ -353,7 +476,10 @@ export function processMultiBucketData(
 }
 
 /**
- * Hook pour utiliser le processeur de buckets multiples
+ * Hook to use the multi-bucket data processor.
+ * @param data - The data to be processed.
+ * @param config - The multi-bucket compatible configuration.
+ * @returns The processed data including grouped data, labels, bucket hierarchy, and split data.
  */
 export function useMultiBucketProcessor(
   data: Record<string, unknown>[],

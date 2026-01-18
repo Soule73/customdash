@@ -1,50 +1,68 @@
 import type { AggregationType } from '../types';
-import { DEFAULT_CHART_COLORS } from '../types/constants';
+import { DEFAULT_CHART_COLORS } from '../constants';
+import { aggregateFromRecords } from './aggregation';
+import { getLocal } from './config';
 
 /**
- * Agregation de donnees selon le type d'agregation
+ * Aggregates data based on the specified aggregation type.
+ *
+ * @param rows - An array of records to aggregate.
+ * @param agg - The type of aggregation to perform.
+ * @param field - The field in the records to aggregate.
+ * @returns The aggregated value as a number.
+ *
+ * @example
+ * const data = [
+ *   { sales: 100, price: 10 },
+ *   { sales: 200, price: 20 },
+ *   { sales: 150, price: 15 },
+ * ];
+ * aggregate(data, 'sum', 'sales'); // Returns the sum of the 'sales' field (450)
+ * aggregate(data, 'avg', 'price'); // Returns the average of the 'price' field (15)
  */
 export function aggregate(
   rows: Record<string, unknown>[],
   agg: AggregationType,
   field: string,
 ): number {
-  if (agg === 'none') {
-    if (rows.length === 1) {
-      const value = rows[0][field];
-      return typeof value === 'number' ? value : 0;
-    }
-    const found = rows.find(r => r[field] !== undefined && r[field] !== null);
-    return found ? Number(found[field]) || 0 : 0;
-  }
-
-  const nums = rows.map(r => Number(r[field])).filter(v => !isNaN(v));
-
-  switch (agg) {
-    case 'sum':
-      return nums.reduce((a, b) => a + b, 0);
-    case 'avg':
-      return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
-    case 'min':
-      return nums.length ? Math.min(...nums) : 0;
-    case 'max':
-      return nums.length ? Math.max(...nums) : 0;
-    case 'count':
-      return rows.length;
-    default:
-      return 0;
-  }
+  return aggregateFromRecords(rows, agg, field);
 }
 
 /**
- * Extrait les labels uniques d'un champ
+ * Extracts unique labels from a specified field in the data.
+ *
+ * @param data - An array of records to extract labels from.
+ * @param field - The field in the records to extract unique labels.
+ * @returns An array of unique labels as strings.
+ *
+ * @example
+ * const data = [
+ *  { category: 'A', value: 10 },
+ *   { category: 'B', value: 20 },
+ *   { category: 'A', value: 30 },
+ * ];
+ * getLabels(data, 'category'); // Returns unique categories from the 'category' field
  */
 export function getLabels(data: Record<string, unknown>[], field: string): string[] {
   return Array.from(new Set(data.map(row => String(row[field] || ''))));
 }
 
 /**
- * Retourne les couleurs par defaut ou personnalisees
+ * Returns default or customized colors for chart labels.
+ *
+ * This function generates an array of colors corresponding to the provided labels.
+ * If custom colors are provided, they are used cyclically. Otherwise, default chart colors
+ * are used, starting from the specified metric index.
+ *
+ * @param labels - An array of labels for which colors are to be generated.
+ * @param customColors - An optional array of custom colors to use.
+ * @param metricIndex - The starting index for default colors (default is 0).
+ * @returns An array of colors corresponding to the labels.
+ *
+ * @example
+ * getColors(['A', 'B', 'C']); // Returns default colors for A, B, C
+ * getColors(['A', 'B', 'C'], ['#ff0000', '#00ff00']); // Returns ['#ff0000', '#00ff00', '#ff0000']
+ * getColors(['A', 'B', 'C'], undefined, 2); // Returns default colors starting from index 2
  */
 export function getColors(
   labels: string[],
@@ -60,7 +78,23 @@ export function getColors(
 }
 
 /**
- * Detecte si un label est un timestamp ISO
+ * Detects if a value is an ISO timestamp string.
+ * Supports various ISO 8601 formats:
+ * - Full datetime: `2024-01-15T14:30:00`
+ * - Date only: `2024-01-15`
+ * - Year-month: `2024-01`
+ * - Week format: `2024-W03`
+ *
+ * @param val - The value to check
+ * @returns `true` if the value is a string matching an ISO timestamp pattern, `false` otherwise
+ *
+ * @example
+ * isIsoTimestamp('2024-01-15T14:30:00'); // true
+ * isIsoTimestamp('2024-01-15'); // true
+ * isIsoTimestamp('2024-01'); // true
+ * isIsoTimestamp('2024-W03'); // true
+ * isIsoTimestamp('not a date'); // false
+ * isIsoTimestamp(123); // false
  */
 export function isIsoTimestamp(val: unknown): boolean {
   if (typeof val !== 'string') return false;
@@ -73,7 +107,18 @@ export function isIsoTimestamp(val: unknown): boolean {
 }
 
 /**
- * Verifie si tous les labels sont du meme jour
+ * Checks if all labels in the array represent timestamps from the same calendar day.
+ * Only works with full ISO datetime strings (e.g., `2024-01-15T14:30:00`).
+ *
+ * @param labels - An array of ISO datetime strings to check
+ * @returns `true` if all labels are from the same day, `false` if the array is empty,
+ *          contains non-datetime strings, or spans multiple days
+ *
+ * @example
+ * allSameDay(['2024-01-15T10:00:00', '2024-01-15T14:30:00']); // true
+ * allSameDay(['2024-01-15T10:00:00', '2024-01-16T14:30:00']); // false
+ * allSameDay(['2024-01-15']); // false (not a full datetime)
+ * allSameDay([]); // false
  */
 export function allSameDay(labels: string[]): boolean {
   if (!labels || labels.length === 0) return false;
@@ -94,23 +139,40 @@ export function allSameDay(labels: string[]): boolean {
 }
 
 /**
- * Formate un label timestamp pour l'axe X
+ * Formats a timestamp label for the X-axis.
+ *
+ * This function takes a raw timestamp string and formats it into a human-readable
+ * string suitable for display on the X-axis of a chart. It supports various ISO 8601
+ * formats and can optionally display only the time if all timestamps are from the same day.
+ *
+ * @param raw - The raw timestamp string to format.
+ * @param onlyTimeIfSameDay - If `true`, formats the label to show only the time when all timestamps are from the same day.
+ * @param locale - The locale string to use for formatting (default is null).
+ * @returns The formatted timestamp label as a string.
+ *
+ * @example
+ * formatXTicksLabel('2024-01-15T14:30:00'); // "15/01 14:30"
+ * formatXTicksLabel('2024-01-15'); // "15/01"
+ * formatXTicksLabel('2024-01'); // "janv."
+ * formatXTicksLabel('2024-W03'); // "S03"
  */
-export function formatXTicksLabel(raw: string, onlyTimeIfSameDay = false): string {
+export function formatXTicksLabel(raw: string, onlyTimeIfSameDay = false, locale?: string): string {
   if (!raw || typeof raw !== 'string') return String(raw);
 
   if (!/^\d{4}/.test(raw) && !raw.includes('T') && !raw.includes('Z')) {
     return raw;
   }
 
+  const localValue = getLocal(locale);
+
   if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z?$/.test(raw)) {
     const d = new Date(raw);
     if (isNaN(d.getTime())) return raw;
 
     if (onlyTimeIfSameDay) {
-      return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      return d.toLocaleTimeString(localValue, { hour: '2-digit', minute: '2-digit' });
     }
-    return d.toLocaleDateString('fr-FR', {
+    return d.toLocaleDateString(localValue, {
       day: '2-digit',
       month: '2-digit',
       hour: '2-digit',
@@ -121,13 +183,13 @@ export function formatXTicksLabel(raw: string, onlyTimeIfSameDay = false): strin
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
     const d = new Date(raw);
     if (isNaN(d.getTime())) return raw;
-    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+    return d.toLocaleDateString(localValue, { day: '2-digit', month: '2-digit' });
   }
 
   if (/^\d{4}-\d{2}$/.test(raw)) {
     const [year, month] = raw.split('-');
     const d = new Date(parseInt(year), parseInt(month) - 1);
-    return d.toLocaleDateString('fr-FR', { month: 'short' });
+    return d.toLocaleDateString(localValue, { month: 'short' });
   }
 
   if (/^\d{4}-W\d{1,2}$/.test(raw)) {
@@ -139,15 +201,28 @@ export function formatXTicksLabel(raw: string, onlyTimeIfSameDay = false): strin
 }
 
 /**
- * Formate une valeur pour affichage dans un tooltip
+ * Formats a value for display in a tooltip.
+ *
+ * This function takes a value and formats it into a human-readable string suitable for display in a tooltip.
+ * It supports ISO 8601 date formats and converts them to a localized French date format.
+ *
+ * @param val - The value to format for the tooltip. Can be a string or other types.
+ * @returns The formatted value as a string.
+ *
+ * @example
+ * formatTooltipValue('2024-01-15T14:30:00'); // "January 15, 2024, 2:30 PM"
+ * formatTooltipValue('2024-01-15'); // "January 15, 2024"
+ * formatTooltipValue('random text'); // "random text"
  */
-export function formatTooltipValue(val: unknown): string {
+export function formatTooltipValue(val: unknown, locale?: string): string {
   if (!val || typeof val !== 'string') return String(val);
+
+  const localValue = getLocal(locale);
 
   if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z?$/.test(val)) {
     const d = new Date(val);
     if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString('fr-FR', {
+      return d.toLocaleDateString(localValue, {
         day: '2-digit',
         month: 'long',
         year: 'numeric',
@@ -160,7 +235,7 @@ export function formatTooltipValue(val: unknown): string {
   if (/^\d{4}-\d{2}-\d{2}$/.test(val)) {
     const d = new Date(val);
     if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+      return d.toLocaleDateString(localValue, { day: '2-digit', month: 'long', year: 'numeric' });
     }
   }
 

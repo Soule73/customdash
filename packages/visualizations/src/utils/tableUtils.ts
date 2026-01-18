@@ -1,34 +1,19 @@
-import type { Filter, Metric, MultiBucketConfig, TableColumn } from '../types';
+import type { Filter, Metric, MultiBucketConfig, TableColumn } from '../interfaces';
+import type { TableConfig, TableDataResult, TableConfigType } from '../interfaces';
 import { applyAllFilters } from './filterUtils';
-
-export interface TableConfig {
-  metrics?: Metric[];
-  buckets?: MultiBucketConfig[];
-  columns?: TableColumn[];
-  globalFilters?: Filter[];
-  widgetParams?: {
-    title?: string;
-    pageSize?: number;
-    searchable?: boolean;
-    sortable?: boolean;
-    striped?: boolean;
-    compact?: boolean;
-  };
-}
-
-export interface TableDataResult {
-  columns: TableColumn[];
-  displayData: Record<string, unknown>[];
-}
-
-export interface TableConfigType {
-  hasMetrics: boolean;
-  hasMultiBuckets: boolean;
-  hasColumns: boolean;
-}
 
 /**
  * Detects the type of table configuration
+ * @param config - The table configuration
+ * @returns An object indicating the presence of metrics, multi-buckets, and columns
+ *
+ * @example
+ * const config: TableConfig = {
+ *   metrics: [{ field: 'sales', agg: 'sum' }],
+ *   buckets: [{ field: 'region' }],
+ * };
+ * const configType = detectTableConfigType(config);
+ * // Result: { hasMetrics: true, hasMultiBuckets: true, hasColumns: false }
  */
 export function detectTableConfigType(config: TableConfig): TableConfigType {
   const hasMetrics = Array.isArray(config.metrics) && config.metrics.length > 0;
@@ -40,6 +25,19 @@ export function detectTableConfigType(config: TableConfig): TableConfigType {
 
 /**
  * Creates columns from bucket configuration
+ * @param buckets - An array of multi-bucket configurations
+ * @returns An array of table columns derived from the bucket configurations
+ *
+ * @example
+ * const buckets: MultiBucketConfig[] = [
+ *   { field: 'region', label: 'Region' },
+ *   { field: 'category' },
+ * ];
+ * const columns = createBucketColumns(buckets);
+ * // Result: [
+ * //   { key: 'region', label: 'Region', sortable: true },
+ * //   { key: 'category', label: 'Category', sortable: true },
+ * // ]
  */
 export function createBucketColumns(buckets: MultiBucketConfig[]): TableColumn[] {
   return buckets.map(bucket => ({
@@ -51,6 +49,19 @@ export function createBucketColumns(buckets: MultiBucketConfig[]): TableColumn[]
 
 /**
  * Creates columns from metric configuration
+ * @param metrics - An array of metric configurations
+ * @returns An array of table columns derived from the metric configurations
+ *
+ * @example
+ * const metrics: Metric[] = [
+ *   { field: 'sales', label: 'Total Sales' },
+ *   { field: 'profit' },
+ * ];
+ * const columns = createMetricColumns(metrics);
+ * // Result: [
+ * //   { key: 'sales', label: 'Total Sales', sortable: true, align: 'right', format: 'number' },
+ * //   { key: 'profit', label: 'Profit', sortable: true, align: 'right', format: 'number' },
+ * // ]
  */
 export function createMetricColumns(metrics: Metric[]): TableColumn[] {
   return metrics.map(metric => ({
@@ -64,6 +75,20 @@ export function createMetricColumns(metrics: Metric[]): TableColumn[] {
 
 /**
  * Auto-generates columns from data structure
+ * @param data - An array of data records
+ * @returns An array of table columns derived from the data keys
+ *
+ * @example
+ * const data: Record<string, unknown>[] = [
+ *   { region: 'North', sales: 1000, date: '2023-01-01' },
+ *   { region: 'South', sales: 1500, date: '2023-01-02' },
+ * ];
+ * const columns = createAutoColumns(data);
+ * // Result: [
+ * //   { key: 'region', label: 'Region', sortable: true, format: 'text' },
+ * //   { key: 'sales', label: 'Sales', sortable: true, format: 'number' },
+ * //   { key: 'date', label: 'Date', sortable: true, format: 'date' },
+ * // ]
  */
 export function createAutoColumns(data: Record<string, unknown>[]): TableColumn[] {
   if (!data || data.length === 0) return [];
@@ -81,6 +106,13 @@ export function createAutoColumns(data: Record<string, unknown>[]): TableColumn[
 
 /**
  * Detects the appropriate format for a column based on value type
+ * @param value - A sample value from the column
+ * @returns The detected format: 'number', 'date', or 'text'
+ *
+ * @example
+ * detectColumnFormat(123); // 'number'
+ * detectColumnFormat('2023-01-01'); // 'date'
+ * detectColumnFormat('Sample Text'); // 'text'
  */
 function detectColumnFormat(value: unknown): TableColumn['format'] {
   if (typeof value === 'number') return 'number';
@@ -90,6 +122,13 @@ function detectColumnFormat(value: unknown): TableColumn['format'] {
 
 /**
  * Checks if a string appears to be a date
+ * @param value - The string to check
+ * @returns `true` if the string matches common date patterns, `false` otherwise
+ *
+ * @example
+ * isDateString('2023-01-01'); // true
+ * isDateString('15/01/2023'); // true
+ * isDateString('Not a date'); // false
  */
 function isDateString(value: string): boolean {
   const datePatterns = [/^\d{4}-\d{2}-\d{2}$/, /^\d{4}-\d{2}-\d{2}T/, /^\d{2}\/\d{2}\/\d{4}$/];
@@ -98,67 +137,14 @@ function isDateString(value: string): boolean {
 
 /**
  * Capitalizes first letter of a string
+ * @param str - The string to capitalize
+ * @returns The capitalized string
+ *
+ * @example
+ * capitalizeFirst('hello_world'); // 'Hello world'
  */
 function capitalizeFirst(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).replace(/_/g, ' ');
-}
-
-/**
- * Formats a date string for display
- */
-export function formatDateForDisplay(dateStr: string): string {
-  try {
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr;
-
-    return date.toLocaleDateString('fr-FR', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  } catch {
-    return dateStr;
-  }
-}
-
-/**
- * Formats a cell value based on column format
- */
-export function formatCellValue(
-  value: unknown,
-  format?: TableColumn['format'],
-  options?: { currency?: string; decimals?: number },
-): string {
-  if (value === null || value === undefined) return '-';
-
-  switch (format) {
-    case 'number':
-      return typeof value === 'number'
-        ? value.toLocaleString('fr-FR', {
-            minimumFractionDigits: options?.decimals ?? 0,
-            maximumFractionDigits: options?.decimals ?? 2,
-          })
-        : String(value);
-
-    case 'currency':
-      return typeof value === 'number'
-        ? value.toLocaleString('fr-FR', {
-            style: 'currency',
-            currency: options?.currency || 'EUR',
-          })
-        : String(value);
-
-    case 'percent':
-      return typeof value === 'number'
-        ? `${(value * 100).toFixed(options?.decimals ?? 1)}%`
-        : String(value);
-
-    case 'date':
-      return typeof value === 'string' ? formatDateForDisplay(value) : String(value);
-
-    default:
-      return String(value);
-  }
 }
 
 /**
@@ -187,16 +173,16 @@ export function generateTableTitle(config: TableConfig, configType: TableConfigT
     const bucketLabels = config.buckets.map(bucket => bucket.label || bucket.field).join(', ');
 
     if (hasMetrics) {
-      return `Tableau groupe par ${bucketLabels}`;
+      return `Table grouped by ${bucketLabels}`;
     }
-    return `Decompte par ${bucketLabels}`;
+    return `Count by ${bucketLabels}`;
   }
 
   if (hasMetrics) {
-    return 'Tableau des metriques';
+    return 'Metrics table';
   }
 
-  return 'Tableau des donnees';
+  return 'Data table';
 }
 
 /**

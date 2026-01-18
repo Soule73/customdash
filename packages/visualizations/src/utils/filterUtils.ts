@@ -1,20 +1,22 @@
-import type { Filter, FilterOperator, ValidationResult } from '../types';
-
-const VALID_OPERATORS: FilterOperator[] = [
-  'equals',
-  'not_equals',
-  'contains',
-  'not_contains',
-  'greater_than',
-  'less_than',
-  'greater_equal',
-  'less_equal',
-  'starts_with',
-  'ends_with',
-];
+import { VALID_OPERATORS } from '../constants';
+import type { Filter, ValidationResult } from '../interfaces';
 
 /**
- * Applique un filtre a un ensemble de donnees
+ * Applies a filter to a dataset.
+ *
+ * @param data - The dataset to filter, represented as an array of records.
+ * @param filter - The filter to apply, containing field, operator, and value.
+ * @returns A new array containing only the records that match the filter criteria.
+ *
+ * @example
+ * const data = [
+ *   { name: 'Alice', age: 30 },
+ *   { name: 'Bob', age: 25 },
+ *   { name: 'Charlie', age: 35 },
+ * ];
+ * const filter = { field: 'age', operator: 'greater_than', value: 28 };
+ * const filteredData = applyFilter(data, filter);
+ * // Result: [{ name: 'Alice', age: 30 }, { name: 'Charlie', age: 35 }]
  */
 export function applyFilter(
   data: Record<string, unknown>[],
@@ -71,7 +73,23 @@ export function applyFilter(
 }
 
 /**
- * Applique une liste de filtres globaux
+ * Applies global filters to a dataset.
+ * @param data - The dataset to filter.
+ * @param filters - The global filters to apply.
+ * @returns The filtered dataset.
+ *
+ * @example
+ * const data = [
+ *   { name: 'Alice', age: 30 },
+ *   { name: 'Bob', age: 25 },
+ *   { name: 'Charlie', age: 35 },
+ * ];
+ * const filters = [
+ *   { field: 'age', operator: 'greater_than', value: 28 },
+ *   { field: 'name', operator: 'contains', value: 'a' },
+ * ];
+ * const filteredData = applyGlobalFilters(data, filters);
+ * // Result: [{ name: 'Alice', age: 30 }]
  */
 export function applyGlobalFilters(
   data: Record<string, unknown>[],
@@ -87,7 +105,27 @@ export function applyGlobalFilters(
 }
 
 /**
- * Applique tous les filtres (globaux + dataset) a un ensemble de donnees
+ * Applies all filters (global + dataset) to a dataset.
+ *
+ * @param data - The dataset to filter.
+ * @param globalFilters - The global filters to apply.
+ * @param datasetFilters - The dataset-specific filters to apply.
+ * @returns The filtered dataset.
+ *
+ * @example
+ * const data = [
+ *   { name: 'Alice', age: 30 },
+ *   { name: 'Bob', age: 25 },
+ *   { name: 'Charlie', age: 35 },
+ * ];
+ * const globalFilters = [
+ *   { field: 'age', operator: 'greater_than', value: 28 },
+ * ];
+ * const datasetFilters = [
+ *   { field: 'name', operator: 'contains', value: 'a' },
+ * ];
+ * const filteredData = applyAllFilters(data, globalFilters, datasetFilters);
+ * // Result: [{ name: 'Alice', age: 30 }]
  */
 export function applyAllFilters(
   data: Record<string, unknown>[],
@@ -108,28 +146,41 @@ export function applyAllFilters(
 }
 
 /**
- * Valide un filtre
+ * Validates a filter.
+ * @param filter - The filter to validate.
+ * @returns An object containing a boolean indicating validity and a list of error messages.
+ *
+ * @example
+ * const filter = { field: 'age', operator: 'greater_than', value: 28 };
+ * const validationResult = validateFilter(filter);
+ * // Result: { isValid: true, errors: [] }
  */
 export function validateFilter(filter: Filter): ValidationResult {
   const errors: string[] = [];
 
   if (!filter.field || filter.field.trim() === '') {
-    errors.push('Le champ du filtre doit etre specifie');
+    errors.push('The filter field must be specified');
   }
 
   if (filter.value === undefined || filter.value === null || filter.value === '') {
-    errors.push('La valeur du filtre doit etre specifiee');
+    errors.push('The filter value must be specified');
   }
 
   if (filter.operator && !VALID_OPERATORS.includes(filter.operator)) {
-    errors.push(`Operateur invalide: ${filter.operator}`);
+    errors.push(`Invalid operator: ${filter.operator}`);
   }
 
   return { isValid: errors.length === 0, errors };
 }
 
 /**
- * Cree un filtre par defaut
+ * Creates a default filter.
+ * @param field - The field for the filter.
+ * @returns A default filter object.
+ *
+ * @example
+ * const defaultFilter = createDefaultFilter('age');
+ * // Result: { field: 'age', operator: 'equals', value: '' }
  */
 export function createDefaultFilter(field: string = ''): Filter {
   return {

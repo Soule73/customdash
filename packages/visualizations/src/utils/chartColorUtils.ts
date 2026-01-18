@@ -1,8 +1,20 @@
-import type { ChartType, MetricStyle } from '../types';
-import { DEFAULT_CHART_COLORS } from '../types/constants';
+import type { MetricStyle } from '../interfaces';
+import { DEFAULT_CHART_COLORS } from '../constants';
+import type { ChartType } from '../types';
 
 /**
- * Genere une couleur HSL basee sur l'index
+ * Generates an HSL color based on the given index.
+ *
+ * @param index - The index used to calculate the hue.
+ * @param saturation - The saturation percentage (default is 70).
+ * @param lightness - The lightness percentage (default is 60).
+ * @param alpha - Optional alpha value for transparency.
+ * @returns The generated HSL color string.
+ *
+ * @example
+ * generateHSLColor(0); // Returns 'hsl(0, 70%, 60%)'
+ * generateHSLColor(1, 80, 50); // Returns 'hsl(60, 80%, 50%)'
+ * generateHSLColor(2, 70, 60, 0.5); // Returns 'hsl(120, 70%, 60%, 0.5)'
  */
 export function generateHSLColor(
   index: number,
@@ -16,7 +28,18 @@ export function generateHSLColor(
 }
 
 /**
- * Obtient la couleur d'un dataset selon le type de graphique et l'index
+ * Retrieves the color for a dataset based on the chart type and index.
+ *
+ * @param chartType - The type of chart (e.g., 'pie', 'line').
+ * @param index - The index of the dataset.
+ * @param style - Optional metric style containing a custom color.
+ * @param colors - Optional array of custom colors.
+ * @returns The dataset color as a string.
+ *
+ * @example
+ * getDatasetColor('pie', 0); // Returns a color from the default palette or generated HSL color
+ * getDatasetColor('line', 1, { color: '#ff0000' }); // Returns '#ff0000'
+ * getDatasetColor('pie', 2, undefined, ['#123456', '#654321']); // Returns '#123456'
  */
 export function getDatasetColor(
   chartType: ChartType,
@@ -35,7 +58,15 @@ export function getDatasetColor(
 }
 
 /**
- * Genere un tableau de couleurs pour les labels (utilise pour pie charts)
+ * Generates an array of colors for labels (used for pie charts).
+ *
+ * @param labels - The array of labels.
+ * @param customColors - Optional array of custom colors.
+ * @returns An array of colors corresponding to the labels.
+ *
+ * @example
+ * generateColorsForLabels(['A', 'B', 'C']); // Returns colors from the default palette or generated HSL colors
+ * generateColorsForLabels(['A', 'B'], ['#ff0000', '#00ff00']); // Returns ['#ff0000', '#00ff00']
  */
 export function generateColorsForLabels(labels: string[], customColors?: string[]): string[] {
   const palette = customColors || DEFAULT_CHART_COLORS;
@@ -43,7 +74,16 @@ export function generateColorsForLabels(labels: string[], customColors?: string[
 }
 
 /**
- * Genere des couleurs de bordure basees sur les couleurs de fond
+ * Generates border colors based on the background colors.
+ *
+ * @param backgroundColors - The array of background colors.
+ * @param borderColor - Optional custom border color.
+ * @param darkenFactor - Factor by which to darken the background color (default is 0.2).
+ * @returns An array of border colors.
+ *
+ * @example
+ * generateBorderColors(['hsl(0, 70%, 60%)', 'hsl(60, 70%, 60%)']); // Returns darkened HSL colors
+ * generateBorderColors(['#ff0000', '#00ff00'], '#000000'); // Returns ['#000000', '#000000']
  */
 export function generateBorderColors(
   backgroundColors: string[],
@@ -66,7 +106,16 @@ export function generateBorderColors(
 }
 
 /**
- * Convertit une couleur en format rgba avec transparence
+ * Converts a color to an RGBA format with transparency.
+ *
+ * @param color - The input color (hex, HSL, or RGB).
+ * @param alpha - The alpha value for transparency.
+ * @returns The color in RGBA format.
+ *
+ * @example
+ * addTransparency('#ff0000', 0.5); // Returns 'rgba(255, 0, 0, 0.5)'
+ * addTransparency('hsl(120, 70%, 60%)', 0.3); // Returns 'hsla(120, 70%, 60%, 0.3)'
+ * addTransparency('rgb(0, 255, 0)', 0.8); // Returns 'rgba(0, 255, 0, 0.8)'
  */
 export function addTransparency(color: string, alpha: number): string {
   if (color.startsWith('#')) {
@@ -88,7 +137,15 @@ export function addTransparency(color: string, alpha: number): string {
 }
 
 /**
- * Obtient la couleur de fond par defaut pour un type de chart
+ * Retrieves the default background color for a given chart type.
+ *
+ * @param chartType - The type of chart (e.g., 'line', 'radar').
+ * @param index - The index of the dataset.
+ * @returns The default background color as a string.
+ *
+ * @example
+ * getDefaultBackgroundColor('line', 0); // Returns a transparent HSL color
+ * getDefaultBackgroundColor('radar', 1); // Returns a transparent HSL color
  */
 export function getDefaultBackgroundColor(chartType: ChartType, index: number): string {
   if (chartType === 'line' || chartType === 'radar') {
@@ -98,7 +155,15 @@ export function getDefaultBackgroundColor(chartType: ChartType, index: number): 
 }
 
 /**
- * Obtient la couleur de bordure par defaut pour un type de chart
+ * Retrieves the default border color for a given chart type.
+ *
+ * @param chartType - The type of chart (e.g., 'pie').
+ * @param index - The index of the dataset.
+ * @returns The default border color as a string.
+ *
+ * @example
+ * getDefaultBorderColor('pie', 0); // Returns '#ffffff'
+ * getDefaultBorderColor('line', 1); // Returns a generated HSL color
  */
 export function getDefaultBorderColor(chartType: ChartType, index: number): string {
   if (chartType === 'pie') {

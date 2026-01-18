@@ -1,20 +1,23 @@
 import type { ChartOptions, TooltipItem } from 'chart.js';
-import type { ChartType, WidgetParams, ChartStyles } from '../types';
+import type { WidgetParams, ChartStyles, BaseDataset } from '../interfaces';
 import { isIsoTimestamp, allSameDay, formatXTicksLabel } from './chartUtils';
-
-type ChartOptionsType = ChartOptions<'bar' | 'line' | 'pie' | 'scatter' | 'bubble' | 'radar'>;
-
-interface BaseDataset {
-  label: string;
-  data: number[];
-  backgroundColor?: string | string[];
-  borderColor?: string | string[];
-  borderWidth?: number;
-  [key: string]: unknown;
-}
+import type { ChartOptionsType, ChartType } from '../types';
 
 /**
- * Cree un dataset par defaut selon le type de chart
+ * Creates a default dataset based on the chart type.
+ *
+ * @param chartType - The type of chart (e.g., 'bar', 'line', 'pie', etc.).
+ * @param baseDataset - The base dataset containing data and optional styles.
+ * @returns A dataset object with default and type-specific properties.
+ *
+ * @example
+ * const baseDataset = {
+ *   label: 'Sales',
+ *   data: [100, 200, 150],
+ *   backgroundColor: ['#ff0000', '#00ff00', '#0000ff'],
+ * };
+ * const defaultDataset = createDefaultDataset('bar', baseDataset);
+ * // Result: Dataset object configured for a bar chart with the specified data and styles.
  */
 export function createDefaultDataset(
   chartType: ChartType,
@@ -68,7 +71,25 @@ export function createDefaultDataset(
 }
 
 /**
- * Cree les options de base pour un chart
+ * Creates the base options for a chart.
+ *
+ * @param chartType - The type of chart (e.g., 'bar', 'line', 'scatter', etc.).
+ * @param params - Widget parameters including labels, legends, and other configurations.
+ * @param labels - The labels for the chart's data points.
+ * @returns A Chart.js options object with default and type-specific properties.
+ *
+ * @example
+ * const params: WidgetParams = {
+ *   title: 'Sales Over Time',
+ *   legendPosition: 'top',
+ *   xLabel: 'Date',
+ *   yLabel: 'Sales',
+ *   showGrid: true,
+ *   stacked: false,
+ * };
+ * const labels = ['2023-01-01', '2023-01-02', '2023-01-03'];
+ * const baseOptions = createBaseOptions('line', params, labels);
+ * // Result: ChartOptions object configured for a line chart with the specified parameters and labels.
  */
 export function createBaseOptions(
   chartType: ChartType,
@@ -179,7 +200,19 @@ export function createBaseOptions(
 }
 
 /**
- * Cree les options specifiques pour un pie chart
+ * Creates specific options for a pie chart.
+ *
+ * @param params - Widget parameters including labels, legends, and other configurations.
+ * @returns A Chart.js options object specifically for pie charts.
+ *
+ * @example
+ * const params: WidgetParams = {
+ *   title: 'Sales Distribution',
+ *   legendPosition: 'right',
+ *   labelFormat: '{label}: {value} ({percent}%)',
+ * };
+ * const pieOptions = createPieOptions(params);
+ * // Result: ChartOptions object configured for a pie chart with the specified parameters.
  */
 export function createPieOptions(params: WidgetParams): ChartOptions<'pie'> {
   return {

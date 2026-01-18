@@ -1,51 +1,32 @@
-import type { BubbleMetricConfig, Filter } from '../types';
+import type { BubbleMetricConfig, Filter } from '../interfaces';
+import type {
+  BubbleDataPoint,
+  BubbleValidationResult,
+  BubbleScales,
+  ProcessedBubbleMetric,
+} from '../interfaces';
 import { applyAllFilters } from './filterUtils';
-
-export interface BubbleDataPoint {
-  x: number;
-  y: number;
-  r: number;
-}
-
-export interface BubbleValidationResult {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-}
-
-export interface BubbleScales {
-  xMin: number;
-  xMax: number;
-  yMin: number;
-  yMax: number;
-  rMin: number;
-  rMax: number;
-}
-
-export interface ProcessedBubbleMetric {
-  metric: BubbleMetricConfig;
-  bubbleData: BubbleDataPoint[];
-  index: number;
-}
+import { validateChartMetrics, calculateXYScales, generateAxisMetricLabel } from './aggregation';
 
 /**
- * Genere un label formate pour une metrique bubble
+ * Generates a formatted label for a bubble metric.
+ *
+ * @param metric - The bubble metric configuration containing x, y, and r field definitions.
+ * @returns A formatted string label for the bubble dataset.
  */
 export function generateBubbleMetricLabel(metric: BubbleMetricConfig): string {
-  if (metric.label && metric.label.trim()) {
-    return metric.label;
-  }
-
-  const parts: string[] = [];
-  if (metric.x) parts.push(`X: ${metric.x}`);
-  if (metric.y) parts.push(`Y: ${metric.y}`);
-  if (metric.r) parts.push(`R: ${metric.r}`);
-
-  return parts.length > 0 ? parts.join(', ') : 'Bubble Dataset';
+  return generateAxisMetricLabel(metric, 'Bubble Dataset');
 }
 
 /**
- * Valide la configuration d'une metrique bubble
+ * Validates a bubble metric configuration.
+ *
+ * Checks that the required fields (x, y, and r) are specified and non-empty.
+ *
+ * @param metric - The bubble metric configuration to validate.
+ * @returns An object containing:
+ *   - `isValid`: Whether the metric configuration is valid.
+ *   - `errors`: An array of error messages describing validation failures.
  */
 export function validateBubbleMetric(metric: BubbleMetricConfig): {
   isValid: boolean;
@@ -54,15 +35,15 @@ export function validateBubbleMetric(metric: BubbleMetricConfig): {
   const errors: string[] = [];
 
   if (!metric.x || metric.x.trim() === '') {
-    errors.push('Le champ X doit etre specifie');
+    errors.push('X field must be specified');
   }
 
   if (!metric.y || metric.y.trim() === '') {
-    errors.push('Le champ Y doit etre specifie');
+    errors.push('Y field must be specified');
   }
 
   if (!metric.r || metric.r.trim() === '') {
-    errors.push('Le champ R (rayon) doit etre specifie');
+    errors.push('R field (radius) must be specified');
   }
 
   return {
@@ -72,33 +53,31 @@ export function validateBubbleMetric(metric: BubbleMetricConfig): {
 }
 
 /**
- * Valide la configuration complete du bubble chart
+ * Validates the complete configuration for the bubble chart.
+ *
+ * This function ensures that all provided metrics are valid for use in a bubble chart.
+ * It leverages the `validateChartMetrics` utility to perform the validation.
+ *
+ * @param metrics - An array of bubble metric configurations to validate.
+ * @returns An object containing:
+ *   - `isValid`: A boolean indicating if the configuration is valid.
+ *   - `errors`: An array of error messages for invalid metrics.
+ *   - `warnings`: An array of warning messages for potential issues.
  */
 export function validateBubbleConfiguration(metrics: BubbleMetricConfig[]): BubbleValidationResult {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-
-  if (!metrics.length) {
-    errors.push('Au moins un dataset doit etre configure');
-    return { isValid: false, errors, warnings };
-  }
-
-  metrics.forEach((metric, index) => {
-    const validation = validateBubbleMetric(metric);
-    if (!validation.isValid) {
-      errors.push(`Dataset ${index + 1}: ${validation.errors.join(', ')}`);
-    }
-  });
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-    warnings,
-  };
+  return validateChartMetrics({ metrics, chartType: 'bubble' });
 }
 
 /**
- * Convertit les donnees pour le format bubble de Chart.js
+ * Converts data into the bubble format required by Chart.js.
+ *
+ * This function takes an array of data records and a bubble metric configuration,
+ * and maps the data into an array of BubbleDataPoint objects. Each BubbleDataPoint
+ * contains x, y, and r values derived from the data records based on the metric configuration.
+ *
+ * @param data - An array of data records where each record is a key-value pair.
+ * @param metric - The bubble metric configuration specifying the x, y, and r fields.
+ * @returns An array of BubbleDataPoint objects formatted for Chart.js.
  */
 export function convertToBubbleData(
   data: Record<string, unknown>[],
@@ -120,7 +99,18 @@ export function convertToBubbleData(
 }
 
 /**
- * Traite toutes les metriques bubble et retourne les datasets avec filtres appliques
+ * Processes all bubble metrics and returns datasets with applied filters.
+ *
+ * This function iterates over the provided bubble metrics, applies global and dataset-specific filters
+ * to the data, and converts the filtered data into the bubble format required by Chart.js.
+ *
+ * @param data - The raw data records to process, where each record is a key-value pair.
+ * @param metrics - An array of bubble metric configurations specifying the x, y, and r fields.
+ * @param globalFilters - Optional global filters to apply to all datasets.
+ * @returns An array of processed bubble metrics, each containing:
+ *   - `metric`: The original bubble metric configuration.
+ *   - `bubbleData`: The filtered and formatted bubble data points.
+ *   - `index`: The index of the metric in the input array.
  */
 export function processBubbleMetrics(
   data: Record<string, unknown>[],
@@ -139,7 +129,20 @@ export function processBubbleMetrics(
 }
 
 /**
- * Calcule les echelles optimales pour le bubble chart
+ * Calculates the optimal scales for the bubble chart.
+ *
+ * This function aggregates all bubble data points from the provided metrics and computes the minimum and maximum
+ * values for the x, y, and r dimensions. If no data is available, default scale values are returned.
+ *
+ * @param data - An array of raw data records where each record is a key-value pair.
+ * @param metrics - An array of bubble metric configurations specifying the x, y, and r fields.
+ * @returns An object containing the calculated scales:
+ *   - `xMin`: Minimum value for the x-axis.
+ *   - `xMax`: Maximum value for the x-axis.
+ *   - `yMin`: Minimum value for the y-axis.
+ *   - `yMax`: Maximum value for the y-axis.
+ *   - `rMin`: Minimum value for the radius.
+ *   - `rMax`: Maximum value for the radius.
  */
 export function calculateBubbleScales(
   data: Record<string, unknown>[],
@@ -149,41 +152,27 @@ export function calculateBubbleScales(
     return { xMin: 0, xMax: 100, yMin: 0, yMax: 100, rMin: 1, rMax: 10 };
   }
 
-  let xMin = Infinity,
-    xMax = -Infinity;
-  let yMin = Infinity,
-    yMax = -Infinity;
-  let rMin = Infinity,
-    rMax = -Infinity;
+  const allBubbleData: BubbleDataPoint[] = [];
 
   metrics.forEach(metric => {
-    const bubbleData = convertToBubbleData(data, metric);
-
-    bubbleData.forEach(point => {
-      xMin = Math.min(xMin, point.x);
-      xMax = Math.max(xMax, point.x);
-      yMin = Math.min(yMin, point.y);
-      yMax = Math.max(yMax, point.y);
-      rMin = Math.min(rMin, point.r);
-      rMax = Math.max(rMax, point.r);
-    });
+    allBubbleData.push(...convertToBubbleData(data, metric));
   });
 
-  if (!isFinite(xMin)) xMin = 0;
-  if (!isFinite(xMax)) xMax = 100;
-  if (!isFinite(yMin)) yMin = 0;
-  if (!isFinite(yMax)) yMax = 100;
+  const xyScales = calculateXYScales(allBubbleData);
+
+  let rMin = Infinity;
+  let rMax = -Infinity;
+
+  allBubbleData.forEach(point => {
+    rMin = Math.min(rMin, point.r);
+    rMax = Math.max(rMax, point.r);
+  });
+
   if (!isFinite(rMin)) rMin = 1;
   if (!isFinite(rMax)) rMax = 10;
 
-  const xMargin = (xMax - xMin) * 0.1;
-  const yMargin = (yMax - yMin) * 0.1;
-
   return {
-    xMin: xMin - xMargin,
-    xMax: xMax + xMargin,
-    yMin: yMin - yMargin,
-    yMax: yMax + yMargin,
+    ...xyScales,
     rMin,
     rMax,
   };

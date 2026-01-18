@@ -1,61 +1,44 @@
-import type {
-  MultiBucketConfig,
-  BucketType,
-  DateInterval,
-  RangeConfig,
-  ValidationResult,
-} from '../types';
-
-export interface BucketTypeOption {
-  value: BucketType;
-  label: string;
-  description: string;
-}
-
-export const BUCKET_TYPE_OPTIONS: BucketTypeOption[] = [
-  { value: 'terms', label: 'Termes', description: 'Grouper par valeurs de champ (categories)' },
-  { value: 'histogram', label: 'Histogramme', description: 'Grouper par intervalles numeriques' },
-  {
-    value: 'date_histogram',
-    label: 'Histogramme de dates',
-    description: 'Grouper par intervalles de temps',
-  },
-  { value: 'range', label: 'Plages', description: 'Grouper par plages personnalisees' },
-  { value: 'split_series', label: 'Diviser en series', description: 'Creer une serie par valeur' },
-  { value: 'split_rows', label: 'Diviser en lignes', description: 'Creer une ligne par valeur' },
-  {
-    value: 'split_chart',
-    label: 'Diviser en graphiques',
-    description: 'Creer un graphique separe par valeur',
-  },
-];
-
-export interface DateIntervalOption {
-  value: DateInterval;
-  label: string;
-}
-
-export const DATE_INTERVAL_OPTIONS: DateIntervalOption[] = [
-  { value: 'minute', label: 'Minute' },
-  { value: 'hour', label: 'Heure' },
-  { value: 'day', label: 'Jour' },
-  { value: 'week', label: 'Semaine' },
-  { value: 'month', label: 'Mois' },
-  { value: 'year', label: 'Annee' },
-];
-
-export interface SortOrderOption {
-  value: 'asc' | 'desc';
-  label: string;
-}
-
-export const SORT_ORDER_OPTIONS: SortOrderOption[] = [
-  { value: 'asc', label: 'Croissant' },
-  { value: 'desc', label: 'Decroissant' },
-];
+import type { MultiBucketConfig, RangeConfig, ValidationResult } from '../interfaces';
+import { BUCKET_TYPE_OPTIONS } from '../constants';
+import type { BucketType, SplitType } from '../types';
 
 /**
- * Cree un bucket par defaut selon le type
+ * Creates a default bucket configuration based on the specified type.
+ *
+ * @param type - The type of bucket to create.
+ * @param field - The field associated with the bucket (default is an empty string).
+ * @returns A MultiBucketConfig object with default settings for the specified bucket type.
+ *
+ * @example
+ * const defaultTermsBucket = createDefaultBucket('terms', 'category');
+ * // Result: {
+ * //   field: 'category',
+ * //   label: '',
+ * //   type: 'terms',
+ * //   order: 'desc',
+ * //   size: 10,
+ * //   minDocCount: 1,
+ * // }
+ * const defaultHistogramBucket = createDefaultBucket('histogram', 'price');
+ * // Result: {
+ * //   field: 'price',
+ * //   label: '',
+ * //   type: 'histogram',
+ * //   order: 'desc',
+ * //   size: 10,
+ * //   minDocCount: 1,
+ * //   interval: 1,
+ * // }
+ * const defaultDateHistogramBucket = createDefaultBucket('date_histogram', 'date');
+ * // Result: {
+ * //   field: 'date',
+ * //   label: '',
+ * //   type: 'date_histogram',
+ * //   order: 'desc',
+ * //   size: 10,
+ * //   minDocCount: 1,
+ * //   dateInterval: 'day',
+ * // }
  */
 export function createDefaultBucket(type: BucketType, field: string = ''): MultiBucketConfig {
   const base: MultiBucketConfig = {
@@ -77,7 +60,7 @@ export function createDefaultBucket(type: BucketType, field: string = ''): Multi
     case 'range':
       return {
         ...base,
-        ranges: [{ from: 0, to: 100, label: 'Plage 1' }],
+        ranges: [{ from: 0, to: 100, label: 'Range 1' }],
       };
 
     case 'split_series':
@@ -96,36 +79,63 @@ export function createDefaultBucket(type: BucketType, field: string = ''): Multi
 }
 
 /**
- * Valide si un bucket est valide
+ * Validates if a bucket configuration is valid.
+ *
+ * @param bucket - The bucket configuration to validate.
+ * @returns An object containing a boolean indicating validity and a list of error messages.
+ *
+ * @example
+ * const bucket: MultiBucketConfig = {
+ *   field: 'price',
+ *   type: 'histogram',
+ *   interval: 0,
+ * };
+ * const validation = validateBucket(bucket);
+ * // Result: {
+ * //   isValid: false,
+ * //   errors: ['The interval must be greater than 0'],
+ * // }
  */
 export function validateBucket(bucket: MultiBucketConfig): ValidationResult {
   const errors: string[] = [];
 
   if (!bucket.field) {
-    errors.push('Le champ est requis');
+    errors.push('The field is required');
   }
 
   if (bucket.type === 'histogram' && (!bucket.interval || bucket.interval <= 0)) {
-    errors.push("L'intervalle doit etre superieur a 0");
+    errors.push('The interval must be greater than 0');
   }
 
   if (bucket.type === 'date_histogram' && !bucket.dateInterval) {
-    errors.push("L'intervalle de date est requis");
+    errors.push('The date interval is required');
   }
 
   if (bucket.type === 'range' && (!bucket.ranges || bucket.ranges.length === 0)) {
-    errors.push('Au moins une plage est requise');
+    errors.push('At least one range is required');
   }
 
   if (bucket.size && bucket.size <= 0) {
-    errors.push('La taille doit etre superieure a 0');
+    errors.push('The size must be greater than 0');
   }
 
   return { isValid: errors.length === 0, errors };
 }
 
 /**
- * Genere un label automatique pour un bucket
+ * Generates an automatic label for a bucket configuration.
+ *
+ * @param bucket - The bucket configuration for which to generate the label.
+ * @returns The generated label string. If the bucket has a label, it returns that label.
+ * Otherwise, it combines the bucket type label and field name.
+ *
+ * @example
+ * const bucket: MultiBucketConfig = {
+ *   field: 'category',
+ *   type: 'terms',
+ * };
+ * const label = generateBucketLabel(bucket);
+ * // Result: 'Terms - category'
  */
 export function generateBucketLabel(bucket: MultiBucketConfig): string {
   const typeLabel = BUCKET_TYPE_OPTIONS.find(t => t.value === bucket.type)?.label || bucket.type;
@@ -133,23 +143,52 @@ export function generateBucketLabel(bucket: MultiBucketConfig): string {
 }
 
 /**
- * Cree une plage par defaut
+ * Creates a default range configuration.
+ *
+ * @returns {RangeConfig} The default range configuration with `from` set to 0, `to` set to 100, and an empty `label`.
+ *
+ * @example
+ * const defaultRange = createDefaultRange();
+ * // Result: { from: 0, to: 100, label: '' }
  */
 export function createDefaultRange(): RangeConfig {
   return { from: 0, to: 100, label: '' };
 }
 
 /**
- * Verifie si un bucket est de type split
+ * Checks if a bucket is of type split.
+ *
+ * @param bucket - The bucket configuration to check.
+ * @returns True if the bucket type starts with 'split_', otherwise false.
+ *
+ * @example
+ * const bucket: MultiBucketConfig = {
+ *   field: 'region',
+ *   type: 'split_series',
+ * };
+ * const isSplit = isSplitBucket(bucket);
+ * // Result: true
  */
 export function isSplitBucket(bucket: MultiBucketConfig): boolean {
   return bucket.type.startsWith('split_');
 }
 
 /**
- * Obtient le type de split d'un bucket
+ * Retrieves the split type of a bucket configuration.
+ *
+ * @param bucket - The bucket configuration to check.
+ * @returns The split type `SplitType` if the bucket is a split bucket, otherwise null.
+ *
+ * @example
+ * const bucket: MultiBucketConfig = {
+ *   field: 'region',
+ *   type: 'split_series',
+ *   splitType: 'series',
+ * };
+ * const splitType = getSplitType(bucket);
+ * // Result: 'series'
  */
-export function getSplitType(bucket: MultiBucketConfig): 'series' | 'rows' | 'chart' | null {
+export function getSplitType(bucket: MultiBucketConfig): SplitType | null {
   if (!isSplitBucket(bucket)) return null;
   return bucket.splitType || null;
 }

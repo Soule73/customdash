@@ -1,41 +1,37 @@
-import type { Metric, Filter } from '../types';
+import type { Metric, KPIWidgetParams, KPIConfig, CardConfig } from '../interfaces';
+import type {
+  FilterableConfig,
+  ParsedKPIWidgetParams,
+  KPITrendResult,
+  KPICardColors,
+} from '../interfaces';
 import { applyAllFilters } from './filterUtils';
-
-export interface FilterableConfig {
-  globalFilters?: Filter[];
-  metrics?: Metric[];
-}
-
-export interface StylableConfig {
-  metricStyles?: Record<string, unknown> | Record<string, unknown>[];
-  widgetParams?: Record<string, unknown>;
-}
-
-export interface ParsedKPIWidgetParams {
-  showTrend: boolean;
-  showValue: boolean;
-  format: string;
-  currency: string;
-  decimals: number;
-  trendType: string;
-  showPercent: boolean;
-  threshold: number;
-}
-
-export interface KPITrendResult {
-  trend: 'up' | 'down' | null;
-  trendValue: number;
-  trendPercent: number;
-}
-
-export interface KPICardColors {
-  iconColor: string;
-  valueColor: string;
-  descriptionColor: string;
-}
+import { aggregateNumericValues } from './aggregation';
+import { formatValue } from './valueFormatter';
+import type { TrendDirection } from '../types';
 
 /**
  * Applies filters to KPI data
+ * @param data - The dataset to filter.
+ * @param config - The configuration object containing global and metric-specific filters.
+ * @returns The filtered dataset.
+ *
+ * @example
+ * const data = [
+ *  { name: 'Alice', age: 30 },
+ *  { name: 'Bob', age: 25 },
+ *  { name: 'Charlie', age: 35 },
+ * ];
+ * const config = {
+ *   globalFilters: [
+ *    { field: 'age', operator: 'greater_than', value: 28 },
+ * ],
+ *  metrics: [
+ *   { field: 'age', filters: [ { field: 'name', operator: 'contains', value: 'a' } ] },
+ * ],
+ * };
+ * const filteredData = applyKPIFilters(data, config);
+ * // Result: [{ name: 'Alice', age: 30 }]
  */
 export function applyKPIFilters(
   data: Record<string, unknown>[],
@@ -57,6 +53,18 @@ export function applyKPIFilters(
 
 /**
  * Calculates KPI value from filtered data
+ * @param metric - The metric configuration for the KPI.
+ * @param filteredData - The filtered dataset to calculate the KPI value from.
+ * @returns The calculated KPI value as a number.
+ *
+ * @example
+ * const metric = { field: 'sales', agg: 'sum' };
+ * const filteredData = [
+ *   { sales: 100 },
+ *   { sales: 150 },
+ * ];
+ * const kpiValue = calculateKPIValue(metric, filteredData);
+ * // Result: 250
  */
 export function calculateKPIValue(
   metric: Metric | undefined,
@@ -66,45 +74,52 @@ export function calculateKPIValue(
   if (!filteredData || filteredData.length === 0) return 0;
 
   const field = metric.field;
-  const values = filteredData.map((row: Record<string, unknown>) => Number(row[field]) || 0);
+  const values = filteredData.map(row => Number(row[field]) || 0);
 
-  return aggregateValues(values, metric.agg);
-}
-
-/**
- * Aggregates an array of values according to aggregation type
- */
-export function aggregateValues(values: number[], aggregationType: string): number {
-  if (values.length === 0) return 0;
-
-  switch (aggregationType) {
-    case 'sum':
-      return values.reduce((a: number, b: number) => a + b, 0);
-    case 'avg':
-      return values.reduce((a: number, b: number) => a + b, 0) / values.length;
-    case 'min':
-      return Math.min(...values);
-    case 'max':
-      return Math.max(...values);
-    case 'count':
-      return values.length;
-    default:
-      return values[0] || 0;
-  }
+  return aggregateNumericValues(values, metric.agg);
 }
 
 /**
  * Extracts value color from widget params
+ * @param config - The configuration object containing widget parameters.
+ * @param defaultColor - The default color to use if none is specified.
+ * @returns The color for the KPI value.
+ *
+ * @example
+ * const config = {
+ *   widgetParams: {
+ *     valueColor: '#ff0000',
+ *     // Other params...
+ *   },
+ *  // Other config...
+ * };
+ * const valueColor = getKPIValueColor(config);
+ * // Result: '#ff0000'
  */
-export function getKPIValueColor(config: StylableConfig, defaultColor: string = '#2563eb'): string {
+export function getKPIValueColor(config: KPIConfig, defaultColor: string = '#2563eb'): string {
   const valueColor = config.widgetParams?.valueColor;
   return (typeof valueColor === 'string' ? valueColor : undefined) || defaultColor;
 }
 
 /**
  * Extracts colors for Card widgets from widget params
+ * @param config - The card configuration object containing widget parameters.
+ * @returns An object with iconColor, valueColor, and descriptionColor.
+ *
+ * @example
+ * const config = {
+ *   widgetParams: {
+ *     iconColor: '#ff0000',
+ *     valueColor: '#00ff00',
+ *     descriptionColor: '#0000ff',
+ *     // Other params...
+ *   },
+ *  // Other config...
+ * };
+ * const colors = getCardColors(config);
+ * // Result: { iconColor: '#ff0000', valueColor: '#00ff00', descriptionColor: '#0000ff' }
  */
-export function getCardColors(config: StylableConfig): KPICardColors {
+export function getCardColors(config: CardConfig): KPICardColors {
   const params = config.widgetParams || {};
 
   const iconColor =
@@ -120,14 +135,27 @@ export function getCardColors(config: StylableConfig): KPICardColors {
 
 /**
  * Calculates trend data for a KPI
+ * @param metric - The metric configuration for the KPI.
+ * @param filteredData - The filtered dataset to calculate the trend from.
+ * @param showTrend - A boolean indicating whether to calculate the trend.
+ * @returns An object containing trend direction, trend value, and trend percentage.
+ *
+ * @example
+ * const metric = { field: 'sales' };
+ * const filteredData = [
+ *   { sales: 100 },
+ *   { sales: 150 },
+ * ];
+ * const trendData = calculateKPITrend(metric, filteredData, true);
+ * // Result: { trend: 'up', trendValue: 50, trendPercent: 50 }
  */
 export function calculateKPITrend(
   metric: Metric | undefined,
   filteredData: Record<string, unknown>[],
   showTrend: boolean,
 ): KPITrendResult {
-  let trend: 'up' | 'down' | null = null;
-  let trendValue = 0;
+  let trend: TrendDirection = null;
+  let trendValue: number | string = 0;
   let trendPercent = 0;
 
   if (showTrend && metric && filteredData && filteredData.length > 1) {
@@ -137,7 +165,7 @@ export function calculateKPITrend(
     const diff = last - prev;
 
     trend = diff !== 0 ? (diff > 0 ? 'up' : 'down') : null;
-    trendValue = diff;
+    trendValue = formatValue(diff, 'number', { decimals: 2 });
 
     if (prev !== 0) {
       trendPercent = (diff / Math.abs(prev)) * 100;
@@ -148,37 +176,19 @@ export function calculateKPITrend(
 }
 
 /**
- * Formats a value according to the specified format
- */
-export function formatKPIValue(
-  value: number,
-  format: string = 'number',
-  decimals: number = 2,
-  currency: string = 'EUR',
-): string {
-  if (format === 'currency') {
-    return value.toLocaleString(undefined, {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: decimals,
-    });
-  }
-
-  if (format === 'percent') {
-    return (value * 100).toFixed(decimals) + '%';
-  }
-
-  return value.toLocaleString(undefined, {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
-}
-
-/**
  * Gets trend color based on type and threshold
+ * @param trend - The trend direction ('up', 'down', or null).
+ * @param trendPercent - The percentage change of the trend.
+ * @param threshold - The threshold for strong trends.
+ * @returns A string representing the CSS class for the trend color.
+ *
+ * @example
+ * getKPITrendColor('up', 10, 5); // Returns 'text-green-700'
+ * getKPITrendColor('down', 3, 5); // Returns 'text-red-500'
+ * getKPITrendColor(null, 0); // Returns ''
  */
 export function getKPITrendColor(
-  trend: 'up' | 'down' | null,
+  trend: TrendDirection,
   trendPercent: number,
   threshold: number = 0,
 ): string {
@@ -193,6 +203,16 @@ export function getKPITrendColor(
 
 /**
  * Extracts the title of a KPI widget
+ * @param config - The configuration object containing widget parameters.
+ * @param metric - The metric associated with the KPI.
+ * @param defaultTitle - The default title to use if none is specified.
+ * @returns The title of the KPI widget.
+ *
+ * @example
+ * const config = { widgetParams: { title: 'Total Sales' } };
+ * const metric = { label: 'Sales', field: 'sales' };
+ * const title = getKPITitle(config, metric);
+ * // Result: 'Total Sales'
  */
 export function getKPITitle(
   config: { widgetParams?: { title?: string } },
@@ -204,19 +224,49 @@ export function getKPITitle(
 
 /**
  * Extracts common parameters from a KPI widget
+ * @param config - The configuration object containing widget parameters.
+ * @returns An object with parsed KPI widget parameters.
+ *
+ * @example
+ * const config = {
+ *   widgetParams: {
+ *     showTrend: true,
+ *     format: 'currency',
+ *     currency: 'USD',
+ *     decimals: 2,
+ *     trendType: 'arrow',
+ *     showPercent: false,
+ *     trendThreshold: 5,
+ *   },
+ * };
+ * const params = getKPIWidgetParams(config);
+ * // Result: {
+ * //   showTrend: true,
+ * //   showValue: true,
+ * //   format: 'currency',
+ * //   currency: 'USD',
+ * //   decimals: 2,
+ * //   trendType: 'arrow',
+ * //   showPercent: false,
+ * //   threshold: 5,
+ * // }
  */
-export function getKPIWidgetParams(config: {
-  widgetParams?: Record<string, unknown>;
-}): ParsedKPIWidgetParams {
+export function getKPIWidgetParams(
+  config: {
+    widgetParams?: KPIWidgetParams;
+  },
+  defaultCurrency: string = 'USD',
+): ParsedKPIWidgetParams {
   const params = config.widgetParams || {};
 
   return {
     showTrend: params.showTrend !== false,
     showValue: params.showValue !== false,
-    format: (typeof params.format === 'string' ? params.format : undefined) || 'number',
-    currency: (typeof params.currency === 'string' ? params.currency : undefined) || 'EUR',
+    format: params.format || 'number',
+    currency:
+      (typeof params.currency === 'string' ? params.currency : undefined) || defaultCurrency,
     decimals: (typeof params.decimals === 'number' ? params.decimals : undefined) ?? 2,
-    trendType: (typeof params.trendType === 'string' ? params.trendType : undefined) || 'arrow',
+    trendType: params.trendType || 'arrow',
     showPercent: params.showPercent === true,
     threshold: (typeof params.trendThreshold === 'number' ? params.trendThreshold : undefined) ?? 0,
   };

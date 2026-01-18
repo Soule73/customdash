@@ -1,47 +1,47 @@
-import type { ScatterMetricConfig, Filter } from '../types';
+import type { ScatterMetricConfig, Filter } from '../interfaces';
+import type {
+  ScatterDataPoint,
+  ScatterValidationResult,
+  ScatterScales,
+  ProcessedScatterMetric,
+} from '../interfaces';
 import { applyAllFilters } from './filterUtils';
-
-export interface ScatterDataPoint {
-  x: number;
-  y: number;
-}
-
-export interface ScatterValidationResult {
-  isValid: boolean;
-  errors: string[];
-  warnings: string[];
-}
-
-export interface ScatterScales {
-  xMin: number;
-  xMax: number;
-  yMin: number;
-  yMax: number;
-}
-
-export interface ProcessedScatterMetric {
-  metric: ScatterMetricConfig;
-  scatterData: ScatterDataPoint[];
-  index: number;
-}
+import {
+  validateChartMetrics,
+  calculateXYScales,
+  convertToXYPoints,
+  generateAxisMetricLabel,
+} from './aggregation';
 
 /**
- * Genere un label formate pour une metrique scatter
+ * Genere a formatted label for a scatter metric
+ * @param metric - The scatter metric configuration
+ * @returns A formatted string label for the scatter dataset
+ *
+ * @example
+ * const metric: ScatterMetricConfig = {
+ *   x: 'age',
+ *   y: 'salary',
+ * };
+ * const label = generateScatterMetricLabel(metric);
+ * // Result: 'Scatter Dataset (x: age, y: salary)'
  */
 export function generateScatterMetricLabel(metric: ScatterMetricConfig): string {
-  if (metric.label && metric.label.trim()) {
-    return metric.label;
-  }
-
-  const parts: string[] = [];
-  if (metric.x) parts.push(`X: ${metric.x}`);
-  if (metric.y) parts.push(`Y: ${metric.y}`);
-
-  return parts.length > 0 ? parts.join(', ') : 'Scatter Dataset';
+  return generateAxisMetricLabel(metric, 'Scatter Dataset');
 }
 
 /**
- * Valide la configuration d'une metrique scatter
+ * Validate the configuration of a scatter metric
+ * @param metric - The scatter metric configuration to validate
+ * @returns An object indicating whether the metric is valid and any associated error messages
+ *
+ * @example
+ * const metric: ScatterMetricConfig = {
+ *  x: '',
+ *  y: 'salary',
+ * };
+ * const validation = validateScatterMetric(metric);
+ * // Result: { isValid: false, errors: ['Le champ X doit etre specifie'] }
  */
 export function validateScatterMetric(metric: ScatterMetricConfig): {
   isValid: boolean;
@@ -64,31 +64,29 @@ export function validateScatterMetric(metric: ScatterMetricConfig): {
 }
 
 /**
- * Valide la configuration complete du scatter chart
+ * Validate the complete scatter chart configuration
+ * @param metrics - An array of scatter metric configurations to validate
+ * @returns An object containing:
+ *   - `isValid`: A boolean indicating if the configuration is valid
+ *   - `errors`: An array of error messages for invalid metrics
+ *   - `warnings`: An array of warning messages for potential issues
+ *
+ * @example
+ * const metrics: ScatterMetricConfig[] = [
+ *   { x: 'age', y: 'salary' },
+ *   { x: '', y: 'expenses' },
+ * ];
+ * const validation = validateScatterConfiguration(metrics);
+ * // Result: {
+ * //   isValid: false,
+ * //   errors: ['Dataset 2: Le champ X doit etre specifie'],
+ * //   warnings: [],
+ * // }
  */
 export function validateScatterConfiguration(
   metrics: ScatterMetricConfig[],
 ): ScatterValidationResult {
-  const errors: string[] = [];
-  const warnings: string[] = [];
-
-  if (!metrics.length) {
-    errors.push('Au moins un dataset doit etre configure');
-    return { isValid: false, errors, warnings };
-  }
-
-  metrics.forEach((metric, index) => {
-    const validation = validateScatterMetric(metric);
-    if (!validation.isValid) {
-      errors.push(`Dataset ${index + 1}: ${validation.errors.join(', ')}`);
-    }
-  });
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-    warnings,
-  };
+  return validateChartMetrics({ metrics, chartType: 'scatter' });
 }
 
 /**
@@ -98,22 +96,36 @@ export function convertToScatterData(
   data: Record<string, unknown>[],
   metric: ScatterMetricConfig,
 ): ScatterDataPoint[] {
-  if (!data.length || !metric.x || !metric.y) {
-    return [];
-  }
-
-  return data
-    .map(row => {
-      const x = Number(row[metric.x]) || 0;
-      const y = Number(row[metric.y]) || 0;
-
-      return { x, y };
-    })
-    .filter(point => !isNaN(point.x) && !isNaN(point.y));
+  if (!metric.x || !metric.y) return [];
+  return convertToXYPoints(data, metric.x, metric.y);
 }
 
 /**
- * Traite toutes les metriques scatter et retourne les datasets avec filtres appliques
+ * Process all scatter metrics and return datasets with applied filters
+ * @param data - The data to be processed
+ * @param metrics - An array of scatter metric configurations
+ * @param globalFilters - Optional global filters to apply to the data
+ * @returns An array of processed scatter metrics with their corresponding data points
+ *
+ * @example
+ * const data = [
+ *   { age: 25, salary: 50000 },
+ *   { age: 30, salary: 60000 },
+ * ];
+ * const metrics: ScatterMetricConfig[] = [
+ *   { x: 'age', y: 'salary' },
+ * ];
+ * const processedMetrics = processScatterMetrics(data, metrics);
+ * // Result: [
+ * //   {
+ * //     metric: { x: 'age', y: 'salary' },
+ * //     scatterData: [
+ * //       { x: 25, y: 50000 },
+ * //       { x: 30, y: 60000 },
+ * //     ],
+ * //     index: 0,
+ * //   },
+ * // ]
  */
 export function processScatterMetrics(
   data: Record<string, unknown>[],
@@ -132,7 +144,21 @@ export function processScatterMetrics(
 }
 
 /**
- * Calcule les echelles optimales pour le scatter chart
+ * Calculate the scales for scatter chart axes based on the data points
+ * @param data - The data to be processed
+ * @param metrics - An array of scatter metric configurations
+ * @returns An object containing the min and max values for both X and Y axes
+ *
+ * @example
+ * const data = [
+ *   { age: 25, salary: 50000 },
+ *   { age: 30, salary: 60000 },
+ * ];
+ * const metrics: ScatterMetricConfig[] = [
+ *   { x: 'age', y: 'salary' },
+ * ];
+ * const scales = calculateScatterScales(data, metrics);
+ * // Result: { xMin: 25, xMax: 30, yMin: 50000, yMax: 60000 }
  */
 export function calculateScatterScales(
   data: Record<string, unknown>[],
@@ -142,34 +168,11 @@ export function calculateScatterScales(
     return { xMin: 0, xMax: 100, yMin: 0, yMax: 100 };
   }
 
-  let xMin = Infinity,
-    xMax = -Infinity;
-  let yMin = Infinity,
-    yMax = -Infinity;
+  const allPoints: ScatterDataPoint[] = [];
 
   metrics.forEach(metric => {
-    const scatterData = convertToScatterData(data, metric);
-
-    scatterData.forEach(point => {
-      xMin = Math.min(xMin, point.x);
-      xMax = Math.max(xMax, point.x);
-      yMin = Math.min(yMin, point.y);
-      yMax = Math.max(yMax, point.y);
-    });
+    allPoints.push(...convertToScatterData(data, metric));
   });
 
-  if (!isFinite(xMin)) xMin = 0;
-  if (!isFinite(xMax)) xMax = 100;
-  if (!isFinite(yMin)) yMin = 0;
-  if (!isFinite(yMax)) yMax = 100;
-
-  const xMargin = (xMax - xMin) * 0.1;
-  const yMargin = (yMax - yMin) * 0.1;
-
-  return {
-    xMin: xMin - xMargin,
-    xMax: xMax + xMargin,
-    yMin: yMin - yMargin,
-    yMax: yMax + yMargin,
-  };
+  return calculateXYScales(allPoints);
 }

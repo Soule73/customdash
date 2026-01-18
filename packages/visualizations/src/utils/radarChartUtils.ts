@@ -1,36 +1,47 @@
-import type { RadarMetricConfig, Filter } from '../types';
+import type { RadarMetricConfig, Filter } from '../interfaces';
+import type {
+  RadarValidationResult,
+  RadarConfigValidationResult,
+  ProcessedRadarMetric,
+} from '../interfaces';
 import { applyAllFilters } from './filterUtils';
-
-export interface RadarValidationResult {
-  isValid: boolean;
-  errors: string[];
-}
-
-export interface RadarConfigValidationResult extends RadarValidationResult {
-  warnings: string[];
-}
-
-export interface ProcessedRadarMetric {
-  metric: RadarMetricConfig;
-  values: number[];
-  index: number;
-}
+import { aggregateFromRecords } from './aggregation';
 
 /**
  * Generates a formatted label for a radar metric
+ * @param metric - The radar metric configuration
+ * @returns A formatted string label for the radar dataset
+ *
+ * @example
+ * const metric: RadarMetricConfig = {
+ *   agg: 'sum',
+ *   fields: ['sales', 'profit'],
+ * };
+ * const label = generateRadarMetricLabel(metric);
+ * // Result: 'sum(sales, profit)'
  */
 export function generateRadarMetricLabel(metric: RadarMetricConfig): string {
   if (metric.label && metric.label.trim()) {
     return metric.label;
   }
 
-  const fieldsStr = metric.fields && metric.fields.length > 0 ? metric.fields.join(', ') : 'champs';
+  const fieldsStr = metric.fields && metric.fields.length > 0 ? metric.fields.join(', ') : 'fields';
 
   return `${metric.agg}(${fieldsStr})`;
 }
 
 /**
  * Extracts radar labels (axes) from metrics using the union of all fields from all datasets
+ * @param metrics - An array of radar metric configurations
+ * @returns An array of unique radar labels as strings
+ *
+ * @example
+ * const metrics: RadarMetricConfig[] = [
+ *   { agg: 'sum', fields: ['sales', 'profit'] },
+ *   { agg: 'avg', fields: ['sales', 'expenses'] },
+ * ];
+ * const labels = getRadarLabels(metrics);
+ * // Result: ['sales', 'profit', 'expenses']
  */
 export function getRadarLabels(metrics: RadarMetricConfig[]): string[] {
   if (!metrics.length) {
@@ -51,6 +62,18 @@ export function getRadarLabels(metrics: RadarMetricConfig[]): string[] {
 
 /**
  * Calculates the aggregated value for a specific field
+ * @param data - The dataset to aggregate
+ * @param field - The field to aggregate
+ * @param aggregation - The aggregation type (e.g., 'sum', 'avg')
+ * @returns The aggregated value as a number
+ *
+ * @example
+ * const data = [
+ *   { sales: 100, profit: 20 },
+ *   { sales: 200, profit: 50 },
+ * ];
+ * const totalSales = calculateRadarFieldValue(data, 'sales', 'sum');
+ * // Result: 300
  */
 export function calculateRadarFieldValue(
   data: Record<string, unknown>[],
@@ -58,32 +81,28 @@ export function calculateRadarFieldValue(
   aggregation: string,
 ): number {
   if (!data.length) return 0;
-
-  switch (aggregation) {
-    case 'sum':
-      return data.reduce((sum, row) => sum + (Number(row[field]) || 0), 0);
-
-    case 'avg': {
-      const total = data.reduce((sum, row) => sum + (Number(row[field]) || 0), 0);
-      return total / data.length;
-    }
-
-    case 'count':
-      return data.filter(row => row[field] !== null && row[field] !== undefined).length;
-
-    case 'min':
-      return Math.min(...data.map(row => Number(row[field]) || 0));
-
-    case 'max':
-      return Math.max(...data.map(row => Number(row[field]) || 0));
-
-    default:
-      return data.length;
-  }
+  return aggregateFromRecords(data, aggregation as import('../types').AggregationType, field);
 }
 
 /**
  * Calculates all values for the axes of a radar metric, ensuring values correspond to all radar labels
+ * @param data - The dataset to aggregate
+ * @param metric - The radar metric configuration
+ * @param allLabels - An array of all radar labels (axes)
+ * @returns An array of aggregated values corresponding to each radar label
+ *
+ * @example
+ * const data = [
+ *   { sales: 100, profit: 20, expenses: 50 },
+ *   { sales: 200, profit: 50, expenses: 80 },
+ * ];
+ * const metric: RadarMetricConfig = {
+ *   agg: 'sum',
+ *   fields: ['sales', 'profit'],
+ * };
+ * const allLabels = ['sales', 'profit', 'expenses'];
+ * const values = calculateRadarMetricValues(data, metric, allLabels);
+ * // Result: [300, 70, 0]
  */
 export function calculateRadarMetricValues(
   data: Record<string, unknown>[],
@@ -103,6 +122,28 @@ export function calculateRadarMetricValues(
 
 /**
  * Processes all radar metrics and returns datasets with applied filters
+ * @param data - The raw data records to process
+ * @param metrics - An array of radar metric configurations
+ * @param globalFilters - Optional global filters to apply to all datasets
+ * @returns An array of processed radar metrics, each containing:
+ *   - `metric`: The original radar metric configuration
+ *   - `values`: The aggregated values for each axis
+ *   - `index`: The index of the metric in the input array
+ *
+ * @example
+ * const data = [
+ *   { sales: 100, profit: 20, expenses: 50 },
+ *   { sales: 200, profit: 50, expenses: 80 },
+ * ];
+ * const metrics: RadarMetricConfig[] = [
+ *   { agg: 'sum', fields: ['sales', 'profit'] },
+ *   { agg: 'avg', fields: ['expenses'] },
+ * ];
+ * const processedMetrics = processRadarMetrics(data, metrics);
+ * // Result: [
+ * //   { metric: { ... }, values: [300, 70], index: 0 },
+ * //   { metric: { ... }, values: [65], index: 1 },
+ * // ]
  */
 export function processRadarMetrics(
   data: Record<string, unknown>[],
@@ -124,16 +165,26 @@ export function processRadarMetrics(
 
 /**
  * Validates a single radar metric configuration
+ * @param metric - The radar metric configuration to validate
+ * @returns An object indicating whether the metric is valid and any associated error messages
+ *
+ * @example
+ * const metric: RadarMetricConfig = {
+ *   agg: 'sum',
+ *   fields: [],
+ * };
+ * const validation = validateRadarMetric(metric);
+ * // Result: { isValid: false, errors: ['Au moins un champ doit etre selectionne pour les axes'] }
  */
 export function validateRadarMetric(metric: RadarMetricConfig): RadarValidationResult {
   const errors: string[] = [];
 
   if (!metric.fields || metric.fields.length === 0) {
-    errors.push('Au moins un champ doit etre selectionne pour les axes');
+    errors.push('At least one field must be selected for axes');
   }
 
   if (!metric.agg) {
-    errors.push('Une agregation doit etre specifiee');
+    errors.push('An aggregation must be specified');
   }
 
   return {
@@ -144,6 +195,23 @@ export function validateRadarMetric(metric: RadarMetricConfig): RadarValidationR
 
 /**
  * Validates the complete radar chart configuration
+ * @param metrics - An array of radar metric configurations to validate
+ * @returns An object containing:
+ *   - `isValid`: A boolean indicating if the configuration is valid
+ *   - `errors`: An array of error messages for invalid metrics
+ *   - `warnings`: An array of warning messages for potential issues
+ *
+ * @example
+ * const metrics: RadarMetricConfig[] = [
+ *   { agg: 'sum', fields: ['sales'] },
+ *   { agg: 'avg', fields: [] },
+ * ];
+ * const validation = validateRadarConfiguration(metrics);
+ * // Result: {
+ * //   isValid: false,
+ * //   errors: ['Dataset 2: Au moins un champ doit etre selectionne pour les axes'],
+ * //   warnings: [],
+ * // }
  */
 export function validateRadarConfiguration(
   metrics: RadarMetricConfig[],
@@ -152,7 +220,7 @@ export function validateRadarConfiguration(
   const warnings: string[] = [];
 
   if (!metrics.length) {
-    errors.push('Au moins un dataset doit etre configure');
+    errors.push('At least one dataset must be configured');
     return { isValid: false, errors, warnings };
   }
 
@@ -172,7 +240,7 @@ export function validateRadarConfiguration(
   });
 
   if (hasInconsistentFields) {
-    warnings.push('Les datasets ont des champs differents, cela peut creer un radar desequilibre');
+    warnings.push('Datasets have different fields, this may create an unbalanced radar');
   }
 
   return {

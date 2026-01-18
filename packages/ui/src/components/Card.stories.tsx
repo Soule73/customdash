@@ -25,16 +25,16 @@ type Story = StoryObj<typeof Card>;
 
 export const Default: Story = {
   args: {
-    children: <p>Contenu de la carte simple</p>,
+    children: <p>Simple card content</p>,
   },
 };
 
 export const WithHeader: Story = {
   render: () => (
     <Card>
-      <Card.Header title="Titre de la carte" subtitle="Description optionnelle" />
+      <Card.Header title="Card Title" subtitle="Optional description" />
       <Card.Body>
-        <p>Contenu principal de la carte avec du texte explicatif.</p>
+        <p>Main content of the card with explanatory text.</p>
       </Card.Body>
     </Card>
   ),
@@ -44,12 +44,12 @@ export const WithHeaderAndAction: Story = {
   render: () => (
     <Card>
       <Card.Header
-        title="Statistiques"
-        subtitle="Derniere mise a jour: Aujourd'hui"
-        action={<Button size="sm">Actualiser</Button>}
+        title="Statistics"
+        subtitle="Last updated: Today"
+        action={<Button size="sm">Refresh</Button>}
       />
       <Card.Body>
-        <p>Donnees de performance du tableau de bord.</p>
+        <p>Dashboard performance data.</p>
       </Card.Body>
     </Card>
   ),
@@ -58,14 +58,14 @@ export const WithHeaderAndAction: Story = {
 export const WithFooter: Story = {
   render: () => (
     <Card>
-      <Card.Header title="Formulaire" />
+      <Card.Header title="Form" />
       <Card.Body>
-        <p>Contenu du formulaire ici...</p>
+        <p>Form content goes here...</p>
       </Card.Body>
       <Card.Footer>
         <div className="flex gap-2 justify-end">
-          <Button variant="ghost">Annuler</Button>
-          <Button>Sauvegarder</Button>
+          <Button variant="ghost">Cancel</Button>
+          <Button>Save</Button>
         </div>
       </Card.Footer>
     </Card>
@@ -75,6 +75,6 @@ export const WithFooter: Story = {
 export const LargeShadow: Story = {
   args: {
     shadow: 'lg',
-    children: <p>Carte avec ombre prononcee</p>,
+    children: <p>Card with pronounced shadow</p>,
   },
 };

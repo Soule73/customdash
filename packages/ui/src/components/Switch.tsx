@@ -1,4 +1,4 @@
-import { Switch as HeadlessSwitch } from '@headlessui/react';
+import { Description, Field, Switch as HeadlessSwitch, Label } from '@headlessui/react';
 
 interface SwitchProps {
   checked: boolean;
@@ -43,7 +43,7 @@ export function Switch({
   const sizes = sizeClasses[size];
 
   return (
-    <HeadlessSwitch.Group as="div" className={`flex items-center gap-3 ${className}`}>
+    <Field as="div" className={`flex items-center gap-3 ${className}`}>
       <HeadlessSwitch
         checked={checked}
         onChange={onChange}
@@ -70,23 +70,23 @@ export function Switch({
       {(label || description) && (
         <div className="flex flex-col">
           {label && (
-            <HeadlessSwitch.Label
+            <Label
               as="span"
               className={`text-sm font-medium text-gray-900 dark:text-white ${disabled ? 'opacity-50' : ''}`}
             >
               {label}
-            </HeadlessSwitch.Label>
+            </Label>
           )}
           {description && (
-            <HeadlessSwitch.Description
+            <Description
               as="span"
               className={`text-sm text-gray-500 dark:text-gray-400 ${disabled ? 'opacity-50' : ''}`}
             >
               {description}
-            </HeadlessSwitch.Description>
+            </Description>
           )}
         </div>
       )}
-    </HeadlessSwitch.Group>
+    </Field>
   );
 }

@@ -25,21 +25,14 @@ function ModalDemo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' | 'xl' }) {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Ouvrir la modale</Button>
-      <Modal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        title="Titre de la modale"
-        size={size}
-      >
-        <p className="text-gray-600">
-          Contenu de la modale. Vous pouvez ajouter n'importe quel contenu ici.
-        </p>
+      <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Modal Title" size={size}>
+        <p className="text-gray-600">Modal content. You can add any content here.</p>
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" onClick={() => setIsOpen(false)}>
-            Annuler
+            Cancel
           </Button>
-          <Button onClick={() => setIsOpen(false)}>Confirmer</Button>
+          <Button onClick={() => setIsOpen(false)}>Confirm</Button>
         </div>
       </Modal>
     </>
@@ -68,18 +61,18 @@ function ConfirmationModal() {
   return (
     <>
       <Button variant="danger" onClick={() => setIsOpen(true)}>
-        Supprimer
+        Delete
       </Button>
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Confirmation de suppression">
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Delete Confirmation">
         <p className="text-gray-600">
-          Etes-vous sur de vouloir supprimer cet element ? Cette action est irreversible.
+          Are you sure you want to delete this item? This action is irreversible.
         </p>
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="ghost" onClick={() => setIsOpen(false)}>
-            Annuler
+            Cancel
           </Button>
           <Button variant="danger" onClick={() => setIsOpen(false)}>
-            Supprimer
+            Delete
           </Button>
         </div>
       </Modal>

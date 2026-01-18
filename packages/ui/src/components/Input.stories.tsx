@@ -21,23 +21,23 @@ type Story = StoryObj<typeof Input>;
 
 export const Default: Story = {
   args: {
-    placeholder: 'Entrez du texte...',
+    placeholder: 'Enter text...',
   },
 };
 
 export const WithLabel: Story = {
   args: {
-    label: 'Adresse email',
-    placeholder: 'exemple@email.com',
+    label: 'Email address',
+    placeholder: 'example@email.com',
     type: 'email',
   },
 };
 
 export const WithHelperText: Story = {
   args: {
-    label: 'Mot de passe',
+    label: 'Password',
     type: 'password',
-    helperText: 'Minimum 8 caracteres avec majuscules et chiffres',
+    helperText: 'Minimum 8 characters with uppercase and numbers',
   },
 };
 
@@ -46,29 +46,29 @@ export const WithError: Story = {
     label: 'Email',
     type: 'email',
     value: 'invalid-email',
-    error: 'Veuillez entrer une adresse email valide',
+    error: 'Please enter a valid email address',
   },
 };
 
 export const Disabled: Story = {
   args: {
-    label: 'Champ desactive',
-    value: 'Valeur non modifiable',
+    label: 'Disabled field',
+    value: 'Non-editable value',
     disabled: true,
   },
 };
 
 export const Password: Story = {
   args: {
-    label: 'Mot de passe',
+    label: 'Password',
     type: 'password',
-    placeholder: 'Votre mot de passe',
+    placeholder: 'Your password',
   },
 };
 
 export const Number: Story = {
   args: {
-    label: 'Quantite',
+    label: 'Quantity',
     type: 'number',
     placeholder: '0',
     min: 0,

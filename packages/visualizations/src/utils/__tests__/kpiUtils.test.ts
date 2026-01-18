@@ -124,7 +124,7 @@ describe('kpiUtils', () => {
       const data = [{ value: 100 }, { value: 150 }];
       const result = calculateKPITrend(metric, data, true);
       expect(result.trend).toBe('up');
-      expect(result.trendValue).toBe(50);
+      expect(result.trendValue).toBe('50.00');
       expect(result.trendPercent).toBe(50);
     });
 
@@ -132,7 +132,7 @@ describe('kpiUtils', () => {
       const data = [{ value: 200 }, { value: 100 }];
       const result = calculateKPITrend(metric, data, true);
       expect(result.trend).toBe('down');
-      expect(result.trendValue).toBe(-100);
+      expect(result.trendValue).toBe('-100.00');
     });
 
     it('should return null trend when showTrend is false', () => {
@@ -249,7 +249,7 @@ describe('kpiUtils', () => {
       const data = [{ value: 10 }, { value: 20 }];
       const result = calculateKPITrend(metric, data, true);
       expect(result.trend).toBe('up');
-      expect(result.trendValue).toBe(10);
+      expect(result.trendValue).toBe('10.00');
       expect(result.trendPercent).toBe(100);
     });
 
@@ -258,7 +258,7 @@ describe('kpiUtils', () => {
       const data = [{ value: 20 }, { value: 10 }];
       const result = calculateKPITrend(metric, data, true);
       expect(result.trend).toBe('down');
-      expect(result.trendValue).toBe(-10);
+      expect(result.trendValue).toBe('-10.00');
     });
 
     it('should return null trend when no difference', () => {

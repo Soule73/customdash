@@ -18,8 +18,10 @@ import {
  *
  * @example
  * getCurrencyDisplayByLocale('en-US', 'USD'); // 'symbol' -> $1,234.56
- * getCurrencyDisplayByLocale('fr-FR', 'EUR'); // 'symbol' -> 1 234,56 EUR
- * getCurrencyDisplayByLocale('de-DE', 'EUR'); // 'symbol' -> 1.234,56 EUR
+ * getCurrencyDisplayByLocale('fr-FR', 'EUR'); // 'symbol' -> 1 234,56 €
+ * getCurrencyDisplayByLocale('de-DE', 'EUR'); // 'symbol' -> 1.234,56 €
+ * getCurrencyDisplayByLocale('en-GB', 'GBP'); // 'symbol' -> £1,234.56
+ * getCurrencyDisplayByLocale('ja-JP', 'JPY'); // 'narrowSymbol' -> ¥1,235
  */
 export function getCurrencyDisplayByLocale(
   locale: string = DEFAULT_LOCALE,

@@ -1,7 +1,8 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { usePieChartVM } from '../../hooks/usePieChartVM';
-import type { ChartConfig, WidgetParams } from '../../types';
+import type { ChartConfig, WidgetParams } from '../../interfaces';
+import type { JSX } from 'react';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -14,7 +15,21 @@ export interface PieChartWidgetComponentProps {
 }
 
 /**
- * Composant PieChart pour afficher des graphiques en camembert
+ * PieChart component to display pie charts
+ * @param {PieChartWidgetComponentProps} props - The component props
+ * @returns {JSX.Element} The PieChart component
+ *
+ * @example
+ * <PieChartWidget
+ *    data={[{ category: 'Electronics', sales: 4500 }, ...]}
+ *    config={{
+ *      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+ *      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+ *    }}
+ *    widgetParams={{ legend: true }}
+ *    height={300}
+ *    className="my-custom-class"
+ * />
  */
 export default function PieChartWidget({
   data,
@@ -22,7 +37,7 @@ export default function PieChartWidget({
   widgetParams = {},
   height = 300,
   className = '',
-}: PieChartWidgetComponentProps) {
+}: PieChartWidgetComponentProps): JSX.Element {
   const { chartData, options } = usePieChartVM({ data, config, widgetParams });
 
   if (
@@ -35,7 +50,7 @@ export default function PieChartWidget({
       <div
         className={`flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded-lg ${className}`}
       >
-        <p className="text-gray-500 dark:text-gray-400">Configuration invalide</p>
+        <p className="text-gray-500 dark:text-gray-400">Invalid configuration</p>
       </div>
     );
   }
@@ -45,7 +60,7 @@ export default function PieChartWidget({
       <div
         className={`flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded-lg ${className}`}
       >
-        <p className="text-gray-500 dark:text-gray-400">Aucune donnee disponible</p>
+        <p className="text-gray-500 dark:text-gray-400">No data available</p>
       </div>
     );
   }

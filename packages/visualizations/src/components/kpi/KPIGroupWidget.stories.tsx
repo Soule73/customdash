@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import KPIGroupWidget from './KPIGroupWidget';
-import type { KPIGroupConfig } from '../../types';
+import type { KPIGroupConfig } from '../../interfaces';
 
 const meta: Meta<typeof KPIGroupWidget> = {
   title: 'Visualizations/KPI/KPIGroupWidget',
@@ -31,7 +31,7 @@ const salesData = [
 const defaultConfig: KPIGroupConfig = {
   metrics: [
     { field: 'revenue', agg: 'sum', label: 'Revenus' },
-    { field: 'orders', agg: 'sum', label: 'Commandes' },
+    { field: 'orders', agg: 'sum', label: 'Orders' },
   ],
   widgetParams: {
     columns: 2,
@@ -50,9 +50,9 @@ export const ThreeColumns: Story = {
     data: salesData,
     config: {
       metrics: [
-        { field: 'revenue', agg: 'sum', label: 'CA Total' },
-        { field: 'orders', agg: 'sum', label: 'Total Commandes' },
-        { field: 'customers', agg: 'count', label: 'Clients' },
+        { field: 'revenue', agg: 'sum', label: 'Total Revenue' },
+        { field: 'orders', agg: 'sum', label: 'Total Orders' },
+        { field: 'customers', agg: 'count', label: 'Total Customers' },
       ],
       widgetParams: {
         columns: 3,
@@ -73,10 +73,10 @@ export const FourKPIs: Story = {
     data: salesData,
     config: {
       metrics: [
-        { field: 'revenue', agg: 'sum', label: 'Revenus' },
-        { field: 'orders', agg: 'sum', label: 'Commandes' },
-        { field: 'customers', agg: 'avg', label: 'Clients Moy.' },
-        { field: 'conversion', agg: 'avg', label: 'Taux Conv.' },
+        { field: 'revenue', agg: 'sum', label: 'Total Revenue' },
+        { field: 'orders', agg: 'sum', label: 'Total Orders' },
+        { field: 'customers', agg: 'avg', label: 'Average Customers' },
+        { field: 'conversion', agg: 'avg', label: 'Conversion Rate' },
       ],
       widgetParams: {
         columns: 4,
@@ -90,8 +90,8 @@ export const WithCustomColors: Story = {
     data: salesData,
     config: {
       metrics: [
-        { field: 'revenue', agg: 'sum', label: 'Revenus' },
-        { field: 'orders', agg: 'sum', label: 'Commandes' },
+        { field: 'revenue', agg: 'sum', label: 'Total Revenue' },
+        { field: 'orders', agg: 'sum', label: 'Total Orders' },
       ],
       metricStyles: [{ color: '#22c55e' }, { color: '#8b5cf6' }],
       widgetParams: {
@@ -106,13 +106,13 @@ export const WithCurrencyFormat: Story = {
     data: salesData,
     config: {
       metrics: [
-        { field: 'revenue', agg: 'sum', label: 'CA Total' },
-        { field: 'revenue', agg: 'avg', label: 'CA Moyen' },
+        { field: 'revenue', agg: 'sum', label: 'Total Revenue' },
+        { field: 'revenue', agg: 'avg', label: 'Average Revenue' },
       ],
       widgetParams: {
         columns: 2,
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
         decimals: 0,
       },
     },
@@ -124,8 +124,8 @@ export const WithTrends: Story = {
     data: salesData,
     config: {
       metrics: [
-        { field: 'revenue', agg: 'sum', label: 'Revenus' },
-        { field: 'orders', agg: 'sum', label: 'Commandes' },
+        { field: 'revenue', agg: 'sum', label: 'Total Revenue' },
+        { field: 'orders', agg: 'sum', label: 'Total Orders' },
       ],
       widgetParams: {
         columns: 2,
@@ -148,9 +148,9 @@ export const SingleColumn: Story = {
     data: salesData,
     config: {
       metrics: [
-        { field: 'revenue', agg: 'sum', label: 'Revenus' },
-        { field: 'orders', agg: 'sum', label: 'Commandes' },
-        { field: 'customers', agg: 'avg', label: 'Clients' },
+        { field: 'revenue', agg: 'sum', label: 'Total Revenue' },
+        { field: 'orders', agg: 'sum', label: 'Total Orders' },
+        { field: 'customers', agg: 'avg', label: 'Average Customers' },
       ],
       widgetParams: {
         columns: 1,
@@ -169,14 +169,14 @@ export const WithGlobalFilters: Story = {
     ],
     config: {
       metrics: [
-        { field: 'revenue', agg: 'sum', label: 'CA Nord' },
-        { field: 'orders', agg: 'sum', label: 'Commandes Nord' },
+        { field: 'revenue', agg: 'sum', label: 'North Revenue' },
+        { field: 'orders', agg: 'sum', label: 'North Orders' },
       ],
       globalFilters: [{ field: 'region', operator: 'equals', value: 'North' }],
       widgetParams: {
         columns: 2,
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
         decimals: 0,
       },
     },

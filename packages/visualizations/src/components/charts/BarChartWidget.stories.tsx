@@ -11,7 +11,7 @@ const meta: Meta<typeof BarChartWidget> = {
   argTypes: {
     height: {
       control: { type: 'number' },
-      description: 'Hauteur du graphique en pixels',
+      description: 'Height of the chart in pixels',
     },
   },
 };
@@ -20,20 +20,20 @@ export default meta;
 type Story = StoryObj<typeof BarChartWidget>;
 
 const sampleData = [
-  { category: 'Janvier', ventes: 4000, depenses: 2400 },
-  { category: 'Fevrier', ventes: 3000, depenses: 1398 },
-  { category: 'Mars', ventes: 2000, depenses: 9800 },
-  { category: 'Avril', ventes: 2780, depenses: 3908 },
-  { category: 'Mai', ventes: 1890, depenses: 4800 },
-  { category: 'Juin', ventes: 2390, depenses: 3800 },
+  { category: 'January', sales: 4000, expenses: 2400 },
+  { category: 'February', sales: 3000, expenses: 1398 },
+  { category: 'March', sales: 2000, expenses: 9800 },
+  { category: 'April', sales: 2780, expenses: 3908 },
+  { category: 'May', sales: 1890, expenses: 4800 },
+  { category: 'June', sales: 2390, expenses: 3800 },
 ];
 
 export const Default: Story = {
   args: {
     data: sampleData,
     config: {
-      metrics: [{ field: 'ventes', agg: 'sum', label: 'Ventes' }],
-      buckets: [{ field: 'category', type: 'terms', label: 'Mois' }],
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
     height: 300,
   },
@@ -44,10 +44,10 @@ export const MultipleMetrics: Story = {
     data: sampleData,
     config: {
       metrics: [
-        { field: 'ventes', agg: 'sum', label: 'Ventes' },
-        { field: 'depenses', agg: 'sum', label: 'Depenses' },
+        { field: 'sales', agg: 'sum', label: 'Sales' },
+        { field: 'expenses', agg: 'sum', label: 'Expenses' },
       ],
-      buckets: [{ field: 'category', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
     height: 350,
   },
@@ -58,14 +58,14 @@ export const Stacked: Story = {
     data: sampleData,
     config: {
       metrics: [
-        { field: 'ventes', agg: 'sum', label: 'Ventes' },
-        { field: 'depenses', agg: 'sum', label: 'Depenses' },
+        { field: 'sales', agg: 'sum', label: 'Sales' },
+        { field: 'expenses', agg: 'sum', label: 'Expenses' },
       ],
-      buckets: [{ field: 'category', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
     widgetParams: {
       stacked: true,
-      title: 'Ventes vs Depenses (Empile)',
+      title: 'Sales vs Expenses (Stacked)',
       legend: true,
       legendPosition: 'top',
     },
@@ -77,12 +77,12 @@ export const Horizontal: Story = {
   args: {
     data: sampleData,
     config: {
-      metrics: [{ field: 'ventes', agg: 'sum', label: 'Ventes' }],
-      buckets: [{ field: 'category', type: 'terms', label: 'Mois' }],
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
     widgetParams: {
       horizontal: true,
-      title: 'Ventes par Mois (Horizontal)',
+      title: 'Sales by Month (Horizontal)',
     },
     height: 350,
   },
@@ -92,8 +92,8 @@ export const WithCustomStyles: Story = {
   args: {
     data: sampleData,
     config: {
-      metrics: [{ field: 'ventes', agg: 'sum', label: 'Ventes' }],
-      buckets: [{ field: 'category', type: 'terms', label: 'Mois' }],
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
       metricStyles: [
         {
           backgroundColor: '#6366f1',
@@ -104,9 +104,9 @@ export const WithCustomStyles: Story = {
       ],
     },
     widgetParams: {
-      title: 'Ventes avec styles personnalises',
-      xLabel: 'Mois',
-      yLabel: 'Montant (EUR)',
+      title: 'Sales with Custom Styles',
+      xLabel: 'Month',
+      yLabel: 'Amount (USD)',
     },
     height: 350,
   },
@@ -116,12 +116,12 @@ export const WithFilters: Story = {
   args: {
     data: sampleData,
     config: {
-      metrics: [{ field: 'ventes', agg: 'sum', label: 'Ventes filtrees' }],
-      buckets: [{ field: 'category', type: 'terms', label: 'Mois' }],
-      globalFilters: [{ field: 'ventes', operator: 'greater_than', value: 2000 }],
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Filtered Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+      globalFilters: [{ field: 'sales', operator: 'greater_than', value: 2000 }],
     },
     widgetParams: {
-      title: 'Ventes > 2000 seulement',
+      title: 'Sales > 2000 only',
     },
     height: 350,
   },
@@ -131,8 +131,8 @@ export const EmptyData: Story = {
   args: {
     data: [],
     config: {
-      metrics: [{ field: 'ventes', agg: 'sum', label: 'Ventes' }],
-      buckets: [{ field: 'category', type: 'terms', label: 'Mois' }],
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
     height: 300,
   },

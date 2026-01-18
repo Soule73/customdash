@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import PieChartWidget from './PieChartWidget';
-import type { ChartConfig } from '../../types';
+import type { ChartConfig } from '../../interfaces';
 
 const meta: Meta<typeof PieChartWidget> = {
   title: 'Visualizations/Charts/PieChartWidget',
@@ -12,11 +12,11 @@ const meta: Meta<typeof PieChartWidget> = {
   argTypes: {
     height: {
       control: { type: 'number' },
-      description: 'Hauteur du graphique',
+      description: 'Height of the chart',
     },
     className: {
       control: { type: 'text' },
-      description: 'Classes CSS additionnelles',
+      description: 'Additional CSS classes',
     },
   },
 };
@@ -25,17 +25,17 @@ export default meta;
 type Story = StoryObj<typeof PieChartWidget>;
 
 const sampleData = [
-  { categorie: 'Electronique', ventes: 4500 },
-  { categorie: 'Vetements', ventes: 3200 },
-  { categorie: 'Alimentation', ventes: 2800 },
-  { categorie: 'Maison', ventes: 1900 },
-  { categorie: 'Sport', ventes: 1500 },
-  { categorie: 'Livres', ventes: 800 },
+  { categorie: 'Electronics', salles: 4500 },
+  { categorie: 'Clothing', salles: 3200 },
+  { categorie: 'Food', salles: 2800 },
+  { categorie: 'Home', salles: 1900 },
+  { categorie: 'Sports', salles: 1500 },
+  { categorie: 'Books', salles: 800 },
 ];
 
 const defaultConfig: ChartConfig = {
-  metrics: [{ field: 'ventes', agg: 'sum', label: 'Ventes' }],
-  buckets: [{ field: 'categorie', type: 'terms', label: 'Categorie' }],
+  metrics: [{ field: 'salles', agg: 'sum', label: 'Sales' }],
+  buckets: [{ field: 'categorie', type: 'terms', label: 'Category' }],
 };
 
 export const Default: Story = {
@@ -63,7 +63,7 @@ export const WithTitle: Story = {
     data: sampleData,
     config: defaultConfig,
     widgetParams: {
-      title: 'Repartition des ventes par categorie',
+      title: 'Sales distribution by category',
       legend: true,
     },
     height: 400,
@@ -91,12 +91,12 @@ export const WithCustomColors: Story = {
 export const SmallDataset: Story = {
   args: {
     data: [
-      { type: 'Oui', count: 75 },
-      { type: 'Non', count: 25 },
+      { type: 'Yes', count: 75 },
+      { type: 'No', count: 25 },
     ],
     config: {
-      metrics: [{ field: 'count', agg: 'sum', label: 'Reponses' }],
-      buckets: [{ field: 'type', type: 'terms', label: 'Reponse' }],
+      metrics: [{ field: 'count', agg: 'sum', label: 'Responses' }],
+      buckets: [{ field: 'type', type: 'terms', label: 'Response' }],
     },
     widgetParams: {
       legend: true,
@@ -109,25 +109,25 @@ export const SmallDataset: Story = {
 export const LargeDataset: Story = {
   args: {
     data: [
-      { pays: 'France', population: 67 },
-      { pays: 'Allemagne', population: 83 },
-      { pays: 'Italie', population: 60 },
-      { pays: 'Espagne', population: 47 },
-      { pays: 'Pologne', population: 38 },
-      { pays: 'Roumanie', population: 19 },
-      { pays: 'Pays-Bas', population: 17 },
-      { pays: 'Belgique', population: 11 },
-      { pays: 'Grece', population: 10 },
-      { pays: 'Portugal', population: 10 },
+      { country: 'France', population: 67 },
+      { country: 'Germany', population: 83 },
+      { country: 'Italy', population: 60 },
+      { country: 'Spain', population: 47 },
+      { country: 'Poland', population: 38 },
+      { country: 'Romania', population: 19 },
+      { country: 'Netherlands', population: 17 },
+      { country: 'Belgium', population: 11 },
+      { country: 'Greece', population: 10 },
+      { country: 'Portugal', population: 10 },
     ],
     config: {
       metrics: [{ field: 'population', agg: 'sum', label: 'Population (millions)' }],
-      buckets: [{ field: 'pays', type: 'terms', label: 'Pays' }],
+      buckets: [{ field: 'country', type: 'terms', label: 'Country' }],
     },
     widgetParams: {
       legend: true,
       legendPosition: 'right',
-      title: 'Population des pays europeens',
+      title: 'Population by Country in Europe',
     },
     height: 400,
   },
@@ -138,11 +138,11 @@ export const WithFilters: Story = {
     data: sampleData,
     config: {
       ...defaultConfig,
-      globalFilters: [{ field: 'ventes', operator: 'greater_than', value: 1500 }],
+      globalFilters: [{ field: 'salles', operator: 'greater_than', value: 1500 }],
     },
     widgetParams: {
       legend: true,
-      title: 'Categories avec plus de 1500 ventes',
+      title: 'Categories with more than 1500 sales',
     },
     height: 350,
   },

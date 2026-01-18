@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import ScatterChartWidget from './ScatterChartWidget';
-import type { ScatterChartConfig } from '../../types';
+import type { ScatterChartConfig } from '../../interfaces';
 
 const meta: Meta<typeof ScatterChartWidget> = {
   title: 'Visualizations/Charts/ScatterChartWidget',
@@ -12,11 +12,11 @@ const meta: Meta<typeof ScatterChartWidget> = {
   argTypes: {
     height: {
       control: { type: 'number' },
-      description: 'Hauteur du graphique',
+      description: 'Height of the chart',
     },
     className: {
       control: { type: 'text' },
-      description: 'Classes CSS additionnelles',
+      description: 'Additional CSS classes',
     },
   },
 };
@@ -25,26 +25,26 @@ export default meta;
 type Story = StoryObj<typeof ScatterChartWidget>;
 
 const sampleData = [
-  { taille: 165, poids: 60 },
-  { taille: 170, poids: 65 },
-  { taille: 175, poids: 70 },
-  { taille: 180, poids: 75 },
-  { taille: 185, poids: 80 },
-  { taille: 160, poids: 55 },
-  { taille: 172, poids: 68 },
-  { taille: 178, poids: 73 },
-  { taille: 182, poids: 78 },
-  { taille: 168, poids: 62 },
+  { height: 165, weight: 60 },
+  { height: 170, weight: 65 },
+  { height: 175, weight: 70 },
+  { height: 180, weight: 75 },
+  { height: 185, weight: 80 },
+  { height: 160, weight: 55 },
+  { height: 172, weight: 68 },
+  { height: 178, weight: 73 },
+  { height: 182, weight: 78 },
+  { height: 168, weight: 62 },
 ];
 
 const defaultConfig: ScatterChartConfig = {
   metrics: [
     {
-      field: 'poids',
+      field: 'weight',
       agg: 'sum',
-      x: 'taille',
-      y: 'poids',
-      label: 'Individus',
+      x: 'height',
+      y: 'weight',
+      label: 'Individuals',
     },
   ],
 };
@@ -63,9 +63,9 @@ export const WithLabels: Story = {
     config: {
       ...defaultConfig,
       widgetParams: {
-        title: 'Correlation Taille / Poids',
-        xLabel: 'Taille (cm)',
-        yLabel: 'Poids (kg)',
+        title: 'Height / Weight Correlation',
+        xLabel: 'Height (cm)',
+        yLabel: 'Weight (kg)',
         legend: true,
       },
     },
@@ -76,36 +76,36 @@ export const WithLabels: Story = {
 export const MultipleDatasets: Story = {
   args: {
     data: [
-      { taille: 165, poids: 60, genre: 'F' },
-      { taille: 170, poids: 65, genre: 'F' },
-      { taille: 158, poids: 52, genre: 'F' },
-      { taille: 180, poids: 75, genre: 'M' },
-      { taille: 185, poids: 80, genre: 'M' },
-      { taille: 178, poids: 73, genre: 'M' },
+      { height: 165, weight: 60, gender: 'F' },
+      { height: 170, weight: 65, gender: 'F' },
+      { height: 158, weight: 52, gender: 'F' },
+      { height: 180, weight: 75, gender: 'M' },
+      { height: 185, weight: 80, gender: 'M' },
+      { height: 178, weight: 73, gender: 'M' },
     ],
     config: {
       metrics: [
         {
-          field: 'poids',
+          field: 'weight',
           agg: 'sum',
-          x: 'taille',
-          y: 'poids',
-          label: 'Femmes',
-          datasetFilters: [{ field: 'genre', operator: 'equals', value: 'F' }],
+          x: 'height',
+          y: 'weight',
+          label: 'Females',
+          datasetFilters: [{ field: 'gender', operator: 'equals', value: 'F' }],
         },
         {
-          field: 'poids',
+          field: 'weight',
           agg: 'sum',
-          x: 'taille',
-          y: 'poids',
-          label: 'Hommes',
-          datasetFilters: [{ field: 'genre', operator: 'equals', value: 'M' }],
+          x: 'height',
+          y: 'weight',
+          label: 'Males',
+          datasetFilters: [{ field: 'gender', operator: 'equals', value: 'M' }],
         },
       ],
       widgetParams: {
-        title: 'Comparaison par genre',
-        xLabel: 'Taille (cm)',
-        yLabel: 'Poids (kg)',
+        title: 'Comparison by Gender',
+        xLabel: 'Height (cm)',
+        yLabel: 'Weight (kg)',
         legend: true,
       },
     },
@@ -154,12 +154,12 @@ export const ScientificData: Story = {
           agg: 'sum',
           x: 'x',
           y: 'y',
-          label: 'Mesures experimentales',
+          label: 'Experimental Measurements',
         },
       ],
       widgetParams: {
-        title: 'Donnees Experimentales',
-        xLabel: 'Temps (s)',
+        title: 'Experimental Data',
+        xLabel: 'Time (s)',
         yLabel: 'Amplitude (V)',
         legend: true,
       },
@@ -173,9 +173,9 @@ export const WithGlobalFilters: Story = {
     data: sampleData,
     config: {
       ...defaultConfig,
-      globalFilters: [{ field: 'poids', operator: 'greater_than', value: 65 }],
+      globalFilters: [{ field: 'weight', operator: 'greater_than', value: 65 }],
       widgetParams: {
-        title: 'Poids superieurs a 65kg',
+        title: 'Weights Greater Than 65kg',
         legend: true,
       },
     },
@@ -197,10 +197,10 @@ export const InvalidConfig: Story = {
     config: {
       metrics: [
         {
-          field: 'poids',
+          field: 'weight',
           agg: 'sum',
           x: '',
-          y: 'poids',
+          y: 'weight',
         },
       ],
     } as ScatterChartConfig,

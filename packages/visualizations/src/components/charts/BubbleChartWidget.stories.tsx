@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import BubbleChartWidget from './BubbleChartWidget';
-import type { BubbleChartConfig } from '../../types';
+import type { BubbleChartConfig } from '../../interfaces';
 
 const meta: Meta<typeof BubbleChartWidget> = {
   title: 'Visualizations/Charts/BubbleChartWidget',
@@ -12,11 +12,11 @@ const meta: Meta<typeof BubbleChartWidget> = {
   argTypes: {
     height: {
       control: { type: 'number' },
-      description: 'Hauteur du graphique',
+      description: 'Height of the chart',
     },
     className: {
       control: { type: 'text' },
-      description: 'Classes CSS additionnelles',
+      description: 'Additional CSS classes',
     },
   },
 };
@@ -25,27 +25,27 @@ export default meta;
 type Story = StoryObj<typeof BubbleChartWidget>;
 
 const sampleData = [
-  { age: 25, salaire: 35000, experience: 2 },
-  { age: 30, salaire: 45000, experience: 5 },
-  { age: 35, salaire: 55000, experience: 8 },
-  { age: 40, salaire: 65000, experience: 12 },
-  { age: 45, salaire: 75000, experience: 18 },
-  { age: 28, salaire: 40000, experience: 3 },
-  { age: 33, salaire: 50000, experience: 7 },
-  { age: 38, salaire: 60000, experience: 10 },
-  { age: 42, salaire: 70000, experience: 15 },
-  { age: 50, salaire: 85000, experience: 22 },
+  { age: 25, salary: 35000, experience: 2 },
+  { age: 30, salary: 45000, experience: 5 },
+  { age: 35, salary: 55000, experience: 8 },
+  { age: 40, salary: 65000, experience: 12 },
+  { age: 45, salary: 75000, experience: 18 },
+  { age: 28, salary: 40000, experience: 3 },
+  { age: 33, salary: 50000, experience: 7 },
+  { age: 38, salary: 60000, experience: 10 },
+  { age: 42, salary: 70000, experience: 15 },
+  { age: 50, salary: 85000, experience: 22 },
 ];
 
 const defaultConfig: BubbleChartConfig = {
   metrics: [
     {
-      field: 'salaire',
+      field: 'salary',
       agg: 'sum',
       x: 'age',
-      y: 'salaire',
+      y: 'salary',
       r: 'experience',
-      label: 'Employes',
+      label: 'Employees',
     },
   ],
 };
@@ -64,9 +64,9 @@ export const WithLabels: Story = {
     config: {
       ...defaultConfig,
       widgetParams: {
-        title: 'Relation Age, Salaire et Experience',
-        xLabel: 'Age (ans)',
-        yLabel: 'Salaire (EUR)',
+        title: 'Relation Age, Salary et Experience',
+        xLabel: 'Age (years)',
+        yLabel: 'Salary (USD)',
         legend: true,
       },
     },
@@ -77,36 +77,36 @@ export const WithLabels: Story = {
 export const MultipleDatasets: Story = {
   args: {
     data: [
-      { age: 25, salaire: 35000, experience: 2, departement: 'IT' },
-      { age: 30, salaire: 45000, experience: 5, departement: 'IT' },
-      { age: 35, salaire: 55000, experience: 8, departement: 'IT' },
-      { age: 28, salaire: 42000, experience: 4, departement: 'RH' },
-      { age: 32, salaire: 48000, experience: 6, departement: 'RH' },
-      { age: 38, salaire: 58000, experience: 10, departement: 'RH' },
+      { age: 25, salary: 35000, experience: 2, department: 'IT' },
+      { age: 30, salary: 45000, experience: 5, department: 'IT' },
+      { age: 35, salary: 55000, experience: 8, department: 'IT' },
+      { age: 28, salary: 42000, experience: 4, department: 'HR' },
+      { age: 32, salary: 48000, experience: 6, department: 'HR' },
+      { age: 38, salary: 58000, experience: 10, department: 'HR' },
     ],
     config: {
       metrics: [
         {
-          field: 'salaire',
+          field: 'salary',
           agg: 'sum',
           x: 'age',
-          y: 'salaire',
+          y: 'salary',
           r: 'experience',
           label: 'IT',
-          datasetFilters: [{ field: 'departement', operator: 'equals', value: 'IT' }],
+          datasetFilters: [{ field: 'department', operator: 'equals', value: 'IT' }],
         },
         {
-          field: 'salaire',
+          field: 'salary',
           agg: 'sum',
           x: 'age',
-          y: 'salaire',
+          y: 'salary',
           r: 'experience',
-          label: 'RH',
-          datasetFilters: [{ field: 'departement', operator: 'equals', value: 'RH' }],
+          label: 'HR',
+          datasetFilters: [{ field: 'department', operator: 'equals', value: 'HR' }],
         },
       ],
       widgetParams: {
-        title: 'Comparaison IT vs RH',
+        title: 'Comparaison IT vs HR',
         legend: true,
       },
     },
@@ -127,7 +127,7 @@ export const WithCustomStyles: Story = {
         },
       ],
       widgetParams: {
-        title: 'Style personnalise',
+        title: 'Custom Style',
         legend: true,
       },
     },
@@ -158,7 +158,7 @@ export const ScientificData: Story = {
         },
       ],
       widgetParams: {
-        title: 'Donnees Scientifiques',
+        title: 'Scientific Data',
         xLabel: 'Position X',
         yLabel: 'Position Y',
         legend: true,
@@ -173,9 +173,9 @@ export const WithGlobalFilters: Story = {
     data: sampleData,
     config: {
       ...defaultConfig,
-      globalFilters: [{ field: 'salaire', operator: 'greater_than', value: 50000 }],
+      globalFilters: [{ field: 'salary', operator: 'greater_than', value: 50000 }],
       widgetParams: {
-        title: 'Salaires superieurs a 50k',
+        title: 'Salaries above 50k',
         legend: true,
       },
     },
@@ -197,10 +197,10 @@ export const InvalidConfig: Story = {
     config: {
       metrics: [
         {
-          field: 'salaire',
+          field: 'salary',
           agg: 'sum',
           x: '',
-          y: 'salaire',
+          y: 'salarys',
           r: 'experience',
         },
       ],

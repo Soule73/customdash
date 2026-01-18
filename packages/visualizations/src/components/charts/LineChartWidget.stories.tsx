@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import LineChartWidget from './LineChartWidget';
-import type { ChartConfig } from '../../types';
+import type { ChartConfig } from '../../interfaces';
 
 const meta: Meta<typeof LineChartWidget> = {
   title: 'Visualizations/Charts/LineChartWidget',
@@ -12,11 +12,11 @@ const meta: Meta<typeof LineChartWidget> = {
   argTypes: {
     height: {
       control: { type: 'number' },
-      description: 'Hauteur du graphique',
+      description: 'Height of the chart',
     },
     className: {
       control: { type: 'text' },
-      description: 'Classes CSS additionnelles',
+      description: 'Additional CSS classes',
     },
   },
 };
@@ -25,23 +25,23 @@ export default meta;
 type Story = StoryObj<typeof LineChartWidget>;
 
 const sampleData = [
-  { month: 'Janvier', temperature: 5, humidite: 80, precipitations: 50 },
-  { month: 'Fevrier', temperature: 7, humidite: 75, precipitations: 45 },
-  { month: 'Mars', temperature: 12, humidite: 65, precipitations: 40 },
-  { month: 'Avril', temperature: 16, humidite: 60, precipitations: 55 },
-  { month: 'Mai', temperature: 20, humidite: 55, precipitations: 65 },
-  { month: 'Juin', temperature: 25, humidite: 50, precipitations: 30 },
-  { month: 'Juillet', temperature: 28, humidite: 45, precipitations: 20 },
-  { month: 'Aout', temperature: 27, humidite: 48, precipitations: 25 },
-  { month: 'Septembre', temperature: 22, humidite: 55, precipitations: 45 },
-  { month: 'Octobre', temperature: 16, humidite: 65, precipitations: 60 },
-  { month: 'Novembre', temperature: 10, humidite: 75, precipitations: 70 },
-  { month: 'Decembre', temperature: 6, humidite: 82, precipitations: 55 },
+  { month: 'January', temperature: 5, humidity: 80, precipitation: 50 },
+  { month: 'February', temperature: 7, humidity: 75, precipitation: 45 },
+  { month: 'March', temperature: 12, humidity: 65, precipitation: 40 },
+  { month: 'April', temperature: 16, humidity: 60, precipitation: 55 },
+  { month: 'May', temperature: 20, humidity: 55, precipitation: 65 },
+  { month: 'June', temperature: 25, humidity: 50, precipitation: 30 },
+  { month: 'July', temperature: 28, humidity: 45, precipitation: 20 },
+  { month: 'August', temperature: 27, humidity: 48, precipitation: 25 },
+  { month: 'September', temperature: 22, humidity: 55, precipitation: 45 },
+  { month: 'October', temperature: 16, humidity: 65, precipitation: 60 },
+  { month: 'November', temperature: 10, humidity: 75, precipitation: 70 },
+  { month: 'December', temperature: 6, humidity: 82, precipitation: 55 },
 ];
 
 const defaultConfig: ChartConfig = {
   metrics: [{ field: 'temperature', agg: 'avg', label: 'Temperature (C)' }],
-  buckets: [{ field: 'month', type: 'terms', label: 'Mois' }],
+  buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
 };
 
 export const Default: Story = {
@@ -58,9 +58,9 @@ export const MultipleMetrics: Story = {
     config: {
       metrics: [
         { field: 'temperature', agg: 'avg', label: 'Temperature (C)' },
-        { field: 'humidite', agg: 'avg', label: 'Humidite (%)' },
+        { field: 'humidity', agg: 'avg', label: 'Humidity (%)' },
       ],
-      buckets: [{ field: 'month', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
     },
     height: 350,
   },
@@ -72,10 +72,10 @@ export const ThreeMetrics: Story = {
     config: {
       metrics: [
         { field: 'temperature', agg: 'avg', label: 'Temperature (C)' },
-        { field: 'humidite', agg: 'avg', label: 'Humidite (%)' },
-        { field: 'precipitations', agg: 'sum', label: 'Precipitations (mm)' },
+        { field: 'humidity', agg: 'avg', label: 'Humidity (%)' },
+        { field: 'precipitation', agg: 'sum', label: 'Precipitation (mm)' },
       ],
-      buckets: [{ field: 'month', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
     },
     height: 350,
   },
@@ -86,7 +86,7 @@ export const WithFill: Story = {
     data: sampleData,
     config: {
       metrics: [{ field: 'temperature', agg: 'avg', label: 'Temperature (C)' }],
-      buckets: [{ field: 'month', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
       metricStyles: [{ fill: true }],
     },
     height: 300,
@@ -121,9 +121,9 @@ export const WithLegend: Story = {
     config: {
       metrics: [
         { field: 'temperature', agg: 'avg', label: 'Temperature (C)' },
-        { field: 'humidite', agg: 'avg', label: 'Humidite (%)' },
+        { field: 'humidity', agg: 'avg', label: 'Humidity (%)' },
       ],
-      buckets: [{ field: 'month', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
     },
     widgetParams: {
       legend: true,
@@ -137,7 +137,7 @@ export const WithCustomStyles: Story = {
     data: sampleData,
     config: {
       metrics: [{ field: 'temperature', agg: 'avg', label: 'Temperature (C)' }],
-      buckets: [{ field: 'month', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
       metricStyles: [
         {
           borderColor: '#e74c3c',
@@ -158,7 +158,7 @@ export const WithFilters: Story = {
     data: sampleData,
     config: {
       metrics: [{ field: 'temperature', agg: 'avg', label: 'Temperature (C)' }],
-      buckets: [{ field: 'month', type: 'terms', label: 'Mois' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
       globalFilters: [{ field: 'temperature', operator: 'greater_than', value: 10 }],
     },
     height: 300,

@@ -11,7 +11,8 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { useLineChartVM } from '../../hooks/useLineChartVM';
-import type { ChartConfig, WidgetParams } from '../../types';
+import type { ChartConfig, WidgetParams } from '../../interfaces';
+import type { JSX } from 'react';
 
 ChartJS.register(
   LineElement,
@@ -33,7 +34,21 @@ export interface LineChartWidgetComponentProps {
 }
 
 /**
- * Composant LineChart pour afficher des graphiques en lignes
+ * Component LineChart to display line charts
+ * @param {LineChartWidgetComponentProps} props - The component props
+ * @returns {JSX.Element} The LineChart component
+ *
+ * @example
+ * <LineChartWidget
+ *    data={[{ month: 'January', temperature: 5 }, ...]}
+ *    config={{
+ *      metrics: [{ field: 'temperature', agg: 'avg', label: 'Temperature (C)' }],
+ *      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
+ *    }}
+ *    widgetParams={{ legend: true }}
+ *    height={300}
+ *    className="my-custom-class"
+ * />
  */
 export default function LineChartWidget({
   data,
@@ -41,7 +56,7 @@ export default function LineChartWidget({
   widgetParams = {},
   height = 300,
   className = '',
-}: LineChartWidgetComponentProps) {
+}: LineChartWidgetComponentProps): JSX.Element {
   const { chartData, options } = useLineChartVM({ data, config, widgetParams });
 
   if (
@@ -54,7 +69,7 @@ export default function LineChartWidget({
       <div
         className={`flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded-lg ${className}`}
       >
-        <p className="text-gray-500 dark:text-gray-400">Configuration invalide</p>
+        <p className="text-gray-500 dark:text-gray-400">Invalid configuration</p>
       </div>
     );
   }
@@ -64,7 +79,7 @@ export default function LineChartWidget({
       <div
         className={`flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded-lg ${className}`}
       >
-        <p className="text-gray-500 dark:text-gray-400">Aucune donnee disponible</p>
+        <p className="text-gray-500 dark:text-gray-400">No data available</p>
       </div>
     );
   }

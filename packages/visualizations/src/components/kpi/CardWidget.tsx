@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useCardWidgetVM, type CardWidgetProps } from '../../hooks/useCardWidgetVM';
 
 interface IconProps {
@@ -31,8 +32,27 @@ function CardIcon({ name, color }: IconProps) {
 
 /**
  * Card widget component displaying a metric with icon, title and description
+ * @param {CardWidgetProps} props - The component props
+ * @returns {JSX.Element} The CardWidget component
+ *
+ * @example
+ * <CardWidget
+ *    data={[{ sales: 150000 }]}
+ *    config={{
+ *      metrics: [{ field: 'sales', agg: 'sum', label: 'Total Sales' }],
+ *      widgetParams: {
+ *        title: 'Sales Overview',
+ *        description: 'Total sales this month',
+ *        icon: 'currency-dollar',
+ *        iconColor: '#10b981',
+ *        valueColor: '#047857',
+ *        format: 'currency',
+ *        currency: 'USD',
+ *      },
+ *    }}
+ * />
  */
-export default function CardWidget({ data, config }: CardWidgetProps) {
+export default function CardWidget({ data, config }: CardWidgetProps): JSX.Element {
   const {
     formattedValue,
     title,
@@ -47,7 +67,7 @@ export default function CardWidget({ data, config }: CardWidgetProps) {
   if (!data || !config.metrics || !Array.isArray(config.metrics) || !config.metrics[0]) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded">
-        <p className="text-gray-500 dark:text-gray-400">Configuration invalide</p>
+        <p className="text-gray-500 dark:text-gray-400">Invalid configuration</p>
       </div>
     );
   }
@@ -55,7 +75,7 @@ export default function CardWidget({ data, config }: CardWidgetProps) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded">
-        <p className="text-gray-500 dark:text-gray-400">Aucune donnee disponible</p>
+        <p className="text-gray-500 dark:text-gray-400">No data available</p>
       </div>
     );
   }

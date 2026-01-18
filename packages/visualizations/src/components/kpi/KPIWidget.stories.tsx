@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import KPIWidget from './KPIWidget';
-import type { KPIConfig } from '../../types';
+import type { KPIConfig } from '../../interfaces';
 
 const meta: Meta<typeof KPIWidget> = {
   title: 'Visualizations/KPI/KPIWidget',
@@ -29,7 +29,7 @@ const salesData = [
 ];
 
 const defaultConfig: KPIConfig = {
-  metrics: [{ field: 'revenue', agg: 'sum', label: "Chiffre d'affaires" }],
+  metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
 };
 
 export const Default: Story = {
@@ -43,7 +43,7 @@ export const WithTrend: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'revenue', agg: 'sum', label: 'CA Total' }],
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Total Revenue' }],
       widgetParams: {
         showTrend: true,
         showPercent: true,
@@ -56,10 +56,10 @@ export const CurrencyFormat: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenus' }],
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
       widgetParams: {
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
         decimals: 0,
       },
     },
@@ -70,7 +70,7 @@ export const Average: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'orders', agg: 'avg', label: 'Commandes moyennes' }],
+      metrics: [{ field: 'orders', agg: 'avg', label: 'Average Orders' }],
       widgetParams: {
         decimals: 0,
       },
@@ -82,7 +82,7 @@ export const Count: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'orders', agg: 'count', label: 'Nombre de periodes' }],
+      metrics: [{ field: 'orders', agg: 'count', label: 'Number of Periods' }],
     },
   },
 };
@@ -91,10 +91,10 @@ export const Maximum: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'revenue', agg: 'max', label: 'Meilleur mois' }],
+      metrics: [{ field: 'revenue', agg: 'max', label: 'Best Month' }],
       widgetParams: {
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
         decimals: 0,
         valueColor: '#22c55e',
       },
@@ -106,7 +106,7 @@ export const WithCaretTrend: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'revenue', agg: 'sum', label: 'CA' }],
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
       widgetParams: {
         showTrend: true,
         trendType: 'caret',
@@ -125,7 +125,7 @@ export const CustomColors: Story = {
         valueColor: '#8b5cf6',
         titleColor: '#6366f1',
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
       },
     },
   },
@@ -139,7 +139,7 @@ export const PercentFormat: Story = {
       { period: 'Q3', conversionRate: 0.038 },
     ],
     config: {
-      metrics: [{ field: 'conversionRate', agg: 'avg', label: 'Taux de conversion' }],
+      metrics: [{ field: 'conversionRate', agg: 'avg', label: 'Conversion Rate' }],
       widgetParams: {
         format: 'percent',
         decimals: 1,
@@ -173,11 +173,11 @@ export const WithGlobalFilters: Story = {
       { date: '2024-04', revenue: 61000, region: 'North' },
     ],
     config: {
-      metrics: [{ field: 'revenue', agg: 'sum', label: 'CA Region Nord' }],
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue North Region' }],
       globalFilters: [{ field: 'region', operator: 'equals', value: 'North' }],
       widgetParams: {
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
         decimals: 0,
       },
     },

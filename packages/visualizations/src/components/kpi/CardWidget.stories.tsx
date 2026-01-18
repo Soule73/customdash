@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import CardWidget from './CardWidget';
-import type { CardConfig } from '../../types';
+import type { CardConfig } from '../../interfaces';
 
 const meta: Meta<typeof CardWidget> = {
   title: 'Visualizations/KPI/CardWidget',
@@ -29,9 +29,9 @@ const salesData = [
 ];
 
 const defaultConfig: CardConfig = {
-  metrics: [{ field: 'revenue', agg: 'sum', label: "Chiffre d'affaires" }],
+  metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
   widgetParams: {
-    description: 'Total des ventes ce trimestre',
+    description: 'Total Sales in this quarter',
   },
 };
 
@@ -46,12 +46,12 @@ export const WithCurrencyIcon: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenus' }],
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
       widgetParams: {
         icon: 'currency-dollar',
-        description: 'Total des revenus',
+        description: 'Total revenue',
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
         decimals: 0,
       },
     },
@@ -62,10 +62,10 @@ export const UsersCard: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'customers', agg: 'sum', label: 'Clients' }],
+      metrics: [{ field: 'customers', agg: 'sum', label: 'Customers' }],
       widgetParams: {
         icon: 'users',
-        description: 'Nombre total de clients',
+        description: 'Total number of customers',
         iconColor: '#8b5cf6',
         valueColor: '#6366f1',
       },
@@ -77,10 +77,10 @@ export const OrdersCard: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'orders', agg: 'sum', label: 'Commandes' }],
+      metrics: [{ field: 'orders', agg: 'sum', label: 'Orders' }],
       widgetParams: {
         icon: 'shopping-cart',
-        description: 'Total des commandes',
+        description: 'Total orders',
         iconColor: '#22c55e',
         valueColor: '#16a34a',
       },
@@ -92,10 +92,10 @@ export const GrowthCard: Story = {
   args: {
     data: salesData,
     config: {
-      metrics: [{ field: 'revenue', agg: 'avg', label: 'Croissance' }],
+      metrics: [{ field: 'revenue', agg: 'avg', label: 'Growth' }],
       widgetParams: {
         icon: 'arrow-trending-up',
-        description: 'Moyenne mensuelle',
+        description: 'Monthly average',
         iconColor: '#f59e0b',
         valueColor: '#d97706',
         format: 'currency',
@@ -112,7 +112,7 @@ export const WithoutIcon: Story = {
       metrics: [{ field: 'revenue', agg: 'sum', label: 'Total' }],
       widgetParams: {
         showIcon: false,
-        description: 'Sans icone',
+        description: 'Without icon',
       },
     },
   },
@@ -125,7 +125,7 @@ export const CustomColors: Story = {
       metrics: [{ field: 'revenue', agg: 'max', label: 'Record' }],
       widgetParams: {
         icon: 'star',
-        description: 'Meilleur mois',
+        description: 'Best month',
         iconColor: '#eab308',
         valueColor: '#ca8a04',
         descriptionColor: '#a16207',
@@ -146,12 +146,12 @@ export const WithGlobalFilters: Story = {
       { date: '2024-04', revenue: 61000, region: 'North' },
     ],
     config: {
-      metrics: [{ field: 'revenue', agg: 'sum', label: 'CA Nord' }],
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'North CA' }],
       globalFilters: [{ field: 'region', operator: 'equals', value: 'North' }],
       widgetParams: {
-        description: 'Region Nord uniquement',
+        description: 'North region only',
         format: 'currency',
-        currency: 'EUR',
+        currency: 'USD',
         decimals: 0,
       },
     },

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import TableWidget from './TableWidget';
-import type { TableWidgetConfig } from '../../types';
+import type { TableWidgetConfig } from '../../interfaces';
 
 const meta: Meta<typeof TableWidget> = {
   title: 'Visualizations/Table/TableWidget',
@@ -134,7 +134,7 @@ const salesData = [
 
 const defaultConfig: TableWidgetConfig = {
   widgetParams: {
-    title: 'Tableau des ventes',
+    title: 'Sales Data',
     pageSize: 5,
   },
 };
@@ -151,7 +151,7 @@ export const WithoutSearch: Story = {
     data: salesData,
     config: {
       widgetParams: {
-        title: 'Tableau sans recherche',
+        title: 'Table Without Search',
         pageSize: 5,
         searchable: false,
       },
@@ -164,7 +164,7 @@ export const CompactMode: Story = {
     data: salesData,
     config: {
       widgetParams: {
-        title: 'Tableau compact',
+        title: 'Compact Table',
         pageSize: 8,
         compact: true,
       },
@@ -177,7 +177,7 @@ export const NoStripes: Story = {
     data: salesData,
     config: {
       widgetParams: {
-        title: 'Tableau sans rayures',
+        title: 'Table Without Stripes',
         pageSize: 5,
         striped: false,
       },
@@ -190,7 +190,7 @@ export const LargePageSize: Story = {
     data: salesData,
     config: {
       widgetParams: {
-        title: 'Grande pagination',
+        title: 'Large Page Size',
         pageSize: 10,
       },
     },
@@ -261,7 +261,7 @@ export const EmployeeTable: Story = {
     data: employeeData,
     config: {
       widgetParams: {
-        title: 'Liste des employes',
+        title: 'Employee List',
         pageSize: 5,
       },
     },
@@ -274,7 +274,7 @@ export const WithGlobalFilters: Story = {
     config: {
       globalFilters: [{ field: 'region', operator: 'equals', value: 'North' }],
       widgetParams: {
-        title: 'Ventes Region Nord',
+        title: 'North Region Sales',
         pageSize: 5,
       },
     },
@@ -286,7 +286,7 @@ export const SmallDataset: Story = {
     data: salesData.slice(0, 3),
     config: {
       widgetParams: {
-        title: 'Petit jeu de donnees',
+        title: 'Small Dataset',
         pageSize: 10,
       },
     },
@@ -314,7 +314,7 @@ export const LargeDataset: Story = {
     data: largeDataset,
     config: {
       widgetParams: {
-        title: 'Grand jeu de donnees (100 lignes)',
+        title: 'Large Dataset (100 rows)',
         pageSize: 15,
       },
     },
@@ -330,7 +330,7 @@ export const MixedDataTypes: Story = {
     ],
     config: {
       widgetParams: {
-        title: 'Types de donnees mixtes',
+        title: 'Mixed Data Types',
         pageSize: 10,
       },
     },

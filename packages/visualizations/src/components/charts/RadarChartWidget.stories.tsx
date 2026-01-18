@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import RadarChartWidget from './RadarChartWidget';
-import type { RadarChartConfig } from '../../types';
+import type { RadarChartConfig } from '../../interfaces';
 
 const meta: Meta<typeof RadarChartWidget> = {
   title: 'Visualizations/Charts/RadarChartWidget',
@@ -53,7 +53,7 @@ const defaultConfig: RadarChartConfig = {
     {
       agg: 'avg',
       fields: ['communication', 'technique', 'leadership', 'creativity', 'teamwork'],
-      label: 'Moyenne equipe',
+      label: 'Performance',
     },
   ],
 };
@@ -83,7 +83,7 @@ export const MultipleDatasets: Story = {
         {
           agg: 'avg',
           fields: ['communication', 'technique', 'leadership', 'creativity', 'teamwork'],
-          label: 'Moyenne',
+          label: 'Average',
         },
       ],
     },
@@ -104,13 +104,13 @@ export const ProductComparison: Story = {
         {
           agg: 'avg',
           fields: ['price', 'quality', 'durability', 'design', 'support'],
-          label: 'Produit A',
+          label: 'Product A',
           datasetFilters: [{ field: 'product', operator: 'equals', value: 'A' }],
         },
         {
           agg: 'avg',
           fields: ['price', 'quality', 'durability', 'design', 'support'],
-          label: 'Produit B',
+          label: 'Product B',
           datasetFilters: [{ field: 'product', operator: 'equals', value: 'B' }],
         },
       ],
@@ -156,7 +156,7 @@ export const DeveloperSkills: Story = {
         {
           agg: 'avg',
           fields: ['javascript', 'python', 'java', 'csharp', 'go'],
-          label: 'Competences techniques',
+          label: 'Technical Skills',
         },
       ],
       widgetParams: {

@@ -1,10 +1,21 @@
+import type { TrendDirection } from '../../types';
 import { useKPIWidgetVM, type KPIWidgetProps } from '../../hooks/useKPIWidgetVM';
 
 interface TrendIconProps {
-  direction: 'up' | 'down';
+  direction: TrendDirection;
   type: string;
 }
 
+/**
+ * Trend Icon component to display up/down arrows based on trend direction and type
+ * @param direction - 'up' or 'down' to indicate trend direction
+ * @param type - type of icon to display ('caret' or other)
+ * @return SVG icon representing the trend direction
+ *
+ * @example
+ * <TrendIcon direction="up" type="caret" />
+ * <TrendIcon direction="down" type="arrow" />
+ */
 function TrendIcon({ direction, type }: TrendIconProps) {
   if (type === 'caret') {
     return direction === 'up' ? (
@@ -40,6 +51,22 @@ function TrendIcon({ direction, type }: TrendIconProps) {
 
 /**
  * KPI Widget component displaying a single key performance indicator with optional trend
+ * @param data - array of data objects to visualize
+ * @param config - configuration object for the KPI widget
+ * @return JSX element representing the KPI widget
+ *
+ * @example
+ * const data = [{ sales: 1000, date: '2024-01-01' }, { sales: 1200, date: '2024-01-02' }];
+ * const config = {
+ *   metrics: ['sales'],
+ *   title: 'Total Sales',
+ *   valueColor: '#4CAF50',
+ *   titleColor: '#000000',
+ *   showTrend: true,
+ *   trendType: 'caret',
+ *   showPercent: true,
+ * };
+ * <KPIWidget data={data} config={config} />
  */
 export default function KPIWidget({ data, config }: KPIWidgetProps) {
   const {
@@ -49,19 +76,18 @@ export default function KPIWidget({ data, config }: KPIWidgetProps) {
     titleColor,
     showTrend,
     showValue,
-    formatValue,
     trendType,
     showPercent,
     trend,
     trendValue,
     trendPercent,
-    getTrendColor,
+    trendColor,
   } = useKPIWidgetVM({ data, config });
 
   if (!data || !config.metrics || !Array.isArray(config.metrics) || !config.metrics[0]) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded">
-        <p className="text-gray-500 dark:text-gray-400">Configuration invalide</p>
+        <p className="text-gray-500 dark:text-gray-400">Invalid configuration</p>
       </div>
     );
   }
@@ -69,7 +95,7 @@ export default function KPIWidget({ data, config }: KPIWidgetProps) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded">
-        <p className="text-gray-500 dark:text-gray-400">Aucune donnee disponible</p>
+        <p className="text-gray-500 dark:text-gray-400">No data available</p>
       </div>
     );
   }
@@ -84,15 +110,15 @@ export default function KPIWidget({ data, config }: KPIWidgetProps) {
           className="text-4xl font-bold text-gray-900 dark:text-white"
           style={{ color: valueColor }}
         >
-          {formatValue(value)}
+          {value}
         </span>
       )}
       {showTrend && trend && (
-        <span className={`flex items-center gap-1 text-xs mt-1 ${getTrendColor()}`}>
+        <span className={`flex items-center gap-1 text-xs mt-1 ${trendColor}`}>
           <TrendIcon direction={trend} type={trendType} />
           {showPercent
             ? `${trendPercent > 0 ? '+' : ''}${trendPercent.toFixed(1)}%`
-            : `${trend === 'up' ? '+' : ''}${formatValue(trendValue)}`}
+            : `${trend === 'up' ? '+' : ''}${trendValue}`}
         </span>
       )}
     </div>

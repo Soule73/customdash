@@ -8,8 +8,9 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import type { ChartConfig, WidgetParams } from '../../types';
+import type { ChartConfig, WidgetParams } from '../../interfaces';
 import { useBarChartVM } from '../../hooks/useBarChartVM';
+import type { JSX } from 'react';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
@@ -22,7 +23,25 @@ export interface BarChartWidgetProps {
 }
 
 /**
- * Widget BarChart avec support des filtres et buckets multiples
+ * BarChartWidget component rendering a bar chart using Chart.js
+ * @param props - The properties for the Bar Chart widget
+ * @returns JSX.Element representing the Bar Chart
+ *
+ * @example
+ * const data = [
+ *   { category: 'A', value: 30 },
+ *   { category: 'B', value: 50 },
+ *   { category: 'C', value: 40 },
+ * ];
+ * const config = {
+ *   buckets: [{ field: 'category' }],
+ *   metrics: [{ field: 'value', agg: 'sum', label: 'Total Value' }],
+ *   widgetParams: {
+ *     title: 'Sample Bar Chart',
+ *     showLegend: true,
+ *   },
+ * };
+ * <BarChartWidget data={data} config={config} height={400} />
  */
 export function BarChartWidget({
   data,
@@ -30,7 +49,7 @@ export function BarChartWidget({
   widgetParams = {},
   height = 300,
   className = '',
-}: BarChartWidgetProps) {
+}: BarChartWidgetProps): JSX.Element {
   const { chartData, options } = useBarChartVM({ data, config, widgetParams });
 
   const hasValidConfig =
@@ -45,7 +64,7 @@ export function BarChartWidget({
       <div
         className={`flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded-lg ${className}`}
       >
-        <p className="text-gray-500 dark:text-gray-400">Configuration invalide</p>
+        <p className="text-gray-500 dark:text-gray-400">Invalid configuration</p>
       </div>
     );
   }
@@ -55,7 +74,7 @@ export function BarChartWidget({
       <div
         className={`flex items-center justify-center h-full bg-gray-50 dark:bg-gray-800 rounded-lg ${className}`}
       >
-        <p className="text-gray-500 dark:text-gray-400">Aucune donnee disponible</p>
+        <p className="text-gray-500 dark:text-gray-400">No data available</p>
       </div>
     );
   }

@@ -4,6 +4,7 @@ export * from './user.types';
 export * from './role.types';
 export * from './dashboard.types';
 export * from './widget.types';
+export * from './widget-form.types';
 export * from './datasource.types';
 export * from './processing.types';
 export * from './ai-conversation.types';

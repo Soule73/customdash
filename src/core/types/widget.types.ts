@@ -1,57 +1,31 @@
-export type WidgetType =
-  | 'kpi'
-  | 'card'
-  | 'kpiGroup'
-  | 'bar'
-  | 'line'
-  | 'pie'
-  | 'table'
-  | 'radar'
-  | 'bubble'
-  | 'scatter';
+import type { WidgetType } from '@customdash/visualizations';
+
+export type { WidgetType };
 
 export type Visibility = 'private' | 'public';
 
-export interface WidgetConfig {
-  metrics?: MetricConfig[];
-  buckets?: BucketConfig[];
-  globalFilters?: FilterConfig[];
+export interface WidgetConfigData {
+  metrics?: Array<{
+    field: string;
+    agg: string;
+    label?: string;
+  }>;
+  buckets?: Array<{
+    field: string;
+    type: string;
+    label?: string;
+    size?: number;
+    interval?: number;
+  }>;
+  globalFilters?: Array<{
+    field: string;
+    operator: string;
+    value: unknown;
+  }>;
   styles?: Record<string, unknown>;
+  metricStyles?: Array<Record<string, unknown>>;
   [key: string]: unknown;
 }
-
-export interface MetricConfig {
-  field: string;
-  type: 'sum' | 'avg' | 'count' | 'min' | 'max';
-  alias?: string;
-}
-
-export interface BucketConfig {
-  field: string;
-  format?: string;
-}
-
-export interface FilterConfig {
-  field: string;
-  operator: FilterOperator;
-  value: unknown;
-}
-
-export type FilterOperator =
-  | 'equals'
-  | 'not_equals'
-  | 'contains'
-  | 'not_contains'
-  | 'greater_than'
-  | 'less_than'
-  | 'greater_than_or_equal'
-  | 'less_than_or_equal'
-  | 'between'
-  | 'in'
-  | 'not_in'
-  | 'regex'
-  | 'is_null'
-  | 'is_not_null';
 
 export interface Widget {
   id: string;
@@ -61,7 +35,7 @@ export interface Widget {
   type: WidgetType;
   dataSourceId: string;
   ownerId: string;
-  config: WidgetConfig;
+  config: WidgetConfigData;
   visibility: Visibility;
   isGeneratedByAI: boolean;
   isDraft: boolean;
@@ -76,7 +50,7 @@ export interface CreateWidgetData {
   type: WidgetType;
   dataSourceId: string;
   description?: string;
-  config?: WidgetConfig;
+  config?: WidgetConfigData;
   visibility?: Visibility;
   isGeneratedByAI?: boolean;
   isDraft?: boolean;
@@ -87,7 +61,7 @@ export interface CreateWidgetData {
 export interface UpdateWidgetData {
   title?: string;
   description?: string;
-  config?: WidgetConfig;
+  config?: WidgetConfigData;
   visibility?: Visibility;
   isDraft?: boolean;
 }

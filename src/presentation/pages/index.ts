@@ -1,6 +1,6 @@
 export { LoginPage } from './auth';
 export { DashboardsPage } from './dashboards';
-export { WidgetsPage } from './widgets';
+export { WidgetsPage, WidgetCreatePage, WidgetEditPage } from './widgets';
 export {
   DataSourcesPage,
   DataSourceCreatePage,

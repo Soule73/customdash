@@ -5,6 +5,8 @@ import {
   LoginPage,
   DashboardsPage,
   WidgetsPage,
+  WidgetCreatePage,
+  WidgetEditPage,
   DataSourcesPage,
   DataSourceCreatePage,
   DataSourceEditPage,
@@ -37,6 +39,8 @@ function App() {
       >
         <Route path="/dashboards" element={<DashboardsPage />} />
         <Route path="/widgets" element={<WidgetsPage />} />
+        <Route path="/widgets/new" element={<WidgetCreatePage />} />
+        <Route path="/widgets/:id/edit" element={<WidgetEditPage />} />
         <Route path="/datasources" element={<DataSourcesPage />} />
         <Route path="/datasources/new" element={<DataSourceCreatePage />} />
         <Route path="/datasources/:id/edit" element={<DataSourceEditPage />} />

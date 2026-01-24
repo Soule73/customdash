@@ -1,9 +1,15 @@
+import { useState } from 'react';
 import { PlusIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Spinner } from '@customdash/ui';
 import { useWidgets } from '@hooks/index';
+import { NewWidgetModal } from '@components/widgets/modal';
 
 export function WidgetsPage() {
   const { data: widgets, isLoading } = useWidgets();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   if (isLoading) {
     return (
@@ -22,7 +28,11 @@ export function WidgetsPage() {
             Gerez vos composants de visualisation
           </p>
         </div>
-        <Button variant="secondary" leftIcon={<PlusIcon className="h-4 w-4" />}>
+        <Button
+          variant="secondary"
+          leftIcon={<PlusIcon className="h-4 w-4" />}
+          onClick={handleOpenModal}
+        >
           Nouveau widget
         </Button>
       </div>
@@ -55,11 +65,18 @@ export function WidgetsPage() {
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Creez votre premier widget de visualisation
           </p>
-          <Button variant="secondary" className="mt-6" leftIcon={<PlusIcon className="h-4 w-4" />}>
+          <Button
+            variant="secondary"
+            className="mt-6"
+            leftIcon={<PlusIcon className="h-4 w-4" />}
+            onClick={handleOpenModal}
+          >
             Creer un widget
           </Button>
         </Card>
       )}
+
+      <NewWidgetModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

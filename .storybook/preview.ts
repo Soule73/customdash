@@ -36,61 +36,43 @@ const preview: Preview = {
       useEffect(() => {
         localStorage.setItem('storybook-theme', theme);
 
+        const root = document.documentElement;
+        if (isDark) {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+
         const storyRoot = document.getElementById('storybook-root');
         if (storyRoot) {
-          storyRoot.style.backgroundColor = isDark ? '#111827' : '#ffffff';
+          storyRoot.style.backgroundColor = isDark ? '#0f172a' : '#ffffff';
           storyRoot.style.minHeight = '100vh';
-          storyRoot.style.transition = 'background-color 0.2s ease';
-        }
-        document.body.style.backgroundColor = isDark ? '#111827' : '#ffffff';
-        document.body.style.transition = 'background-color 0.2s ease';
-        document.body.style.color = isDark ? '#f9fafb' : '#111827';
-
-        const docsContainer = document.querySelector('.sbdocs-wrapper');
-        if (docsContainer) {
-          (docsContainer as HTMLElement).style.backgroundColor = isDark ? '#111827' : '#ffffff';
-          (docsContainer as HTMLElement).style.color = isDark ? '#f9fafb' : '#111827';
         }
 
-        const docsContent = document.querySelector('.sbdocs-content');
-        if (docsContent) {
-          (docsContent as HTMLElement).style.backgroundColor = isDark ? '#111827' : '#ffffff';
-          (docsContent as HTMLElement).style.color = isDark ? '#f9fafb' : '#111827';
-        }
+        document.body.style.backgroundColor = isDark ? '#0f172a' : '#ffffff';
+        document.body.style.color = isDark ? '#f8fafc' : '#0f172a';
 
-        document
-          .querySelectorAll('.sbdocs, .sbdocs-wrapper, .sbdocs-content, .docs-story')
-          .forEach(el => {
-            (el as HTMLElement).style.backgroundColor = isDark ? '#111827' : '#ffffff';
-            (el as HTMLElement).style.color = isDark ? '#f9fafb' : '#111827';
-          });
+        document.querySelectorAll('.sbdocs-wrapper, .sbdocs-content, .docs-story').forEach(el => {
+          (el as HTMLElement).style.backgroundColor = isDark ? '#0f172a' : '#ffffff';
+          (el as HTMLElement).style.color = isDark ? '#f8fafc' : '#0f172a';
+        });
 
-        document
-          .querySelectorAll('.docblock-code-toggle, .docblock-argstable, table, th, td, pre, code')
-          .forEach(el => {
-            (el as HTMLElement).style.backgroundColor = isDark ? '#1f2937' : '#f9fafb';
-            (el as HTMLElement).style.color = isDark ? '#f9fafb' : '#111827';
-            (el as HTMLElement).style.borderColor = isDark ? '#374151' : '#e5e7eb';
-          });
+        document.querySelectorAll('.docblock-argstable').forEach(el => {
+          (el as HTMLElement).style.backgroundColor = isDark ? '#1e293b' : '#f8fafc';
+        });
 
-        try {
-          const managerIframe = window.parent.document;
-          if (managerIframe) {
-            managerIframe.documentElement.style.setProperty(
-              '--storybook-background',
-              isDark ? '#111827' : '#f9fafb',
-            );
+        document.querySelectorAll('pre, code').forEach(el => {
+          if (!el.closest('.docs-story')) {
+            (el as HTMLElement).style.backgroundColor = isDark ? '#1e293b' : '#f1f5f9';
           }
-        } catch {
-          /* */
-        }
+        });
       }, [isDark, theme]);
 
       return createElement(
         'div',
         {
-          className: `min-h-32 w-full p-4 transition-colors`,
-          style: { backgroundColor: isDark ? '#111827' : '#ffffff' },
+          className: `min-h-32 w-full p-4 ${isDark ? 'dark' : ''}`,
+          style: { backgroundColor: isDark ? '#0f172a' : '#ffffff' },
         },
         createElement(Story),
       );

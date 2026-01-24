@@ -224,7 +224,7 @@ export function DataSourceForm({
       </div>
 
       <form id="datasource-form" onSubmit={handleSubmit} className="flex-1 min-h-0 flex gap-6 pt-4">
-        <div className="w-80 shrink-0 flex flex-col gap-4 overflow-y-auto">
+        <div className="w-80 shrink-0 flex flex-col gap-4 overflow-y-auto pr-2">
           <div className="shrink-0 pb-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
               {t('datasources.form.generalInfo')}

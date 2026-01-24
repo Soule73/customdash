@@ -54,7 +54,7 @@ export const Ghost: Story = {
 
 export const Danger: Story = {
   args: {
-    children: 'Supprimer',
+    children: 'Delete',
     variant: 'danger',
   },
 };
@@ -68,35 +68,35 @@ export const Small: Story = {
 
 export const Large: Story = {
   args: {
-    children: 'Grand',
+    children: 'Large',
     size: 'lg',
   },
 };
 
 export const Loading: Story = {
   args: {
-    children: 'Chargement...',
+    children: 'Loading...',
     isLoading: true,
   },
 };
 
 export const Disabled: Story = {
   args: {
-    children: 'Desactive',
+    children: 'Disabled',
     disabled: true,
   },
 };
 
 export const WithLeftIcon: Story = {
   args: {
-    children: 'Ajouter',
+    children: 'Add',
     leftIcon: <span>+</span>,
   },
 };
 
 export const WithRightIcon: Story = {
   args: {
-    children: 'Suivant',
+    children: 'Next',
     rightIcon: <span>-&gt;</span>,
   },
 };

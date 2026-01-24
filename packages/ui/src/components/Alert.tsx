@@ -18,7 +18,7 @@ interface AlertProps {
 }
 
 const variantClasses: Record<AlertVariant, string> = {
-  info: 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200',
+  info: 'bg-cyan-50 dark:bg-cyan-950 border-cyan-200 dark:border-cyan-800 text-cyan-800 dark:text-cyan-200',
   success:
     'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200',
   warning:
@@ -28,7 +28,7 @@ const variantClasses: Record<AlertVariant, string> = {
 };
 
 const iconClasses: Record<AlertVariant, string> = {
-  info: 'text-blue-500 dark:text-blue-400',
+  info: 'text-cyan-500 dark:text-cyan-400',
   success: 'text-green-500 dark:text-green-400',
   warning: 'text-yellow-500 dark:text-yellow-400',
   error: 'text-red-500 dark:text-red-400',

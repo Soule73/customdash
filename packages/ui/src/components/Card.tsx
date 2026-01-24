@@ -26,13 +26,13 @@ const shadowClasses = {
 export function Card({
   children,
   padding = 'md',
-  shadow = 'md',
+  shadow = 'none',
   className = '',
   ...props
 }: CardProps) {
   return (
     <div
-      className={`rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
+      className={`rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 transition-colors ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
       {...props}
     >
       {children}

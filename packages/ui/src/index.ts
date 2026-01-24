@@ -12,3 +12,17 @@ export { Tooltip } from './components/Tooltip';
 export { Select } from './components/Select';
 export { Textarea } from './components/Textarea';
 export { Skeleton } from './components/Skeleton';
+export { Table } from './components/Table';
+export type {
+  TableProps,
+  TableHeaderProps,
+  TableBodyProps,
+  TableRowProps,
+  TableHeadProps,
+  TableCellProps,
+  TablePaginationProps,
+  TableSearchProps,
+  TableEmptyProps,
+  SortDirection,
+  TextAlign as TableTextAlign,
+} from './components/Table';

@@ -1,16 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { PlusIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
 import { MetricField } from '../fields/MetricField';
 import { BucketField } from '../fields/BucketField';
-import { FilterField } from '../fields/FilterField';
 import { getWidgetDataConfig } from '@core/config';
 import {
   useWidgetFormType,
   useWidgetFormColumns,
   useWidgetFormMetrics,
   useWidgetFormBuckets,
-  useWidgetFormFilters,
   useWidgetFormActions,
 } from '@stores/widgetFormStore';
 import type { SelectOption } from '@customdash/visualizations';
@@ -24,25 +22,14 @@ export function DataConfigSection() {
   const columns = useWidgetFormColumns();
   const metrics = useWidgetFormMetrics();
   const buckets = useWidgetFormBuckets();
-  const globalFilters = useWidgetFormFilters();
-  const {
-    addMetric,
-    updateMetric,
-    removeMetric,
-    addBucket,
-    updateBucket,
-    removeBucket,
-    addGlobalFilter,
-    updateGlobalFilter,
-    removeGlobalFilter,
-  } = useWidgetFormActions();
+  const { addMetric, updateMetric, removeMetric, addBucket, updateBucket, removeBucket } =
+    useWidgetFormActions();
 
   const dataConfig = getWidgetDataConfig(type);
   const columnOptions: SelectOption[] = columns.map(col => ({ value: col, label: col }));
 
   const showMetrics = dataConfig?.useMetricSection;
   const showBuckets = dataConfig?.useBuckets && dataConfig?.buckets?.allow;
-  const showFilters = dataConfig?.useGlobalFilters;
   const allowMultipleMetrics = dataConfig?.allowMultipleMetrics;
   const allowMultipleBuckets = dataConfig?.buckets?.allowMultiple;
 
@@ -126,42 +113,6 @@ export function DataConfigSection() {
               />
             ))}
           </div>
-        </Card>
-      )}
-
-      {showFilters && (
-        <Card>
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-              {t('widgets.sections.filters')}
-            </h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              leftIcon={<FunnelIcon className="h-4 w-4" />}
-              onClick={addGlobalFilter}
-            >
-              {t('widgets.actions.addFilter')}
-            </Button>
-          </div>
-          {globalFilters.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {t('widgets.sections.noFilters')}
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {globalFilters.map((filter, index) => (
-                <FilterField
-                  key={index}
-                  filter={filter}
-                  index={index}
-                  columns={columnOptions}
-                  onUpdate={updateGlobalFilter}
-                  onRemove={removeGlobalFilter}
-                />
-              ))}
-            </div>
-          )}
         </Card>
       )}
     </div>

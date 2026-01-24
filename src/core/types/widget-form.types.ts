@@ -72,7 +72,7 @@ export interface WidgetFormConfig {
   widgetParams: WidgetParamsConfig;
 }
 
-export type WidgetFormTab = 'data' | 'style' | 'params';
+export type WidgetFormTab = 'data' | 'style' | 'params' | 'filters';
 
 export interface WidgetFormState {
   type: WidgetType;

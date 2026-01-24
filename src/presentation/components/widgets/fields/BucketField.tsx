@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { TrashIcon, Bars3Icon } from '@heroicons/react/24/outline';
-import { Input, Select } from '@customdash/ui';
+import { Input, Select, SearchSelect } from '@customdash/ui';
 import { BUCKET_TYPE_OPTIONS } from '@core/config';
 import type { BucketType, SelectOption } from '@customdash/visualizations';
 import type { BucketConfig } from '@type/widget-form.types';
@@ -33,8 +33,8 @@ export function BucketField({
     onUpdate(index, { type: e.target.value as BucketType });
   };
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onUpdate(index, { field: e.target.value });
+  const handleFieldChange = (value: string) => {
+    onUpdate(index, { field: value });
   };
 
   const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +68,7 @@ export function BucketField({
             onChange={handleTypeChange}
             options={allowedTypes}
           />
-          <Select
+          <SearchSelect
             label={t('widgets.buckets.field')}
             value={bucket.field}
             onChange={handleFieldChange}

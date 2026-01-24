@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { TrashIcon, Bars3Icon } from '@heroicons/react/24/outline';
-import { Button, Checkbox, Input, Select } from '@customdash/ui';
+import { Button, Checkbox, Input, Select, SearchSelect } from '@customdash/ui';
 import { AGGREGATION_OPTIONS } from '@core/config';
 import type { AggregationType, SelectOption } from '@customdash/visualizations';
 import type { MetricConfig } from '@type/widget-form.types';
@@ -37,25 +37,24 @@ export function MetricField({
     onUpdate(index, { agg: e.target.value as AggregationType });
   };
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const field = e.target.value;
-    onUpdate(index, { field, label: metric.label || field });
+  const handleFieldChange = (value: string) => {
+    onUpdate(index, { field: value, label: metric.label || value });
   };
 
   const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdate(index, { label: e.target.value });
   };
 
-  const handleXChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onUpdate(index, { x: e.target.value });
+  const handleXChange = (value: string) => {
+    onUpdate(index, { x: value });
   };
 
-  const handleYChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onUpdate(index, { y: e.target.value });
+  const handleYChange = (value: string) => {
+    onUpdate(index, { y: value });
   };
 
-  const handleRChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onUpdate(index, { r: e.target.value });
+  const handleRChange = (value: string) => {
+    onUpdate(index, { r: value });
   };
 
   return (
@@ -73,7 +72,7 @@ export function MetricField({
               onChange={handleAggChange}
               options={AGGREGATION_OPTIONS}
             />
-            <Select
+            <SearchSelect
               label={t('widgets.metrics.field')}
               value={metric.field}
               onChange={handleFieldChange}
@@ -85,14 +84,14 @@ export function MetricField({
 
         {showXY && (
           <div className="grid grid-cols-2 gap-3">
-            <Select
+            <SearchSelect
               label={t('widgets.metrics.xField')}
               value={metric.x || ''}
               onChange={handleXChange}
               options={columns}
               placeholder={t('widgets.actions.select')}
             />
-            <Select
+            <SearchSelect
               label={t('widgets.metrics.yField')}
               value={metric.y || ''}
               onChange={handleYChange}
@@ -103,7 +102,7 @@ export function MetricField({
         )}
 
         {showR && (
-          <Select
+          <SearchSelect
             label={t('widgets.metrics.rField')}
             value={metric.r || ''}
             onChange={handleRChange}

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Select, Input } from '@customdash/ui';
+import { Select, SearchSelect, Input } from '@customdash/ui';
 import type { FilterOperator, SelectOption } from '@customdash/visualizations';
 import type { GlobalFilter } from '@type/widget-form.types';
 
@@ -39,8 +39,8 @@ export function FilterField({ filter, index, columns, onUpdate, onRemove }: Filt
     }));
   }, [t]);
 
-  const handleFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onUpdate(index, { field: e.target.value });
+  const handleFieldChange = (value: string) => {
+    onUpdate(index, { field: value });
   };
 
   const handleOperatorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -54,7 +54,7 @@ export function FilterField({ filter, index, columns, onUpdate, onRemove }: Filt
   return (
     <div className="flex items-end gap-2 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
       <div className="flex-1 grid grid-cols-3 gap-3">
-        <Select
+        <SearchSelect
           label={t('widgets.filters.field')}
           value={filter.field}
           onChange={handleFieldChange}

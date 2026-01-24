@@ -4,6 +4,7 @@ import {
   ChartBarIcon,
   PaintBrushIcon,
   AdjustmentsHorizontalIcon,
+  FunnelIcon,
 } from '@heroicons/react/24/outline';
 import { Card, Button, Input, Select, Modal } from '@customdash/ui';
 import {
@@ -19,6 +20,7 @@ import type { WidgetFormTab } from '@type/widget-form.types';
 import { DataConfigSection } from '../sections/DataConfigSection';
 import { StyleConfigSection } from '../sections/StyleConfigSection';
 import { ParamsConfigSection } from '../sections/ParamsConfigSection';
+import { FiltersConfigSection } from '../sections/FiltersConfigSection';
 import { WidgetPreview } from '../preview/WidgetPreview';
 import { PageHeader } from '../../common';
 
@@ -43,6 +45,7 @@ const TAB_DEFINITIONS: TabDefinition[] = [
   { id: 'data', labelKey: 'widgets.form.tabs.data', icon: ChartBarIcon },
   { id: 'style', labelKey: 'widgets.form.tabs.style', icon: PaintBrushIcon },
   { id: 'params', labelKey: 'widgets.form.tabs.params', icon: AdjustmentsHorizontalIcon },
+  { id: 'filters', labelKey: 'widgets.form.tabs.filters', icon: FunnelIcon },
 ];
 
 /**
@@ -176,6 +179,7 @@ export function WidgetFormLayout({
               {activeTab === 'data' && <DataConfigSection />}
               {activeTab === 'style' && <StyleConfigSection />}
               {activeTab === 'params' && <ParamsConfigSection />}
+              {activeTab === 'filters' && <FiltersConfigSection />}
             </div>
           </div>
         </div>

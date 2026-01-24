@@ -55,6 +55,7 @@ export const widgets = {
       data: 'Data',
       style: 'Style',
       params: 'Parameters',
+      filters: 'Filters',
     },
   },
   params: {
@@ -382,12 +383,15 @@ export const widgets = {
     update: 'Update',
     add: 'Add',
     addFilter: 'Add filter',
+    addFirstFilter: 'Add first filter',
     select: 'Select...',
   },
   sections: {
     dimensions: 'Dimensions',
     filters: 'Filters',
     noFilters: 'No filters configured',
+    filtersNotAvailable: 'Filters not available',
+    filtersNotAvailableDescription: 'This widget type does not support global filters.',
     generalParams: 'General parameters',
     advancedEcharts: 'Advanced ECharts options',
     noParams: 'No parameters available for this widget type.',

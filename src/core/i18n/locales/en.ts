@@ -65,6 +65,8 @@ const en = {
     user: 'User',
     lightMode: 'Light mode',
     darkMode: 'Dark mode',
+    collapse: 'Collapse',
+    expand: 'Expand',
   },
   dashboards: {
     title: 'Dashboards',

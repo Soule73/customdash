@@ -65,6 +65,8 @@ const fr = {
     user: 'Utilisateur',
     lightMode: 'Mode clair',
     darkMode: 'Mode sombre',
+    collapse: 'Reduire',
+    expand: 'Agrandir',
   },
   dashboards: {
     title: 'Tableaux de bord',

@@ -1,1 +1,9 @@
-export { httpClient } from './httpClient';
+export { httpClient } from './http.client';
+export { authService } from './auth.service';
+export { userService } from './user.service';
+export { roleService } from './role.service';
+export { dashboardService } from './dashboard.service';
+export { widgetService } from './widget.service';
+export { dataSourceService } from './data-source.service';
+export { processingService } from './processing.service';
+export { aiConversationService } from './ai-conversation.service';

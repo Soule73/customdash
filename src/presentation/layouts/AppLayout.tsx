@@ -9,6 +9,8 @@ import {
   Bars3Icon,
   XMarkIcon,
   ChatBubbleLeftRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Avatar, Tooltip } from '@customdash/ui';
 import { cn } from '@customdash/utils';
@@ -36,6 +38,7 @@ const bottomNav: NavItem[] = [
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuthStore();
   const { mutate: logout } = useLogout();
   const navigate = useNavigate();
@@ -57,13 +60,19 @@ export function AppLayout() {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950',
-          'lg:static lg:translate-x-0 transition-transform duration-200',
+          'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950',
+          'lg:static lg:translate-x-0 transition-all duration-200',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+          collapsed ? 'w-16' : 'w-64',
         )}
       >
         <div className="flex h-14 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-800">
-          <Logo size="sm" />
+          {!collapsed && <Logo size="sm" />}
+          {collapsed && (
+            <div className="w-full flex justify-center">
+              <Logo size="sm" showText={false} />
+            </div>
+          )}
           <Button
             variant="ghost"
             size="sm"
@@ -77,44 +86,78 @@ export function AppLayout() {
         <nav className="flex flex-1 flex-col gap-1 p-3">
           <div className="flex-1 space-y-1">
             {navigation.map(item => (
-              <NavLink
+              <Tooltip
                 key={item.nameKey}
-                to={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
-                  )
-                }
+                content={t(item.nameKey)}
+                position="right"
+                disabled={!collapsed}
               >
-                <item.icon className="h-5 w-5 shrink-0" />
-                {t(item.nameKey)}
-              </NavLink>
+                <NavLink
+                  to={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      collapsed && 'justify-center px-2',
+                      isActive
+                        ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
+                    )
+                  }
+                >
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  {!collapsed && t(item.nameKey)}
+                </NavLink>
+              </Tooltip>
             ))}
           </div>
 
           <div className="border-t border-gray-200 pt-3 dark:border-gray-800">
             {bottomNav.map(item => (
-              <NavLink
+              <Tooltip
                 key={item.nameKey}
-                to={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
-                  )
-                }
+                content={t(item.nameKey)}
+                position="right"
+                disabled={!collapsed}
               >
-                <item.icon className="h-5 w-5 shrink-0" />
-                {t(item.nameKey)}
-              </NavLink>
+                <NavLink
+                  to={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      collapsed && 'justify-center px-2',
+                      isActive
+                        ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
+                    )
+                  }
+                >
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  {!collapsed && t(item.nameKey)}
+                </NavLink>
+              </Tooltip>
             ))}
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCollapsed(!collapsed)}
+              className={cn(
+                'hidden lg:flex w-full mt-2 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium',
+                'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
+                collapsed && 'justify-center px-2',
+              )}
+            >
+              {collapsed ? (
+                <ChevronRightIcon className="h-5 w-5 shrink-0" />
+              ) : (
+                <>
+                  <ChevronLeftIcon className="h-5 w-5 shrink-0" />
+                  {t('layout.collapse')}
+                </>
+              )}
+            </Button>
           </div>
         </nav>
       </aside>

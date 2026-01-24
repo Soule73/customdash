@@ -101,7 +101,11 @@ export default function KPIWidget({ data, config }: KPIWidgetProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-full max-h-full bg-white dark:bg-gray-900 w-full max-w-full rounded-lg shadow p-4 transition-colors">
+    <div
+      // className="p-1 md:p-2"
+      style={{ width: '100%', maxWidth: '100%', height: '100%', minWidth: 0 }}
+      className="flex flex-col items-center justify-center bg-white dark:bg-gray-900  p-4 transition-colors"
+    >
       <span className="text-xs text-gray-500 dark:text-gray-400 mb-1" style={{ color: titleColor }}>
         {title}
       </span>

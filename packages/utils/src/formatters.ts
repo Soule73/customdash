@@ -46,7 +46,15 @@ export function formatPercentage(value: number, decimals = 1): string {
 export function formatDate(date: Date | string | number, options: DateFormatOptions = {}): string {
   const { locale = 'fr-FR', format = 'medium', includeTime = false } = options;
 
+  if (date === null || date === undefined || date === '') {
+    return '-';
+  }
+
   const dateObj = date instanceof Date ? date : new Date(date);
+
+  if (isNaN(dateObj.getTime())) {
+    return '-';
+  }
 
   const dateStyleMap: Record<string, Intl.DateTimeFormatOptions['dateStyle']> = {
     short: 'short',

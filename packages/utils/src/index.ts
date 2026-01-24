@@ -6,7 +6,17 @@ export {
   formatRelativeDate,
 } from './formatters';
 
-export { cn, generateId, debounce, throttle, deepClone, isEqual } from './helpers';
+export {
+  cn,
+  generateId,
+  debounce,
+  throttle,
+  deepClone,
+  isEqual,
+  isDateType,
+  filterColumnsByType,
+  getDateColumns,
+} from './helpers';
 
 export { isValidEmail, isValidPassword, isValidUrl, isEmpty, isNumeric } from './validators';
 

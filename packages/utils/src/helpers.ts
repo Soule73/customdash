@@ -111,3 +111,30 @@ export function isEqual(a: unknown, b: unknown): boolean {
 
   return true;
 }
+
+const DATE_TYPES = ['date', 'datetime'] as const;
+
+/**
+ * Check if a column type is a date type
+ */
+export function isDateType(type: string): boolean {
+  return DATE_TYPES.includes(type as (typeof DATE_TYPES)[number]);
+}
+
+/**
+ * Filter columns by their types
+ */
+export function filterColumnsByType(
+  columns: string[],
+  types: Record<string, string>,
+  allowedTypes: string[],
+): string[] {
+  return columns.filter(column => allowedTypes.includes(types[column] || ''));
+}
+
+/**
+ * Get date columns from a list of columns
+ */
+export function getDateColumns(columns: string[], types: Record<string, string>): string[] {
+  return filterColumnsByType(columns, types, [...DATE_TYPES]);
+}

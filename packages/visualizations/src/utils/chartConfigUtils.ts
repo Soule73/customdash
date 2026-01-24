@@ -3,6 +3,18 @@ import type { WidgetParams, ChartStyles, BaseDataset } from '../interfaces';
 import { isIsoTimestamp, allSameDay, formatXTicksLabel } from './chartUtils';
 import type { ChartOptionsType, ChartType } from '../types';
 
+interface DataLabelsOptions {
+  display: boolean;
+  color?: string;
+  font?: { size?: number; weight?: string };
+  formatter?: (
+    value: number,
+    context: { chart: unknown; dataIndex: number; dataset: { data: number[] } },
+  ) => string;
+  anchor?: string;
+  align?: string;
+}
+
 /**
  * Creates a default dataset based on the chart type.
  *
@@ -96,6 +108,17 @@ export function createBaseOptions(
   params: WidgetParams,
   labels: string[],
 ): ChartOptionsType {
+  const datalabelsOptions: DataLabelsOptions = {
+    display: params.showValues === true,
+    color: params.labelColor || '#000',
+    font: {
+      size: params.labelFontSize || 11,
+      weight: 'bold',
+    },
+    anchor: 'end',
+    align: 'top',
+  };
+
   const baseOptions: ChartOptionsType = {
     responsive: true,
     maintainAspectRatio: false,
@@ -124,6 +147,7 @@ export function createBaseOptions(
           },
         },
       },
+      datalabels: datalabelsOptions,
     },
   };
 
@@ -166,9 +190,7 @@ export function createBaseOptions(
       },
     };
 
-    if (params.horizontal) {
-      baseOptions.indexAxis = 'y';
-    }
+    baseOptions.indexAxis = params.horizontal === true ? 'y' : 'x';
   }
 
   if (chartType === 'scatter' || chartType === 'bubble') {
@@ -215,9 +237,27 @@ export function createBaseOptions(
  * // Result: ChartOptions object configured for a pie chart with the specified parameters.
  */
 export function createPieOptions(params: WidgetParams): ChartOptions<'pie'> {
+  const datalabelsOptions: DataLabelsOptions = {
+    display: params.showValues === true,
+    color: params.labelColor || '#fff',
+    font: {
+      size: params.labelFontSize || 12,
+      weight: 'bold',
+    },
+    formatter: (
+      value: number,
+      context: { chart: unknown; dataIndex: number; dataset: { data: number[] } },
+    ) => {
+      const total = context.dataset.data.reduce((sum: number, val: number) => sum + val, 0);
+      const percentage = ((value / total) * 100).toFixed(1);
+      return `${percentage}%`;
+    },
+  };
+
   return {
     responsive: true,
     maintainAspectRatio: false,
+    cutout: params.cutout || '0%',
     plugins: {
       legend: {
         display: params.legend !== false,
@@ -246,6 +286,7 @@ export function createPieOptions(params: WidgetParams): ChartOptions<'pie'> {
           },
         },
       },
+      datalabels: datalabelsOptions,
     },
   };
 }

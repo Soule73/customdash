@@ -1,43 +1,25 @@
 import type { FormatType } from '../types';
 import type { FormatOptions } from '../interfaces';
-import {
-  CURRENCY_SYMBOL_BEFORE_LOCALES,
-  CURRENCY_CODE_AFTER_CURRENCIES,
-  DEFAULT_CURRENCY,
-  DEFAULT_LOCALE,
-  DEFAULT_NULL_VALUE,
-} from '../constants';
+import { DEFAULT_CURRENCY, DEFAULT_LOCALE, DEFAULT_NULL_VALUE } from '../constants';
 
 /**
  * Determines the currency display style based on locale and currency code.
- * Returns 'symbol' for locales that typically place the symbol before the amount,
- * and 'code' for currencies that are typically displayed with the code after the amount.
+ * Always returns 'symbol' to display currency symbols (€, $, £) instead of codes (EUR, USD, GBP).
  * @param locale - The locale string (e.g., 'en-US', 'fr-FR')
  * @param currency - The currency code (e.g., 'USD', 'EUR')
- * @returns The currency display style: 'symbol', 'code', or 'narrowSymbol'
+ * @returns The currency display style: always 'symbol'
  *
  * @example
  * getCurrencyDisplayByLocale('en-US', 'USD'); // 'symbol' -> $1,234.56
  * getCurrencyDisplayByLocale('fr-FR', 'EUR'); // 'symbol' -> 1 234,56 €
  * getCurrencyDisplayByLocale('de-DE', 'EUR'); // 'symbol' -> 1.234,56 €
  * getCurrencyDisplayByLocale('en-GB', 'GBP'); // 'symbol' -> £1,234.56
- * getCurrencyDisplayByLocale('ja-JP', 'JPY'); // 'narrowSymbol' -> ¥1,235
+ * getCurrencyDisplayByLocale('ja-JP', 'JPY'); // 'symbol' -> ¥1,235
  */
 export function getCurrencyDisplayByLocale(
-  locale: string = DEFAULT_LOCALE,
-  currency: string = DEFAULT_CURRENCY,
+  _locale: string = DEFAULT_LOCALE,
+  _currency: string = DEFAULT_CURRENCY,
 ): 'symbol' | 'code' | 'narrowSymbol' {
-  if (
-    CURRENCY_SYMBOL_BEFORE_LOCALES.includes(locale) &&
-    !CURRENCY_CODE_AFTER_CURRENCIES.includes(currency)
-  ) {
-    return 'symbol';
-  }
-
-  if (CURRENCY_CODE_AFTER_CURRENCIES.includes(currency)) {
-    return 'code';
-  }
-
   return 'symbol';
 }
 

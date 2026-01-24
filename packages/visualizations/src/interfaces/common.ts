@@ -85,6 +85,7 @@ export interface ChartConfig {
   globalFilters?: Filter[];
   styles?: ChartStyles;
   metricStyles?: MetricStyle[];
+  widgetParams?: WidgetParams;
 }
 
 export interface WidgetParams {
@@ -111,6 +112,10 @@ export interface WidgetParams {
   showValues?: boolean;
   showTicks?: boolean;
   pointRadius?: number;
+  cutout?: string;
+  format?: FormatType;
+  currency?: string;
+  decimals?: number;
 }
 
 export interface ScatterMetricConfig extends Metric {

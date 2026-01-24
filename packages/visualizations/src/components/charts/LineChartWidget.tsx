@@ -9,6 +9,7 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Line } from 'react-chartjs-2';
 import { useLineChartVM } from '../../hooks/useLineChartVM';
 import type { ChartConfig, WidgetParams } from '../../interfaces';
@@ -23,6 +24,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler,
+  ChartDataLabels,
 );
 
 export interface LineChartWidgetComponentProps {
@@ -53,8 +55,8 @@ export interface LineChartWidgetComponentProps {
 export default function LineChartWidget({
   data,
   config,
-  widgetParams = {},
-  height = 300,
+  widgetParams,
+  // height = 300,
   className = '',
 }: LineChartWidgetComponentProps): JSX.Element {
   const { chartData, options } = useLineChartVM({ data, config, widgetParams });
@@ -85,11 +87,17 @@ export default function LineChartWidget({
   }
 
   return (
-    <div
-      className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
-      style={{ height }}
-    >
-      <Line data={chartData} options={options} className="max-w-full max-h-full" />
-    </div>
+    // <div
+    //   className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
+    //   style={{ height }}
+    // >
+    <Line
+      data={chartData}
+      options={options}
+      // className="max-w-full max-h-full"
+      className="max-w-full max-h-full p-1 md:p-2"
+      style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
+    />
+    // </div>
   );
 }

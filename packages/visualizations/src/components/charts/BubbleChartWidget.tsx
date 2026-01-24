@@ -40,7 +40,7 @@ export interface BubbleChartWidgetComponentProps {
 export default function BubbleChartWidget({
   data,
   config,
-  height = 400,
+  // height = 400,
   className = '',
 }: BubbleChartWidgetComponentProps): JSX.Element {
   const { chartData, options, validDatasets, isValid, validationErrors } = useBubbleChartVM({
@@ -84,11 +84,17 @@ export default function BubbleChartWidget({
   }
 
   return (
-    <div
-      className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
-      style={{ height }}
-    >
-      <Bubble data={chartData} options={options} className="max-w-full max-h-full" />
-    </div>
+    // <div
+    //   className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
+    //   style={{ height }}
+    // >
+    <Bubble
+      data={chartData}
+      options={options}
+      // className="max-w-full max-h-full"
+      className="p-1 md:p-2"
+      style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
+    />
+    // </div>
   );
 }

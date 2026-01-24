@@ -69,13 +69,15 @@ export default function RadarChartWidget({ data, config }: RadarChartWidgetProps
   }
 
   return (
-    <div className="shadow bg-white dark:bg-gray-900 rounded-lg w-full max-w-full h-full flex items-center justify-center overflow-hidden p-4">
-      <Radar
-        className="max-w-full max-h-full p-1 md:p-2"
-        data={chartData}
-        options={options}
-        style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
-      />
-    </div>
+    // <div className="shadow bg-white dark:bg-gray-900 rounded-lg w-full max-w-full h-full flex items-center justify-center overflow-hidden p-4">
+    <Radar
+      // className="max-w-full max-h-full p-1 md:p-2"
+      data={chartData}
+      options={options}
+      // style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
+      className="p-1 md:p-2"
+      style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
+    />
+    // </div>
   );
 }

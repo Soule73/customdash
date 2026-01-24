@@ -39,7 +39,7 @@ export interface ScatterChartWidgetComponentProps {
 export default function ScatterChartWidget({
   data,
   config,
-  height = 400,
+  // height = 400,
   className = '',
 }: ScatterChartWidgetComponentProps): JSX.Element {
   const { chartData, options, validDatasets, isValid, validationErrors } = useScatterChartVM({
@@ -83,11 +83,17 @@ export default function ScatterChartWidget({
   }
 
   return (
-    <div
-      className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
-      style={{ height }}
-    >
-      <Scatter data={chartData} options={options} className="max-w-full max-h-full" />
-    </div>
+    //   <div
+    //     className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
+    //     style={{ height }}
+    //   >
+    <Scatter
+      data={chartData}
+      options={options}
+      className="p-1 md:p-2"
+      style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
+      //  className="max-w-full max-h-full"
+    />
+    // {/* </div> */}
   );
 }

@@ -7,12 +7,13 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
 import type { ChartConfig, WidgetParams } from '../../interfaces';
 import { useBarChartVM } from '../../hooks/useBarChartVM';
 import type { JSX } from 'react';
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
+ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend, ChartDataLabels);
 
 export interface BarChartWidgetProps {
   data: Record<string, unknown>[];
@@ -46,8 +47,8 @@ export interface BarChartWidgetProps {
 export function BarChartWidget({
   data,
   config,
-  widgetParams = {},
-  height = 300,
+  widgetParams,
+  // height = 300,
   className = '',
 }: BarChartWidgetProps): JSX.Element {
   const { chartData, options } = useBarChartVM({ data, config, widgetParams });
@@ -80,12 +81,19 @@ export function BarChartWidget({
   }
 
   return (
-    <div
-      className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
-      style={{ height }}
-    >
-      <Bar data={chartData} options={options} className="max-w-full max-h-full" />
-    </div>
+    // <div
+    //   // className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 ${className}`}
+    //   // style={{ height }}
+    //   className=" w-full max-w-full h-full flex items-center justify-center overflow-hidden"
+    // >
+    <Bar
+      data={chartData}
+      options={options}
+      // className="max-w-full max-h-full"
+      className="max-w-full max-h-full p-1 md:p-2"
+      style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
+    />
+    // </div>
   );
 }
 

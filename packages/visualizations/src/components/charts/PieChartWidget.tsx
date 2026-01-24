@@ -1,10 +1,11 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Pie } from 'react-chartjs-2';
 import { usePieChartVM } from '../../hooks/usePieChartVM';
 import type { ChartConfig, WidgetParams } from '../../interfaces';
 import type { JSX } from 'react';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 export interface PieChartWidgetComponentProps {
   data: Record<string, unknown>[];
@@ -34,8 +35,8 @@ export interface PieChartWidgetComponentProps {
 export default function PieChartWidget({
   data,
   config,
-  widgetParams = {},
-  height = 300,
+  widgetParams,
+  // height = 300,
   className = '',
 }: PieChartWidgetComponentProps): JSX.Element {
   const { chartData, options } = usePieChartVM({ data, config, widgetParams });
@@ -66,11 +67,17 @@ export default function PieChartWidget({
   }
 
   return (
-    <div
-      className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 flex items-center justify-center ${className}`}
-      style={{ height }}
-    >
-      <Pie data={chartData} options={options} className="max-w-full max-h-full" />
-    </div>
+    // <div
+    //   className={`w-full h-full bg-white dark:bg-gray-900 rounded-lg shadow p-4 flex items-center justify-center ${className}`}
+    //   style={{ height }}
+    // >
+    <Pie
+      data={chartData}
+      options={options}
+      // className="max-w-full max-h-full"
+      className="p-1 md:p-2"
+      style={{ width: '100%', maxWidth: '100%', height: 'auto', minWidth: 0 }}
+    />
+    // </div>
   );
 }

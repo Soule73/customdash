@@ -1,23 +1,6 @@
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  roleId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { User } from './user.types';
 
-export interface Role {
-  id: string;
-  name: string;
-  permissions: Permission[];
-}
-
-export interface Permission {
-  id: string;
-  name: string;
-  description?: string;
-}
+export type { User } from './user.types';
 
 export interface AuthState {
   user: User | null;
@@ -32,7 +15,12 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
+  username: string;
   email: string;
   password: string;
-  name: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  accessToken: string;
 }

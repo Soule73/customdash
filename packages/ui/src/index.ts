@@ -10,6 +10,8 @@ export { Avatar } from './components/Avatar';
 export { Switch } from './components/Switch';
 export { Tooltip } from './components/Tooltip';
 export { Select } from './components/Select';
+export { SearchSelect } from './components/SearchSelect';
+export { Checkbox } from './components/Checkbox';
 export { Textarea } from './components/Textarea';
 export { Skeleton } from './components/Skeleton';
 export { Table } from './components/Table';

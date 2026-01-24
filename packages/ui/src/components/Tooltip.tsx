@@ -8,6 +8,7 @@ interface TooltipProps {
   position?: TooltipPosition;
   delay?: number;
   className?: string;
+  disabled?: boolean;
 }
 
 const positionClasses: Record<TooltipPosition, string> = {
@@ -35,11 +36,13 @@ export function Tooltip({
   position = 'top',
   delay = 200,
   className = '',
+  disabled = false,
 }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMouseEnter = () => {
+    if (disabled) return;
     const id = setTimeout(() => setIsVisible(true), delay);
     setTimeoutId(id);
   };

@@ -68,6 +68,54 @@ export const AreaChart: Story = {
   },
 };
 
+export const GradientAreaChart: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Gradient Area Chart',
+      echarts: {
+        line: {
+          areaStyle: true,
+          areaOpacity: 0.5,
+          smooth: true,
+        },
+        gradient: {
+          enabled: true,
+          direction: 'vertical',
+          startOpacity: 0.8,
+          endOpacity: 0.1,
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
+export const StepLine: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Step Line Chart',
+      echarts: {
+        line: {
+          step: 'middle',
+          symbol: 'rect',
+          symbolSize: 8,
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
 export const SmoothLine: Story = {
   args: {
     data: sampleData,
@@ -98,6 +146,92 @@ export const WithDataLabels: Story = {
   },
 };
 
+export const WithMarkLine: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Line with Target Reference',
+      echarts: {
+        markLine: {
+          show: true,
+          data: [
+            {
+              yAxis: 3000,
+              name: 'Target',
+              lineStyle: { color: '#10b981', type: 'dashed', width: 2 },
+            },
+          ],
+        },
+        markArea: {
+          show: true,
+          data: [[{ yAxis: 2000 }, { yAxis: 3000 }]],
+          itemStyle: { color: 'rgba(16, 185, 129, 0.1)' },
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
+export const WithToolboxAndZoom: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        { field: 'revenue', agg: 'sum', label: 'Revenue' },
+        { field: 'profit', agg: 'sum', label: 'Profit' },
+      ],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Interactive Chart with Toolbox',
+      echarts: {
+        toolbox: {
+          saveAsImage: true,
+          dataView: true,
+          restore: true,
+          magicType: true,
+        },
+        dataZoom: {
+          enabled: true,
+          type: 'both',
+          start: 0,
+          end: 100,
+        },
+      },
+    },
+    height: 450,
+  },
+};
+
+export const CustomSymbols: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        { field: 'revenue', agg: 'sum', label: 'Revenue' },
+        { field: 'profit', agg: 'sum', label: 'Profit' },
+      ],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Custom Symbol Shapes',
+      echarts: {
+        line: {
+          symbol: 'diamond',
+          symbolSize: 12,
+          smooth: true,
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
 export const CustomColors: Story = {
   args: {
     data: sampleData,
@@ -111,6 +245,28 @@ export const CustomColors: Story = {
     },
     widgetParams: {
       title: 'Custom Colored Lines',
+    },
+    height: 350,
+  },
+};
+
+export const AdvancedAnimations: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
+      buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Elastic Animation',
+      echarts: {
+        animation: {
+          enabled: true,
+          duration: 2000,
+          easing: 'elasticOut',
+          delay: 0,
+        },
+      },
     },
     height: 350,
   },

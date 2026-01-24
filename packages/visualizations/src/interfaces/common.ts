@@ -13,6 +13,7 @@ import type {
   TextAlign,
   ChartType,
 } from '../types';
+import type { EChartsWidgetParams } from '../types/echarts.types';
 
 export interface SelectOption<T extends string = string> {
   value: T;
@@ -116,6 +117,7 @@ export interface WidgetParams {
   format?: FormatType;
   currency?: string;
   decimals?: number;
+  echarts?: EChartsWidgetParams;
 }
 
 export interface ScatterMetricConfig extends Metric {

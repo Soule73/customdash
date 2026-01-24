@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import type { EChartsOption, RadarSeriesOption } from 'echarts';
-import type { RadarChartConfig, RadarMetricConfig, WidgetParams } from '../interfaces';
-import { prepareMetricStyles } from '../utils/chartDatasetUtils';
+import type { RadarChartConfig, RadarMetricConfig } from '../interfaces';
+import type { EChartsWidgetParams } from '../types/echarts.types';
+import { prepareMetricStyles } from '../utils/metricStyleUtils';
 import { mergeWidgetParams } from '../utils/widgetParamsUtils';
 import {
   getRadarLabels,
@@ -9,7 +10,13 @@ import {
   validateRadarConfiguration,
   generateRadarMetricLabel,
 } from '../utils/radarChartUtils';
-import { createBaseOptions, mergeOptions } from '../utils/echartsUtils';
+import {
+  createBaseOptions,
+  createEmphasisOptions,
+  mergeOptions,
+  getDefaultColor,
+  type ExtendedWidgetParams,
+} from '../utils/echartsUtils';
 
 export interface RadarChartVMAE {
   option: EChartsOption;
@@ -21,17 +28,23 @@ export interface RadarChartVMAE {
 
 export interface RadarChartWidgetAEProps {
   data: Record<string, unknown>[];
-  config: RadarChartConfig;
+  config: RadarChartConfig & { echarts?: EChartsWidgetParams };
 }
 
 /**
  * Hook to create the ViewModel for a Radar Chart using Apache ECharts
  */
 export function useRadarChartVMAE({ data, config }: RadarChartWidgetAEProps): RadarChartVMAE {
-  const widgetParams: WidgetParams = useMemo(
-    () => mergeWidgetParams(config.widgetParams),
-    [config.widgetParams],
+  const widgetParams: ExtendedWidgetParams = useMemo(
+    () => ({
+      ...mergeWidgetParams(config.widgetParams),
+      echarts: (config as { echarts?: EChartsWidgetParams }).echarts,
+    }),
+    [config],
   );
+
+  const echartsConfig = widgetParams.echarts;
+  const radarConfig = echartsConfig?.radar;
 
   const validMetrics = useMemo(
     () => (config.metrics || []) as RadarMetricConfig[],
@@ -68,16 +81,22 @@ export function useRadarChartVMAE({ data, config }: RadarChartWidgetAEProps): Ra
   }, [labels, processedMetrics]);
 
   const series = useMemo<RadarSeriesOption[]>(() => {
+    const emphasisConfig = createEmphasisOptions(echartsConfig?.emphasis);
+
     const radarData = processedMetrics.map(({ metric, values, index }) => {
       const style = metricStyles[index] || {};
       const color = style.colors?.[0] || getDefaultColor(index);
+
+      const hasAreaStyle = radarConfig?.areaStyle !== false;
+      const areaOpacity = radarConfig?.areaOpacity ?? 0.2;
 
       return {
         name: metric.label || generateRadarMetricLabel(metric),
         value: values,
         itemStyle: { color },
-        lineStyle: { color },
-        areaStyle: { color, opacity: 0.2 },
+        lineStyle: { color, width: 2 },
+        areaStyle: hasAreaStyle ? { color, opacity: areaOpacity } : undefined,
+        ...emphasisConfig,
       };
     });
 
@@ -89,26 +108,36 @@ export function useRadarChartVMAE({ data, config }: RadarChartWidgetAEProps): Ra
         symbolSize: widgetParams.pointRadius ?? 4,
         label: {
           show: widgetParams.showValues ?? false,
+          formatter: echartsConfig?.labelFormatter,
+          fontSize: widgetParams.labelFontSize ?? 11,
+          color: widgetParams.labelColor,
         },
       },
     ];
-  }, [processedMetrics, metricStyles, widgetParams]);
+  }, [processedMetrics, metricStyles, widgetParams, echartsConfig, radarConfig]);
 
   const option = useMemo<EChartsOption>(() => {
     const baseOptions = createBaseOptions(widgetParams);
 
+    const radarShape = radarConfig?.shape ?? 'polygon';
+    const splitNumber = radarConfig?.splitNumber ?? 5;
+    const showAxisName = radarConfig?.axisNameShow !== false;
+
     return mergeOptions(baseOptions, {
       tooltip: {
         trigger: 'item',
+        confine: echartsConfig?.tooltipConfig?.confine ?? true,
       },
       radar: {
         indicator: radarIndicators,
-        shape: 'polygon',
-        splitNumber: 5,
-        axisName: {
-          color: '#666',
-          fontSize: 12,
-        },
+        shape: radarShape,
+        splitNumber,
+        axisName: showAxisName
+          ? {
+              color: '#666',
+              fontSize: 12,
+            }
+          : { show: false },
         splitLine: {
           lineStyle: { color: 'rgba(0, 0, 0, 0.1)' },
         },
@@ -122,7 +151,7 @@ export function useRadarChartVMAE({ data, config }: RadarChartWidgetAEProps): Ra
       },
       series,
     });
-  }, [widgetParams, radarIndicators, series]);
+  }, [widgetParams, radarIndicators, series, echartsConfig, radarConfig]);
 
   return {
     option,
@@ -131,18 +160,4 @@ export function useRadarChartVMAE({ data, config }: RadarChartWidgetAEProps): Ra
     validationErrors: validation.errors,
     validationWarnings: validation.warnings,
   };
-}
-
-function getDefaultColor(index: number): string {
-  const colors = [
-    '#5470c6',
-    '#91cc75',
-    '#fac858',
-    '#ee6666',
-    '#73c0de',
-    '#3ba272',
-    '#fc8452',
-    '#9a60b4',
-  ];
-  return colors[index % colors.length];
 }

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { EChartsOption, BarSeriesOption } from 'echarts';
 import type { ChartConfig, WidgetParams, Metric, MetricStyle, ProcessedData } from '../interfaces';
+import type { EChartsWidgetParams } from '../types/echarts.types';
 import { applyAllFilters } from '../utils/filterUtils';
 import { aggregate, getLabels } from '../utils/chartUtils';
 import { getDatasetColor } from '../utils/chartColorUtils';
@@ -8,8 +9,13 @@ import { processMultiBucketData } from '../utils/multiBucketProcessor';
 import {
   createBaseOptions,
   createAxisConfig,
-  createLabelConfig,
+  createAdvancedLabelConfig,
+  createEmphasisOptions,
+  createGradientColor,
+  createMarkLineOptions,
+  createMarkAreaOptions,
   mergeOptions,
+  type ExtendedWidgetParams,
 } from '../utils/echartsUtils';
 
 export interface BarChartVMAE {
@@ -20,8 +26,8 @@ export interface BarChartVMAE {
 
 export interface BarChartWidgetAEProps {
   data: Record<string, unknown>[];
-  config: ChartConfig;
-  widgetParams?: WidgetParams;
+  config: ChartConfig & { echarts?: EChartsWidgetParams };
+  widgetParams?: WidgetParams & { echarts?: EChartsWidgetParams };
 }
 
 /**
@@ -32,7 +38,21 @@ export function useBarChartVMAE({
   config,
   widgetParams,
 }: BarChartWidgetAEProps): BarChartVMAE {
-  const params = widgetParams || config.widgetParams || {};
+  const params: ExtendedWidgetParams = useMemo(
+    () => ({
+      ...config.widgetParams,
+      ...widgetParams,
+      echarts: {
+        ...config.widgetParams?.echarts,
+        ...(config as { echarts?: EChartsWidgetParams }).echarts,
+        ...widgetParams?.echarts,
+      },
+    }),
+    [config, widgetParams],
+  );
+
+  const echartsConfig = params.echarts;
+  const barConfig = echartsConfig?.bar;
 
   const filteredData = useMemo(() => {
     return applyAllFilters(data, config.globalFilters);
@@ -73,24 +93,37 @@ export function useBarChartVMAE({
         });
       }
 
-      const color = style.colors?.[0] || getDatasetColor('bar', idx, style);
+      const baseColor = style.colors?.[0] || getDatasetColor('bar', idx, style);
+      const color = echartsConfig?.gradient?.enabled
+        ? createGradientColor(baseColor, echartsConfig.gradient)
+        : baseColor;
+
+      const markLineOpts = createMarkLineOptions(echartsConfig?.markLine);
+      const markAreaOpts = createMarkAreaOptions(echartsConfig?.markArea);
 
       return {
         name: metric.label || `${metric.agg}(${metric.field})`,
         type: 'bar',
         data: values,
-        stack: params.stacked ? 'total' : undefined,
+        stack: barConfig?.stack ?? (params.stacked ? 'total' : undefined),
         itemStyle: {
           color,
           borderColor: style.borderColor,
           borderWidth: style.borderWidth ?? params.borderWidth ?? 0,
           borderRadius: style.borderRadius ?? params.borderRadius ?? 0,
         },
-        barWidth: style.barThickness ?? params.barThickness,
-        label: createLabelConfig(params.showValues, params),
-        emphasis: {
-          focus: 'series',
-        },
+        barWidth: barConfig?.barWidth ?? style.barThickness ?? params.barThickness,
+        barMaxWidth: barConfig?.barMaxWidth,
+        barMinWidth: barConfig?.barMinWidth,
+        barMinHeight: barConfig?.barMinHeight,
+        barGap: barConfig?.barGap,
+        barCategoryGap: barConfig?.barCategoryGap,
+        large: barConfig?.large,
+        largeThreshold: barConfig?.largeThreshold,
+        label: createAdvancedLabelConfig(params.showValues, params, echartsConfig),
+        ...createEmphasisOptions(echartsConfig?.emphasis),
+        ...markLineOpts,
+        ...markAreaOpts,
       } as BarSeriesOption;
     });
   }, [
@@ -101,22 +134,22 @@ export function useBarChartVMAE({
     labels,
     filteredData,
     params,
+    echartsConfig,
+    barConfig,
   ]);
 
   const option = useMemo<EChartsOption>(() => {
     const baseOptions = createBaseOptions(params);
     const axisConfig = createAxisConfig(labels, params, params.horizontal);
 
-    const tooltipTrigger = params.horizontal ? 'axis' : 'axis';
-
     return mergeOptions(baseOptions, axisConfig, {
       tooltip: {
-        trigger: tooltipTrigger,
-        axisPointer: { type: 'shadow' },
+        trigger: 'axis',
+        axisPointer: { type: echartsConfig?.axisConfig?.axisPointer ?? 'shadow' },
       },
       series,
     });
-  }, [params, labels, series]);
+  }, [params, labels, series, echartsConfig]);
 
   return {
     option,

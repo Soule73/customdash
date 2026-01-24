@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
-import { generateId } from '@customdash/utils';
+import { generateId, setNestedValue, isNestedPath } from '@customdash/utils';
 import type {
   WidgetType,
   AggregationType,
@@ -203,17 +203,28 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
         }));
       },
 
-      updateWidgetParam: <K extends keyof WidgetParamsConfig>(
-        key: K,
-        value: WidgetParamsConfig[K],
-      ) => {
-        set(state => ({
-          config: {
-            ...state.config,
-            widgetParams: { ...state.config.widgetParams, [key]: value },
-          },
-          isDirty: true,
-        }));
+      updateWidgetParam: (key: string, value: unknown) => {
+        set(state => {
+          let updatedParams: WidgetParamsConfig;
+
+          if (isNestedPath(key)) {
+            updatedParams = setNestedValue(
+              state.config.widgetParams as Record<string, unknown>,
+              key,
+              value,
+            ) as WidgetParamsConfig;
+          } else {
+            updatedParams = { ...state.config.widgetParams, [key]: value };
+          }
+
+          return {
+            config: {
+              ...state.config,
+              widgetParams: updatedParams,
+            },
+            isDirty: true,
+          };
+        });
       },
 
       addMetric: () => {

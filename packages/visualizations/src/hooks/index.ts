@@ -1,20 +1,20 @@
-export { useBarChartVM } from './useBarChartVM';
-export type { BarChartVM, BarChartWidgetProps } from './useBarChartVM';
+export { useBarChartVMAE } from './useBarChartVMAE';
+export type { BarChartVMAE, BarChartWidgetAEProps } from './useBarChartVMAE';
 
-export { useLineChartVM } from './useLineChartVM';
-export type { LineChartVM, LineChartWidgetProps } from './useLineChartVM';
+export { useLineChartVMAE } from './useLineChartVMAE';
+export type { LineChartVMAE, LineChartWidgetAEProps } from './useLineChartVMAE';
 
-export { usePieChartVM } from './usePieChartVM';
-export type { PieChartVM, PieChartWidgetProps } from './usePieChartVM';
+export { usePieChartVMAE } from './usePieChartVMAE';
+export type { PieChartVMAE, PieChartWidgetAEProps } from './usePieChartVMAE';
 
-export { useBubbleChartVM } from './useBubbleChartVM';
-export type { BubbleChartVM, BubbleChartWidgetProps } from './useBubbleChartVM';
+export { useBubbleChartVMAE } from './useBubbleChartVMAE';
+export type { BubbleChartVMAE, BubbleChartWidgetAEProps } from './useBubbleChartVMAE';
 
-export { useScatterChartVM } from './useScatterChartVM';
-export type { ScatterChartVM, ScatterChartWidgetProps } from './useScatterChartVM';
+export { useScatterChartVMAE } from './useScatterChartVMAE';
+export type { ScatterChartVMAE, ScatterChartWidgetAEProps } from './useScatterChartVMAE';
 
-export { useRadarChartVM } from './useRadarChartVM';
-export type { RadarChartVM, RadarChartWidgetProps } from './useRadarChartVM';
+export { useRadarChartVMAE } from './useRadarChartVMAE';
+export type { RadarChartVMAE, RadarChartWidgetAEProps } from './useRadarChartVMAE';
 
 export { useKPIWidgetVM } from './useKPIWidgetVM';
 export type { KPIWidgetVM, KPIWidgetProps } from './useKPIWidgetVM';

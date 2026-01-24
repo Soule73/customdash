@@ -16,6 +16,9 @@ export {
   isDateType,
   filterColumnsByType,
   getDateColumns,
+  getNestedValue,
+  setNestedValue,
+  isNestedPath,
 } from './helpers';
 
 export { isValidEmail, isValidPassword, isValidUrl, isEmpty, isNumeric } from './validators';

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { EChartsOption, LineSeriesOption } from 'echarts';
 import type { ChartConfig, WidgetParams, Metric, MetricStyle, ProcessedData } from '../interfaces';
+import type { EChartsWidgetParams } from '../types/echarts.types';
 import { applyAllFilters } from '../utils/filterUtils';
 import { aggregate, getLabels } from '../utils/chartUtils';
 import { getDatasetColor } from '../utils/chartColorUtils';
@@ -8,8 +9,13 @@ import { processMultiBucketData } from '../utils/multiBucketProcessor';
 import {
   createBaseOptions,
   createAxisConfig,
-  createLabelConfig,
+  createAdvancedLabelConfig,
+  createEmphasisOptions,
+  createGradientColor,
+  createMarkLineOptions,
+  createMarkAreaOptions,
   mergeOptions,
+  type ExtendedWidgetParams,
 } from '../utils/echartsUtils';
 
 export interface LineChartVMAE {
@@ -20,8 +26,8 @@ export interface LineChartVMAE {
 
 export interface LineChartWidgetAEProps {
   data: Record<string, unknown>[];
-  config: ChartConfig;
-  widgetParams?: WidgetParams;
+  config: ChartConfig & { echarts?: EChartsWidgetParams };
+  widgetParams?: WidgetParams & { echarts?: EChartsWidgetParams };
 }
 
 /**
@@ -32,7 +38,21 @@ export function useLineChartVMAE({
   config,
   widgetParams,
 }: LineChartWidgetAEProps): LineChartVMAE {
-  const params = widgetParams || config.widgetParams || {};
+  const params: ExtendedWidgetParams = useMemo(
+    () => ({
+      ...config.widgetParams,
+      ...widgetParams,
+      echarts: {
+        ...config.widgetParams?.echarts,
+        ...(config as { echarts?: EChartsWidgetParams }).echarts,
+        ...widgetParams?.echarts,
+      },
+    }),
+    [config, widgetParams],
+  );
+
+  const echartsConfig = params.echarts;
+  const lineConfig = echartsConfig?.line;
 
   const filteredData = useMemo(() => {
     return applyAllFilters(data, config.globalFilters);
@@ -73,27 +93,48 @@ export function useLineChartVMAE({
         });
       }
 
-      const color = style.colors?.[0] || getDatasetColor('line', idx, style);
+      const baseColor = style.colors?.[0] || getDatasetColor('line', idx, style);
+
+      const smoothValue = lineConfig?.smooth ?? (style.tension ?? params.tension ?? 0.4) > 0;
+      const hasAreaStyle = lineConfig?.areaStyle ?? style.fill;
+
+      let areaStyleConfig: Record<string, unknown> | undefined;
+      if (hasAreaStyle) {
+        const areaColor = echartsConfig?.gradient?.enabled
+          ? createGradientColor(baseColor, { ...echartsConfig.gradient, direction: 'vertical' })
+          : baseColor;
+        areaStyleConfig = {
+          color: areaColor,
+          opacity: lineConfig?.areaOpacity ?? 0.3,
+        };
+      }
+
+      const markLineOpts = createMarkLineOptions(echartsConfig?.markLine);
+      const markAreaOpts = createMarkAreaOptions(echartsConfig?.markArea);
 
       return {
         name: metric.label || `${metric.agg}(${metric.field})`,
         type: 'line',
         data: values,
-        smooth: (style.tension ?? params.tension ?? 0.4) > 0,
+        smooth: smoothValue,
+        smoothMonotone: lineConfig?.smoothMonotone,
+        step: lineConfig?.step,
+        connectNulls: lineConfig?.connectNulls ?? true,
         lineStyle: {
-          color,
+          color: baseColor,
           width: style.borderWidth ?? params.borderWidth ?? 2,
         },
         itemStyle: {
-          color,
+          color: baseColor,
         },
-        areaStyle: style.fill ? { opacity: 0.3 } : undefined,
+        areaStyle: areaStyleConfig,
         showSymbol: params.showPoints !== false,
-        symbolSize: style.pointRadius ?? params.pointRadius ?? 4,
-        label: createLabelConfig(params.showValues, params),
-        emphasis: {
-          focus: 'series',
-        },
+        symbol: lineConfig?.symbol ?? 'circle',
+        symbolSize: lineConfig?.symbolSize ?? style.pointRadius ?? params.pointRadius ?? 4,
+        label: createAdvancedLabelConfig(params.showValues, params, echartsConfig),
+        ...createEmphasisOptions(echartsConfig?.emphasis),
+        ...markLineOpts,
+        ...markAreaOpts,
       } as LineSeriesOption;
     });
   }, [
@@ -104,6 +145,8 @@ export function useLineChartVMAE({
     labels,
     filteredData,
     params,
+    echartsConfig,
+    lineConfig,
   ]);
 
   const option = useMemo<EChartsOption>(() => {
@@ -113,10 +156,11 @@ export function useLineChartVMAE({
     return mergeOptions(baseOptions, axisConfig, {
       tooltip: {
         trigger: 'axis',
+        axisPointer: { type: echartsConfig?.axisConfig?.axisPointer ?? 'line' },
       },
       series,
     });
-  }, [params, labels, series]);
+  }, [params, labels, series, echartsConfig]);
 
   return {
     option,

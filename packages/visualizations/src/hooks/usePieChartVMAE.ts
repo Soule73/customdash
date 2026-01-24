@@ -1,11 +1,18 @@
 import { useMemo } from 'react';
 import type { EChartsOption, PieSeriesOption } from 'echarts';
 import type { ChartConfig, WidgetParams, Metric, MetricStyle, ProcessedData } from '../interfaces';
+import type { EChartsWidgetParams } from '../types/echarts.types';
 import { applyAllFilters } from '../utils/filterUtils';
 import { aggregate, getLabels } from '../utils/chartUtils';
 import { generateColorsForLabels } from '../utils/chartColorUtils';
 import { processMultiBucketData } from '../utils/multiBucketProcessor';
-import { createBaseOptions, mergeOptions } from '../utils/echartsUtils';
+import {
+  createBaseOptions,
+  createEmphasisOptions,
+  createShadowOptions,
+  mergeOptions,
+  type ExtendedWidgetParams,
+} from '../utils/echartsUtils';
 
 export interface PieChartVMAE {
   option: EChartsOption;
@@ -15,8 +22,8 @@ export interface PieChartVMAE {
 
 export interface PieChartWidgetAEProps {
   data: Record<string, unknown>[];
-  config: ChartConfig;
-  widgetParams?: WidgetParams;
+  config: ChartConfig & { echarts?: EChartsWidgetParams };
+  widgetParams?: WidgetParams & { echarts?: EChartsWidgetParams };
 }
 
 /**
@@ -27,7 +34,21 @@ export function usePieChartVMAE({
   config,
   widgetParams,
 }: PieChartWidgetAEProps): PieChartVMAE {
-  const params = widgetParams || config.widgetParams || {};
+  const params: ExtendedWidgetParams = useMemo(
+    () => ({
+      ...config.widgetParams,
+      ...widgetParams,
+      echarts: {
+        ...config.widgetParams?.echarts,
+        ...(config as { echarts?: EChartsWidgetParams }).echarts,
+        ...widgetParams?.echarts,
+      },
+    }),
+    [config, widgetParams],
+  );
+
+  const echartsConfig = params.echarts;
+  const pieConfig = echartsConfig?.pie;
 
   const filteredData = useMemo(() => {
     return applyAllFilters(data, config.globalFilters);
@@ -82,35 +103,50 @@ export function usePieChartVMAE({
     const cutoutValue = params.cutout ? parseInt(params.cutout.replace('%', ''), 10) : 0;
     const innerRadius = cutoutValue > 0 ? `${cutoutValue}%` : 0;
 
+    const labelPosition = echartsConfig?.labelPosition ?? 'outside';
+    const showLabel = params.showValues !== false;
+
+    const emphasisConfig = createEmphasisOptions(echartsConfig?.emphasis);
+    const shadowConfig = createShadowOptions(echartsConfig?.shadow);
+
+    const pieItemStyle: Record<string, unknown> = {
+      borderColor: pieConfig?.itemStyle?.borderColor ?? '#fff',
+      borderWidth: pieConfig?.itemStyle?.borderWidth ?? config.metricStyles?.[0]?.borderWidth ?? 2,
+      borderRadius: pieConfig?.itemStyle?.borderRadius ?? 0,
+      ...shadowConfig,
+    };
+
+    const roseTypeValue = pieConfig?.roseType === false ? undefined : pieConfig?.roseType;
+
     return [
       {
         type: 'pie',
         radius: innerRadius ? [innerRadius, '70%'] : '70%',
         center: ['50%', '50%'],
         data: seriesData,
+        roseType: roseTypeValue,
+        startAngle: pieConfig?.startAngle ?? 90,
+        clockwise: pieConfig?.clockwise ?? true,
+        minShowLabelAngle: pieConfig?.minShowLabelAngle ?? 0,
+        avoidLabelOverlap: pieConfig?.avoidLabelOverlap ?? true,
+        padAngle: pieConfig?.padAngle ?? 0,
         label: {
-          show: params.showValues !== false,
-          formatter: '{b}: {c} ({d}%)',
+          show: showLabel,
+          position: labelPosition,
+          formatter: echartsConfig?.labelFormatter ?? '{b}: {c} ({d}%)',
           fontSize: params.labelFontSize ?? 12,
           color: params.labelColor,
+          rotate: echartsConfig?.labelRotate ?? 0,
         },
         labelLine: {
-          show: params.showValues !== false,
+          show: showLabel && labelPosition === 'outside',
+          smooth: true,
         },
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        },
-        itemStyle: {
-          borderColor: '#fff',
-          borderWidth: config.metricStyles?.[0]?.borderWidth ?? 2,
-        },
+        ...emphasisConfig,
+        itemStyle: pieItemStyle,
       },
     ];
-  }, [seriesData, params, config.metricStyles]);
+  }, [seriesData, params, config.metricStyles, echartsConfig, pieConfig]);
 
   const option = useMemo<EChartsOption>(() => {
     const baseOptions = createBaseOptions(params);
@@ -118,11 +154,12 @@ export function usePieChartVMAE({
     return mergeOptions(baseOptions, {
       tooltip: {
         trigger: 'item',
-        formatter: '{b}: {c} ({d}%)',
+        formatter: echartsConfig?.tooltipConfig?.formatter ?? '{b}: {c} ({d}%)',
+        confine: echartsConfig?.tooltipConfig?.confine ?? true,
       },
       series,
     });
-  }, [params, series]);
+  }, [params, series, echartsConfig]);
 
   return {
     option,

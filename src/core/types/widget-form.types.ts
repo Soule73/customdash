@@ -105,10 +105,7 @@ export interface WidgetFormActions {
     columnTypes: Record<string, string>,
   ) => void;
   updateConfig: <K extends keyof WidgetFormConfig>(key: K, value: WidgetFormConfig[K]) => void;
-  updateWidgetParam: <K extends keyof WidgetParamsConfig>(
-    key: K,
-    value: WidgetParamsConfig[K],
-  ) => void;
+  updateWidgetParam: (key: string, value: unknown) => void;
   addMetric: () => void;
   updateMetric: (index: number, updates: Partial<MetricConfig>) => void;
   removeMetric: (index: number) => void;

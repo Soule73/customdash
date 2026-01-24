@@ -15,6 +15,12 @@ export { Checkbox } from './components/Checkbox';
 export { Textarea } from './components/Textarea';
 export { Skeleton } from './components/Skeleton';
 export { Table } from './components/Table';
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from './components/Accordion';
 export type {
   TableProps,
   TableHeaderProps,

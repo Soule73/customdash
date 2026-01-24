@@ -1,4 +1,4 @@
-import type { SelectOption, WidgetParams } from '@customdash/visualizations';
+import type { SelectOption } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import { Input, Select, Switch } from '@customdash/ui';
 
@@ -6,7 +6,7 @@ interface ParamFieldProps {
   fieldKey: string;
   schema: FieldSchema;
   value: unknown;
-  onChange: (key: keyof WidgetParams, value: unknown) => void;
+  onChange: (key: string, value: unknown) => void;
 }
 
 /**
@@ -14,7 +14,7 @@ interface ParamFieldProps {
  */
 export function ParamField({ fieldKey, schema, value, onChange }: ParamFieldProps) {
   const handleChange = (newValue: unknown) => {
-    onChange(fieldKey as keyof WidgetParams, newValue);
+    onChange(fieldKey, newValue);
   };
 
   const currentValue = value ?? schema.default;

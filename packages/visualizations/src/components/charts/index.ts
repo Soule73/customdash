@@ -1,9 +1,11 @@
 /**
- * Charts components exports
+ * Charts components exports (Apache ECharts)
  */
-export { default as BarChartWidget } from './BarChartWidget';
-export { default as LineChartWidget } from './LineChartWidget';
-export { default as PieChartWidget } from './PieChartWidget';
-export { default as BubbleChartWidget } from './BubbleChartWidget';
-export { default as ScatterChartWidget } from './ScatterChartWidget';
-export { default as RadarChartWidget } from './RadarChartWidget';
+
+export { BarChartWidgetAE } from './BarChartWidgetAE';
+export { LineChartWidgetAE } from './LineChartWidgetAE';
+export { PieChartWidgetAE } from './PieChartWidgetAE';
+export { BubbleChartWidgetAE } from './BubbleChartWidgetAE';
+export { ScatterChartWidgetAE } from './ScatterChartWidgetAE';
+export { RadarChartWidgetAE } from './RadarChartWidgetAE';
+export { BaseChartAE } from './BaseChartAE';

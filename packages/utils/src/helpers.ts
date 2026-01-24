@@ -138,3 +138,50 @@ export function filterColumnsByType(
 export function getDateColumns(columns: string[], types: Record<string, string>): string[] {
   return filterColumnsByType(columns, types, [...DATE_TYPES]);
 }
+
+/**
+ * Get a nested value from an object using a dot-notation path
+ */
+export function getNestedValue<T>(obj: Record<string, unknown>, path: string): T | undefined {
+  const keys = path.split('.');
+  let current: unknown = obj;
+
+  for (const key of keys) {
+    if (current === undefined || current === null) {
+      return undefined;
+    }
+    current = (current as Record<string, unknown>)[key];
+  }
+
+  return current as T | undefined;
+}
+
+/**
+ * Set a nested value in an object using a dot-notation path
+ */
+export function setNestedValue<T extends Record<string, unknown>>(
+  obj: T,
+  path: string,
+  value: unknown,
+): T {
+  const keys = path.split('.');
+  const result = { ...obj };
+  let current: Record<string, unknown> = result;
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i];
+    current[key] =
+      current[key] !== undefined ? { ...(current[key] as Record<string, unknown>) } : {};
+    current = current[key] as Record<string, unknown>;
+  }
+
+  current[keys[keys.length - 1]] = value;
+  return result;
+}
+
+/**
+ * Check if a key is a nested path
+ */
+export function isNestedPath(key: string): boolean {
+  return key.includes('.');
+}

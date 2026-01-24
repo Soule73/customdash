@@ -17,10 +17,10 @@ import { cn } from '@customdash/utils';
 import { Logo, ThemeToggle } from '@components/common';
 import { useAuthStore } from '@stores/authStore';
 import { useLogout } from '@hooks/index';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation, type TranslationKey } from '@hooks/useAppTranslation';
 
 interface NavItem {
-  nameKey: string;
+  nameKey: TranslationKey;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
 }

@@ -183,6 +183,180 @@ export const NoGrid: Story = {
   },
 };
 
+const largeDataset = Array.from({ length: 500 }, () => ({
+  height: 150 + Math.random() * 50,
+  weight: 45 + Math.random() * 60,
+  age: 18 + Math.floor(Math.random() * 50),
+}));
+
+export const LargeDataset: Story = {
+  args: {
+    data: largeDataset,
+    config: {
+      metrics: [
+        {
+          field: 'weight',
+          agg: 'sum',
+          x: 'height',
+          y: 'weight',
+          label: '500 Points',
+        },
+      ],
+      widgetParams: {
+        title: 'Large Dataset Mode (500 points)',
+        echarts: {
+          scatter: {
+            large: true,
+            largeThreshold: 100,
+          },
+          animation: {
+            enabled: false,
+          },
+        },
+      },
+    },
+    height: 450,
+  },
+};
+
+export const WithDataZoom: Story = {
+  args: {
+    data: largeDataset,
+    config: {
+      metrics: [
+        {
+          field: 'weight',
+          agg: 'sum',
+          x: 'height',
+          y: 'weight',
+          label: 'Zoomable Data',
+        },
+      ],
+      widgetParams: {
+        title: 'Scatter with DataZoom',
+        echarts: {
+          dataZoom: {
+            enabled: true,
+            type: 'inside',
+            xAxis: true,
+            yAxis: true,
+          },
+        },
+      },
+    },
+    height: 450,
+  },
+};
+
+export const RotatedSymbols: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        {
+          field: 'weight',
+          agg: 'sum',
+          x: 'height',
+          y: 'weight',
+          label: 'Rotated Diamonds',
+        },
+      ],
+      widgetParams: {
+        title: 'Scatter with Rotated Symbols',
+        echarts: {
+          scatter: {
+            symbolRotate: 45,
+          },
+          emphasis: {
+            focus: 'self',
+            scale: true,
+            scaleSize: 2,
+          },
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const WithToolbox: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        {
+          field: 'weight',
+          agg: 'sum',
+          x: 'height',
+          y: 'weight',
+          label: 'Data Points',
+        },
+      ],
+      widgetParams: {
+        title: 'Scatter with Toolbox',
+        echarts: {
+          toolbox: {
+            show: true,
+            feature: {
+              saveAsImage: true,
+              dataZoom: true,
+              restore: true,
+              brush: true,
+            },
+          },
+        },
+      },
+    },
+    height: 450,
+  },
+};
+
+export const MultipleWithDataZoom: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        {
+          field: 'weight',
+          agg: 'sum',
+          x: 'height',
+          y: 'weight',
+          label: 'Young (< 30)',
+          datasetFilters: [{ field: 'age', operator: 'less_than', value: 30 }],
+        },
+        {
+          field: 'weight',
+          agg: 'sum',
+          x: 'height',
+          y: 'weight',
+          label: 'Senior (30+)',
+          datasetFilters: [{ field: 'age', operator: 'greater_equal', value: 30 }],
+        },
+      ],
+      widgetParams: {
+        title: 'Age Groups with Slider Zoom',
+        xLabel: 'Height (cm)',
+        yLabel: 'Weight (kg)',
+        echarts: {
+          dataZoom: {
+            enabled: true,
+            type: 'slider',
+            xAxis: true,
+            start: 0,
+            end: 100,
+          },
+          animation: {
+            enabled: true,
+            duration: 1000,
+            easing: 'cubicOut',
+          },
+        },
+      },
+    },
+    height: 500,
+  },
+};
+
 export const Loading: Story = {
   args: {
     data: sampleData,

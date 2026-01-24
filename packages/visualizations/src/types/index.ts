@@ -1,5 +1,3 @@
-import type { ChartOptions } from 'chart.js';
-
 export type AggregationType = 'sum' | 'avg' | 'count' | 'min' | 'max' | 'none';
 
 export type FilterOperator =
@@ -26,10 +24,6 @@ export type BucketType =
 export type DateInterval = 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 
 export type ChartType = 'bar' | 'line' | 'pie' | 'scatter' | 'bubble' | 'radar';
-
-export type ChartOptionsType = ChartOptions<
-  'bar' | 'line' | 'pie' | 'scatter' | 'bubble' | 'radar'
->;
 
 export type WidgetType = ChartType | 'kpi' | 'card' | 'kpiGroup' | 'table';
 

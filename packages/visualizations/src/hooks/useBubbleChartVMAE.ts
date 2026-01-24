@@ -4,10 +4,10 @@ import type {
   BubbleMetricConfig,
   BubbleChartConfig,
   MetricStyle,
-  WidgetParams,
   BubbleValidationResult,
 } from '../interfaces';
-import { prepareMetricStyles } from '../utils/chartDatasetUtils';
+import type { EChartsWidgetParams } from '../types/echarts.types';
+import { prepareMetricStyles } from '../utils/metricStyleUtils';
 import { mergeWidgetParams } from '../utils/widgetParamsUtils';
 import {
   processBubbleMetrics,
@@ -15,7 +15,15 @@ import {
   generateBubbleMetricLabel,
   calculateBubbleScales,
 } from '../utils/bubbleChartUtils';
-import { createBaseOptions, mergeOptions } from '../utils/echartsUtils';
+import {
+  createBaseOptions,
+  createEmphasisOptions,
+  createAdvancedLabelConfig,
+  createGradientColor,
+  mergeOptions,
+  getDefaultColor,
+  type ExtendedWidgetParams,
+} from '../utils/echartsUtils';
 
 export interface BubbleChartVMAE {
   option: EChartsOption;
@@ -27,16 +35,23 @@ export interface BubbleChartVMAE {
 
 export interface BubbleChartWidgetAEProps {
   data: Record<string, unknown>[];
-  config: BubbleChartConfig;
+  config: BubbleChartConfig & { echarts?: EChartsWidgetParams };
 }
 
 /**
  * Hook to create the ViewModel for a Bubble Chart using Apache ECharts
  */
 export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): BubbleChartVMAE {
-  const widgetParams = useMemo<WidgetParams>(() => {
-    return mergeWidgetParams(config.widgetParams);
-  }, [config.widgetParams]);
+  const widgetParams: ExtendedWidgetParams = useMemo(
+    () => ({
+      ...mergeWidgetParams(config.widgetParams),
+      echarts: (config as { echarts?: EChartsWidgetParams }).echarts,
+    }),
+    [config],
+  );
+
+  const echartsConfig = widgetParams.echarts;
+  const scatterConfig = echartsConfig?.scatter;
 
   const validMetrics = useMemo<BubbleMetricConfig[]>(() => {
     return config.metrics || [];
@@ -59,10 +74,21 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
   }, [data, validMetrics]);
 
   const series = useMemo<ScatterSeriesOption[]>(() => {
+    const emphasisConfig = createEmphasisOptions(echartsConfig?.emphasis);
+    const labelConfig = createAdvancedLabelConfig(
+      widgetParams.showValues,
+      widgetParams,
+      echartsConfig,
+    );
+
     return processedMetrics.map(({ metric, bubbleData, index }) => {
       const style = metricStyles[index] || {};
-      const color = style.colors?.[0] || getDefaultColor(index);
+      const baseColor = style.colors?.[0] || getDefaultColor(index);
       const label = metric.label || generateBubbleMetricLabel(metric);
+
+      const color = echartsConfig?.gradient?.enabled
+        ? createGradientColor(baseColor, { ...echartsConfig.gradient, direction: 'radial' })
+        : baseColor;
 
       const maxR = Math.max(...bubbleData.map(d => d.r), 1);
       const minSize = 10;
@@ -75,36 +101,35 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
           value: [point.x, point.y],
           symbolSize: minSize + (point.r / maxR) * (maxSize - minSize),
         })),
+        symbolRotate: scatterConfig?.symbolRotate,
+        large: scatterConfig?.large,
+        largeThreshold: scatterConfig?.largeThreshold,
         itemStyle: {
           color,
           opacity: style.opacity ?? 0.7,
         },
-        emphasis: {
-          focus: 'series',
-          itemStyle: {
-            shadowBlur: 10,
-            shadowColor: 'rgba(0, 0, 0, 0.3)',
-          },
-        },
+        ...emphasisConfig,
         label: widgetParams.showValues
           ? {
-              show: true,
-              formatter: (params: { value: [number, number] }) =>
-                `(${params.value[0]}, ${params.value[1]})`,
-              position: 'top',
-              fontSize: widgetParams.labelFontSize ?? 10,
+              ...labelConfig,
+              formatter:
+                echartsConfig?.labelFormatter ??
+                ((params: { value: [number, number] }) =>
+                  `(${params.value[0]}, ${params.value[1]})`),
             }
           : undefined,
       } as ScatterSeriesOption;
     });
-  }, [processedMetrics, metricStyles, widgetParams]);
+  }, [processedMetrics, metricStyles, widgetParams, echartsConfig, scatterConfig]);
 
   const option = useMemo<EChartsOption>(() => {
     const baseOptions = createBaseOptions(widgetParams);
+    const axisConfig = echartsConfig?.axisConfig;
 
     return mergeOptions(baseOptions, {
       tooltip: {
         trigger: 'item',
+        confine: echartsConfig?.tooltipConfig?.confine ?? true,
         formatter: (params: unknown) => {
           const p = params as {
             seriesName?: string;
@@ -120,6 +145,7 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
         min: scales.xMin,
         max: scales.xMax,
         splitLine: { show: widgetParams.showGrid !== false },
+        axisLabel: { rotate: axisConfig?.axisLabelRotate ?? 0 },
       },
       yAxis: {
         type: 'value',
@@ -127,10 +153,11 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
         min: scales.yMin,
         max: scales.yMax,
         splitLine: { show: widgetParams.showGrid !== false },
+        splitArea: axisConfig?.splitAreaShow ? { show: true } : undefined,
       },
       series,
     });
-  }, [widgetParams, scales, series]);
+  }, [widgetParams, scales, series, echartsConfig]);
 
   return {
     option,
@@ -139,18 +166,4 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
     validationErrors: validation.errors,
     validationWarnings: validation.warnings,
   };
-}
-
-function getDefaultColor(index: number): string {
-  const colors = [
-    '#5470c6',
-    '#91cc75',
-    '#fac858',
-    '#ee6666',
-    '#73c0de',
-    '#3ba272',
-    '#fc8452',
-    '#9a60b4',
-  ];
-  return colors[index % colors.length];
 }

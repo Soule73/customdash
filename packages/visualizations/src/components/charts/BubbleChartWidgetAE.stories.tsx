@@ -166,6 +166,189 @@ export const NoGrid: Story = {
   },
 };
 
+export const GradientBubbles: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        {
+          field: 'employees',
+          agg: 'sum',
+          x: 'revenue',
+          y: 'profit',
+          r: 'employees',
+          label: 'Companies',
+        },
+      ],
+      widgetParams: {
+        title: 'Gradient Bubbles',
+        echarts: {
+          gradient: {
+            enabled: true,
+            type: 'radial',
+            x: 0.5,
+            y: 0.5,
+            r: 0.5,
+            colorStops: [
+              { offset: 0, color: 'rgba(99, 102, 241, 0.8)' },
+              { offset: 1, color: 'rgba(99, 102, 241, 0.2)' },
+            ],
+          },
+          shadow: {
+            blur: 10,
+            color: 'rgba(0, 0, 0, 0.15)',
+            offsetX: 2,
+            offsetY: 2,
+          },
+        },
+      },
+    },
+    height: 450,
+  },
+};
+
+export const WithEmphasis: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        {
+          field: 'employees',
+          agg: 'sum',
+          x: 'revenue',
+          y: 'profit',
+          r: 'employees',
+          label: 'Companies',
+        },
+      ],
+      widgetParams: {
+        title: 'Hover Emphasis Effect',
+        echarts: {
+          emphasis: {
+            focus: 'series',
+            scale: true,
+            scaleSize: 1.5,
+            blurScope: 'coordinateSystem',
+          },
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const WithToolboxAndZoom: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        {
+          field: 'employees',
+          agg: 'sum',
+          x: 'revenue',
+          y: 'profit',
+          r: 'employees',
+          label: 'Companies',
+        },
+      ],
+      widgetParams: {
+        title: 'Bubble with Toolbox',
+        xLabel: 'Revenue (M$)',
+        yLabel: 'Profit (M$)',
+        echarts: {
+          toolbox: {
+            show: true,
+            feature: {
+              saveAsImage: true,
+              dataZoom: true,
+              restore: true,
+            },
+          },
+          dataZoom: {
+            enabled: true,
+            type: 'inside',
+            xAxis: true,
+            yAxis: true,
+          },
+        },
+      },
+    },
+    height: 450,
+  },
+};
+
+const largeBubbleData = Array.from({ length: 200 }, () => ({
+  revenue: 50 + Math.random() * 400,
+  profit: 10 + Math.random() * 150,
+  employees: 20 + Math.random() * 500,
+}));
+
+export const LargeDataset: Story = {
+  args: {
+    data: largeBubbleData,
+    config: {
+      metrics: [
+        {
+          field: 'employees',
+          agg: 'sum',
+          x: 'revenue',
+          y: 'profit',
+          r: 'employees',
+          label: 'Companies (200)',
+        },
+      ],
+      widgetParams: {
+        title: 'Large Dataset with Optimized Rendering',
+        echarts: {
+          scatter: {
+            large: true,
+            largeThreshold: 100,
+          },
+          animation: {
+            enabled: false,
+          },
+          dataZoom: {
+            enabled: true,
+            type: 'slider',
+            xAxis: true,
+          },
+        },
+      },
+    },
+    height: 500,
+  },
+};
+
+export const AnimatedBubbles: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        {
+          field: 'employees',
+          agg: 'sum',
+          x: 'revenue',
+          y: 'profit',
+          r: 'employees',
+          label: 'Companies',
+        },
+      ],
+      widgetParams: {
+        title: 'Animated Entry',
+        echarts: {
+          animation: {
+            enabled: true,
+            duration: 2000,
+            easing: 'elasticOut',
+            delay: 100,
+          },
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
 export const Loading: Story = {
   args: {
     data: sampleData,

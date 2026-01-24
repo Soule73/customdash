@@ -53,6 +53,75 @@ export const DonutChart: Story = {
   },
 };
 
+export const NightingaleRoseChart: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+    },
+    widgetParams: {
+      title: 'Nightingale Rose Chart (Radius)',
+      echarts: {
+        pie: {
+          roseType: 'radius',
+          itemStyle: {
+            borderRadius: 5,
+            borderColor: '#fff',
+            borderWidth: 2,
+          },
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const NightingaleAreaChart: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+    },
+    widgetParams: {
+      title: 'Nightingale Rose Chart (Area)',
+      echarts: {
+        pie: {
+          roseType: 'area',
+          startAngle: 45,
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const RoundedDonut: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+    },
+    widgetParams: {
+      cutout: '60%',
+      title: 'Rounded Donut with Gap',
+      echarts: {
+        pie: {
+          padAngle: 2,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2,
+          },
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
 export const WithTitle: Story = {
   args: {
     data: sampleData,
@@ -65,6 +134,27 @@ export const WithTitle: Story = {
       legendPosition: 'right',
     },
     height: 350,
+  },
+};
+
+export const InsideLabels: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+    },
+    widgetParams: {
+      title: 'Labels Inside Slices',
+      echarts: {
+        labelPosition: 'inside',
+        labelFormatter: '{d}%',
+        pie: {
+          avoidLabelOverlap: true,
+        },
+      },
+    },
+    height: 400,
   },
 };
 
@@ -84,6 +174,81 @@ export const CustomColors: Story = {
       title: 'Custom Colors',
     },
     height: 350,
+  },
+};
+
+export const WithShadow: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+    },
+    widgetParams: {
+      title: 'Pie with Shadow Effect',
+      echarts: {
+        shadow: {
+          blur: 15,
+          color: 'rgba(0, 0, 0, 0.2)',
+          offsetX: 5,
+          offsetY: 5,
+        },
+        emphasis: {
+          focus: 'self',
+          scale: true,
+          scaleSize: 15,
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const CounterClockwise: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+    },
+    widgetParams: {
+      title: 'Counter-Clockwise from 180 deg',
+      echarts: {
+        pie: {
+          clockwise: false,
+          startAngle: 180,
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
+export const ScrollableLegend: Story = {
+  args: {
+    data: [
+      ...sampleData,
+      { category: 'Toys', sales: 1200 },
+      { category: 'Beauty', sales: 900 },
+      { category: 'Home', sales: 1800 },
+      { category: 'Garden', sales: 700 },
+    ],
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
+    },
+    widgetParams: {
+      title: 'Many Items with Scrollable Legend',
+      echarts: {
+        legendConfig: {
+          type: 'scroll',
+          orient: 'vertical',
+          position: 'right',
+          icon: 'circle',
+        },
+      },
+    },
+    height: 400,
   },
 };
 

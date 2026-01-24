@@ -124,6 +124,204 @@ export const CustomColors: Story = {
   },
 };
 
+export const WithToolbox: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        { field: 'sales', agg: 'sum', label: 'Sales' },
+        { field: 'expenses', agg: 'sum', label: 'Expenses' },
+      ],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Chart with Toolbox',
+      echarts: {
+        toolbox: {
+          saveAsImage: true,
+          dataView: true,
+          dataZoom: true,
+          restore: true,
+          magicType: true,
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const WithDataZoom: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Chart with Data Zoom Slider',
+      echarts: {
+        dataZoom: {
+          enabled: true,
+          type: 'slider',
+          start: 0,
+          end: 100,
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const WithGradient: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Gradient Bar Chart',
+      borderRadius: 8,
+      echarts: {
+        gradient: {
+          enabled: true,
+          direction: 'vertical',
+          startOpacity: 1,
+          endOpacity: 0.3,
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
+export const WithMarkLine: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Chart with Reference Lines',
+      echarts: {
+        markLine: {
+          show: true,
+          data: [
+            {
+              yAxis: 3000,
+              name: 'Target',
+              lineStyle: { color: '#ef4444', type: 'dashed', width: 2 },
+            },
+            {
+              yAxis: 2000,
+              name: 'Minimum',
+              lineStyle: { color: '#f59e0b', type: 'dotted', width: 2 },
+            },
+          ],
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
+export const WithAnimations: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Animated Chart (Bounce Effect)',
+      echarts: {
+        animation: {
+          enabled: true,
+          duration: 1500,
+          easing: 'bounceOut',
+          delay: 100,
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
+export const AdvancedLabels: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      showValues: true,
+      title: 'Advanced Label Positioning',
+      echarts: {
+        labelPosition: 'inside',
+        labelRotate: 0,
+        labelFormatter: '{c}',
+      },
+    },
+    height: 350,
+  },
+};
+
+export const ScrollableLegend: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        { field: 'sales', agg: 'sum', label: 'Sales Revenue' },
+        { field: 'expenses', agg: 'sum', label: 'Operating Expenses' },
+        { field: 'sales', agg: 'avg', label: 'Average Sales' },
+        { field: 'expenses', agg: 'avg', label: 'Average Expenses' },
+      ],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Scrollable Legend',
+      echarts: {
+        legendConfig: {
+          type: 'scroll',
+          orient: 'horizontal',
+          position: 'bottom',
+          icon: 'roundRect',
+          itemGap: 15,
+        },
+      },
+    },
+    height: 400,
+  },
+};
+
+export const BarSpecificOptions: Story = {
+  args: {
+    data: sampleData,
+    config: {
+      metrics: [
+        { field: 'sales', agg: 'sum', label: 'Sales' },
+        { field: 'expenses', agg: 'sum', label: 'Expenses' },
+      ],
+      buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
+    },
+    widgetParams: {
+      title: 'Custom Bar Width and Gap',
+      borderRadius: 6,
+      echarts: {
+        bar: {
+          barWidth: '40%',
+          barGap: '30%',
+          barCategoryGap: '20%',
+          barMinHeight: 5,
+        },
+      },
+    },
+    height: 350,
+  },
+};
+
 export const Loading: Story = {
   args: {
     data: sampleData,

@@ -51,16 +51,16 @@ yarn build
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `yarn dev` | Serveur de developpement Vite |
-| `yarn build` | Build de production |
-| `yarn preview` | Preview du build |
-| `yarn test` | Tests unitaires Vitest |
-| `yarn test:e2e` | Tests E2E Playwright |
-| `yarn storybook` | Documentation des composants |
-| `yarn lint` | Linting ESLint |
-| `yarn format` | Formatage Prettier |
+| Script           | Description                   |
+| ---------------- | ----------------------------- |
+| `yarn dev`       | Serveur de developpement Vite |
+| `yarn build`     | Build de production           |
+| `yarn preview`   | Preview du build              |
+| `yarn test`      | Tests unitaires Vitest        |
+| `yarn test:e2e`  | Tests E2E Playwright          |
+| `yarn storybook` | Documentation des composants  |
+| `yarn lint`      | Linting ESLint                |
+| `yarn format`    | Formatage Prettier            |
 
 ## Configuration API
 
@@ -68,15 +68,13 @@ Le frontend communique avec deux APIs :
 
 ```typescript
 // src/core/constants/index.ts
-export const CORE_API_URL = 'http://localhost:3002/api/v1';
-export const PROCESSING_API_URL = 'http://localhost:3003';
+export const CORE_API_URL = 'http://localhost:3000/api/v1';
 ```
 
 Configurez les URLs via les variables d'environnement :
 
 ```env
-VITE_CORE_API_URL=http://localhost:3002/api/v1
-VITE_PROCESSING_API_URL=http://localhost:3003
+VITE_CORE_API_URL=http://localhost:3000/api/v1
 ```
 
 ## Docker
@@ -157,6 +155,7 @@ Types: feat, fix, docs, style, refactor, perf, test, chore, ci, build
 ```
 
 Exemples :
+
 - `feat(dashboard): add widget drag and drop`
 - `fix(auth): resolve token refresh issue`
 - `docs: update README with Docker instructions`

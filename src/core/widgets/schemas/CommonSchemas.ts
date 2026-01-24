@@ -1,5 +1,6 @@
 import type { SelectOption, AggregationType, BucketType } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
+import { t, WIDGET_I18N_KEYS as K } from '../utils/i18nHelper';
 
 export const DEFAULT_CHART_COLORS = [
   '#6366f1',
@@ -15,59 +16,234 @@ export const DEFAULT_CHART_COLORS = [
 ] as const;
 
 export const AGGREGATION_OPTIONS: SelectOption<AggregationType>[] = [
-  { value: 'none', label: 'Valeur brute' },
-  { value: 'sum', label: 'Somme' },
-  { value: 'avg', label: 'Moyenne' },
-  { value: 'min', label: 'Minimum' },
-  { value: 'max', label: 'Maximum' },
-  { value: 'count', label: 'Nombre' },
+  {
+    value: 'none',
+    get label() {
+      return t('widgets.options.aggregations.none');
+    },
+  },
+  {
+    value: 'sum',
+    get label() {
+      return t('widgets.options.aggregations.sum');
+    },
+  },
+  {
+    value: 'avg',
+    get label() {
+      return t('widgets.options.aggregations.avg');
+    },
+  },
+  {
+    value: 'min',
+    get label() {
+      return t('widgets.options.aggregations.min');
+    },
+  },
+  {
+    value: 'max',
+    get label() {
+      return t('widgets.options.aggregations.max');
+    },
+  },
+  {
+    value: 'count',
+    get label() {
+      return t('widgets.options.aggregations.count');
+    },
+  },
 ];
 
 export const BUCKET_TYPE_OPTIONS: SelectOption<BucketType>[] = [
-  { value: 'terms', label: 'Termes' },
-  { value: 'histogram', label: 'Histogramme' },
-  { value: 'date_histogram', label: 'Histogramme de dates' },
-  { value: 'range', label: 'Plages' },
-  { value: 'split_series', label: 'Diviser en series' },
-  { value: 'split_rows', label: 'Diviser en lignes' },
-  { value: 'split_chart', label: 'Diviser en graphiques' },
+  {
+    value: 'terms',
+    get label() {
+      return t('widgets.options.bucketTypes.terms');
+    },
+  },
+  {
+    value: 'histogram',
+    get label() {
+      return t('widgets.options.bucketTypes.histogram');
+    },
+  },
+  {
+    value: 'date_histogram',
+    get label() {
+      return t('widgets.options.bucketTypes.date_histogram');
+    },
+  },
+  {
+    value: 'range',
+    get label() {
+      return t('widgets.options.bucketTypes.range');
+    },
+  },
+  {
+    value: 'split_series',
+    get label() {
+      return t('widgets.options.bucketTypes.split_series');
+    },
+  },
+  {
+    value: 'split_rows',
+    get label() {
+      return t('widgets.options.bucketTypes.split_rows');
+    },
+  },
+  {
+    value: 'split_chart',
+    get label() {
+      return t('widgets.options.bucketTypes.split_chart');
+    },
+  },
 ];
 
 export const LEGEND_POSITION_OPTIONS: SelectOption[] = [
-  { value: 'top', label: 'Haut' },
-  { value: 'bottom', label: 'Bas' },
-  { value: 'left', label: 'Gauche' },
-  { value: 'right', label: 'Droite' },
+  {
+    value: 'top',
+    get label() {
+      return t('widgets.positions.top');
+    },
+  },
+  {
+    value: 'bottom',
+    get label() {
+      return t('widgets.positions.bottom');
+    },
+  },
+  {
+    value: 'left',
+    get label() {
+      return t('widgets.positions.left');
+    },
+  },
+  {
+    value: 'right',
+    get label() {
+      return t('widgets.positions.right');
+    },
+  },
 ];
 
 export const TITLE_ALIGN_OPTIONS: SelectOption[] = [
-  { value: 'start', label: 'Debut' },
-  { value: 'center', label: 'Centre' },
-  { value: 'end', label: 'Fin' },
+  {
+    value: 'start',
+    get label() {
+      return t('widgets.positions.start');
+    },
+  },
+  {
+    value: 'center',
+    get label() {
+      return t('widgets.positions.center');
+    },
+  },
+  {
+    value: 'end',
+    get label() {
+      return t('widgets.positions.end');
+    },
+  },
 ];
 
 export const FORMAT_OPTIONS: SelectOption[] = [
-  { value: 'number', label: 'Nombre' },
-  { value: 'currency', label: 'Devise' },
-  { value: 'percent', label: 'Pourcentage' },
+  {
+    value: 'number',
+    get label() {
+      return t('widgets.formats.number');
+    },
+  },
+  {
+    value: 'currency',
+    get label() {
+      return t('widgets.formats.currency');
+    },
+  },
+  {
+    value: 'percent',
+    get label() {
+      return t('widgets.formats.percent');
+    },
+  },
 ];
 
 export const POINT_STYLE_OPTIONS: SelectOption[] = [
-  { value: 'circle', label: 'Cercle' },
-  { value: 'rect', label: 'Rectangle' },
-  { value: 'rectRounded', label: 'Rectangle arrondi' },
-  { value: 'rectRot', label: 'Rectangle tourne' },
-  { value: 'cross', label: 'Croix' },
-  { value: 'crossRot', label: 'Croix tournee' },
-  { value: 'star', label: 'Etoile' },
-  { value: 'line', label: 'Ligne' },
-  { value: 'dash', label: 'Tiret' },
+  {
+    value: 'circle',
+    get label() {
+      return t('widgets.options.pointStyles.circle');
+    },
+  },
+  {
+    value: 'rect',
+    get label() {
+      return t('widgets.options.pointStyles.rect');
+    },
+  },
+  {
+    value: 'rectRounded',
+    get label() {
+      return t('widgets.options.pointStyles.rectRounded');
+    },
+  },
+  {
+    value: 'rectRot',
+    get label() {
+      return t('widgets.options.pointStyles.rectRot');
+    },
+  },
+  {
+    value: 'cross',
+    get label() {
+      return t('widgets.options.pointStyles.cross');
+    },
+  },
+  {
+    value: 'crossRot',
+    get label() {
+      return t('widgets.options.pointStyles.crossRot');
+    },
+  },
+  {
+    value: 'star',
+    get label() {
+      return t('widgets.options.pointStyles.star');
+    },
+  },
+  {
+    value: 'line',
+    get label() {
+      return t('widgets.options.pointStyles.line');
+    },
+  },
+  {
+    value: 'dash',
+    get label() {
+      return t('widgets.options.pointStyles.dash');
+    },
+  },
 ];
 
 export const TREND_TYPE_OPTIONS: SelectOption[] = [
-  { value: 'arrow', label: 'Fleche' },
-  { value: 'icon', label: 'Icone' },
-  { value: 'text', label: 'Texte' },
+  {
+    value: 'arrow',
+    get label() {
+      return t('widgets.trendTypes.arrow');
+    },
+  },
+  {
+    value: 'icon',
+    get label() {
+      return t('widgets.trendTypes.icon');
+    },
+  },
+  {
+    value: 'text',
+    get label() {
+      return t('widgets.trendTypes.text');
+    },
+  },
 ];
 
 export const CURRENCY_OPTIONS: SelectOption[] = [
@@ -100,28 +276,86 @@ export const CURRENCY_OPTIONS: SelectOption[] = [
 ];
 
 export const COMMON_METRIC_STYLES: Record<string, FieldSchema> = {
-  color: { default: '#6366f1', inputType: 'color', label: 'Couleur' },
-  borderColor: { default: '#4f46e5', inputType: 'color', label: 'Couleur de bordure' },
-  borderWidth: { default: 1, inputType: 'number', label: 'Epaisseur bordure' },
+  color: {
+    default: '#6366f1',
+    inputType: 'color',
+    get label() {
+      return t(K.styles.color);
+    },
+  },
+  borderColor: {
+    default: '#4f46e5',
+    inputType: 'color',
+    get label() {
+      return t(K.styles.borderColor);
+    },
+  },
+  borderWidth: {
+    default: 1,
+    inputType: 'number',
+    get label() {
+      return t(K.styles.borderWidth);
+    },
+  },
 };
 
 export const COMMON_WIDGET_PARAMS: Record<string, FieldSchema> = {
-  title: { default: '', inputType: 'text', label: 'Titre' },
+  title: {
+    default: '',
+    inputType: 'text',
+    get label() {
+      return t(K.params.title);
+    },
+  },
   titleAlign: {
     default: 'center',
     inputType: 'select',
-    label: 'Alignement du titre',
+    get label() {
+      return t(K.params.titleAlign);
+    },
     options: TITLE_ALIGN_OPTIONS,
   },
-  legend: { default: true, inputType: 'checkbox', label: 'Afficher la legende' },
+  legend: {
+    default: true,
+    inputType: 'checkbox',
+    get label() {
+      return t(K.params.legend);
+    },
+  },
   legendPosition: {
     default: 'top',
     inputType: 'select',
-    label: 'Position de la legende',
+    get label() {
+      return t(K.params.legendPosition);
+    },
     options: LEGEND_POSITION_OPTIONS,
   },
-  xLabel: { default: '', inputType: 'text', label: 'Label axe X' },
-  yLabel: { default: '', inputType: 'text', label: 'Label axe Y' },
-  showGrid: { default: true, inputType: 'checkbox', label: 'Afficher la grille' },
-  showValues: { default: false, inputType: 'checkbox', label: 'Afficher les valeurs' },
+  xLabel: {
+    default: '',
+    inputType: 'text',
+    get label() {
+      return t(K.params.xLabel);
+    },
+  },
+  yLabel: {
+    default: '',
+    inputType: 'text',
+    get label() {
+      return t(K.params.yLabel);
+    },
+  },
+  showGrid: {
+    default: true,
+    inputType: 'checkbox',
+    get label() {
+      return t(K.params.showGrid);
+    },
+  },
+  showValues: {
+    default: false,
+    inputType: 'checkbox',
+    get label() {
+      return t(K.params.showValues);
+    },
+  },
 };

@@ -9,35 +9,39 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import { ECHARTS_SCATTER_PARAMS, POINT_STYLE_OPTIONS } from '../schemas';
+import {
+  ECHARTS_SCATTER_PARAMS,
+  WIDGET_FIELD_SCHEMAS as F,
+  METRIC_CONFIG_LABELS as L,
+} from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Scatter chart widget type implementation
  */
 export class ScatterWidgetType extends AbstractChartWidgetType {
   protected readonly widgetType = 'scatter' as const;
-  protected readonly widgetLabel = 'Scatter Chart';
-  protected readonly widgetDescription = 'Nuage de points pour correlations';
+  protected get widgetLabel() {
+    return t('widgets.types.scatter');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.scatterDescription');
+  }
   protected readonly widgetIcon = CursorArrowRaysIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = ScatterChartWidgetAE as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      pointRadius: { default: 4, inputType: 'number', label: 'Taille des points' },
-      pointStyle: {
-        default: 'circle',
-        inputType: 'select',
-        label: 'Style des points',
-        options: POINT_STYLE_OPTIONS,
-      },
-      opacity: { default: 0.7, inputType: 'number', label: 'Opacite (0-1)' },
+      pointRadius: F.pointRadius(),
+      pointStyle: F.pointStyle(),
+      opacity: F.opacity(),
     };
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {
     return {
-      showPoints: { default: true, inputType: 'checkbox', label: 'Afficher les points' },
+      showPoints: F.showPoints(),
       ...ECHARTS_SCATTER_PARAMS,
     };
   }
@@ -45,7 +49,9 @@ export class ScatterWidgetType extends AbstractChartWidgetType {
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
-      label: 'Metriques',
+      get label() {
+        return L.metrics;
+      },
     };
   }
 
@@ -62,7 +68,9 @@ export class ScatterWidgetType extends AbstractChartWidgetType {
       useGlobalFilters: true,
       useBuckets: false,
       allowMultipleDatasets: true,
-      datasetSectionTitle: 'Datasets (X, Y)',
+      get datasetSectionTitle() {
+        return t('widgets.datasets.xy');
+      },
     };
   }
 }

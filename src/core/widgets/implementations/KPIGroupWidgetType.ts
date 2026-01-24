@@ -9,50 +9,47 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
-import { FORMAT_OPTIONS, CURRENCY_OPTIONS } from '../schemas';
+import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * KPI Group widget type implementation
  */
 export class KPIGroupWidgetType extends AbstractWidgetType {
   protected readonly widgetType = 'kpiGroup' as const;
-  protected readonly widgetLabel = 'KPI Group';
-  protected readonly widgetDescription = 'Groupe de KPIs';
+  protected get widgetLabel() {
+    return t('widgets.types.kpiGroup');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.kpiGroupDescription');
+  }
   protected readonly widgetIcon = RectangleGroupIcon;
   protected readonly widgetCategory: WidgetCategory = 'metric';
   protected readonly widgetComponent = KPIGroupWidget as unknown as WidgetComponent;
 
   protected buildMetricStyles(): Record<string, FieldSchema> {
     return {
-      valueColor: { default: '#6366f1', inputType: 'color', label: 'Couleur des valeurs' },
+      valueColor: F.valueColor(),
     };
   }
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: { default: '', inputType: 'text', label: 'Titre du groupe' },
-      columns: { default: 2, inputType: 'number', label: 'Nombre de colonnes' },
-      showTrend: { default: true, inputType: 'checkbox', label: 'Afficher la tendance' },
-      format: {
-        default: 'number',
-        inputType: 'select',
-        label: 'Format',
-        options: FORMAT_OPTIONS,
-      },
-      decimals: { default: 2, inputType: 'number', label: 'Decimales' },
-      currency: {
-        default: 'EUR',
-        inputType: 'select',
-        label: 'Devise',
-        options: CURRENCY_OPTIONS,
-      },
+      title: F.title(),
+      columns: F.columns(),
+      showTrend: F.showTrend(),
+      format: F.format(),
+      decimals: F.decimals(),
+      currency: F.currency(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
-      label: 'KPIs',
+      get label() {
+        return L.kpis;
+      },
     };
   }
 

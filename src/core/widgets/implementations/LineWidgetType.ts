@@ -9,37 +9,41 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import { ECHARTS_LINE_PARAMS, POINT_STYLE_OPTIONS } from '../schemas';
+import {
+  ECHARTS_LINE_PARAMS,
+  WIDGET_FIELD_SCHEMAS as F,
+  METRIC_CONFIG_LABELS as L,
+} from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Line chart widget type implementation
  */
 export class LineWidgetType extends AbstractChartWidgetType {
   protected readonly widgetType = 'line' as const;
-  protected readonly widgetLabel = 'Line Chart';
-  protected readonly widgetDescription = 'Graphique en lignes pour visualiser des tendances';
+  protected get widgetLabel() {
+    return t('widgets.types.line');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.lineDescription');
+  }
   protected readonly widgetIcon = ArrowTrendingUpIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = LineChartWidgetAE as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      fill: { default: false, inputType: 'checkbox', label: 'Remplir sous la ligne' },
-      tension: { default: 0, inputType: 'number', label: 'Courbure' },
-      pointStyle: {
-        default: 'circle',
-        inputType: 'select',
-        label: 'Style des points',
-        options: POINT_STYLE_OPTIONS,
-      },
-      stepped: { default: false, inputType: 'checkbox', label: 'Ligne en escalier' },
+      fill: F.fill(),
+      tension: F.tension(),
+      pointStyle: F.pointStyle(),
+      stepped: F.stepped(),
     };
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {
     return {
-      showPoints: { default: true, inputType: 'checkbox', label: 'Afficher les points' },
-      stacked: { default: false, inputType: 'checkbox', label: 'Empiler les lignes' },
+      showPoints: F.showPoints(),
+      stacked: F.stacked('line'),
       ...ECHARTS_LINE_PARAMS,
     };
   }
@@ -47,7 +51,9 @@ export class LineWidgetType extends AbstractChartWidgetType {
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
-      label: 'Metriques',
+      get label() {
+        return L.metrics;
+      },
     };
   }
 
@@ -55,7 +61,9 @@ export class LineWidgetType extends AbstractChartWidgetType {
     return {
       allow: true,
       allowMultiple: true,
-      label: 'Groupements',
+      get label() {
+        return L.buckets;
+      },
     };
   }
 

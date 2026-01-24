@@ -9,23 +9,32 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import { ECHARTS_SCATTER_PARAMS } from '../schemas';
+import {
+  ECHARTS_SCATTER_PARAMS,
+  WIDGET_FIELD_SCHEMAS as F,
+  METRIC_CONFIG_LABELS as L,
+} from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Bubble chart widget type implementation
  */
 export class BubbleWidgetType extends AbstractChartWidgetType {
   protected readonly widgetType = 'bubble' as const;
-  protected readonly widgetLabel = 'Bubble Chart';
-  protected readonly widgetDescription = 'Graphique a bulles pour 3 dimensions';
+  protected get widgetLabel() {
+    return t('widgets.types.bubble');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.bubbleDescription');
+  }
   protected readonly widgetIcon = ChatBubbleLeftIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = BubbleChartWidgetAE as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      pointRadius: { default: 5, inputType: 'number', label: 'Taille de base' },
-      opacity: { default: 0.7, inputType: 'number', label: 'Opacite (0-1)' },
+      pointRadius: F.pointRadius(5),
+      opacity: F.opacity(),
     };
   }
 
@@ -38,7 +47,9 @@ export class BubbleWidgetType extends AbstractChartWidgetType {
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
-      label: 'Metriques',
+      get label() {
+        return L.metrics;
+      },
     };
   }
 
@@ -55,7 +66,9 @@ export class BubbleWidgetType extends AbstractChartWidgetType {
       useGlobalFilters: true,
       useBuckets: false,
       allowMultipleDatasets: true,
-      datasetSectionTitle: 'Datasets (X, Y, R)',
+      get datasetSectionTitle() {
+        return t('widgets.datasets.xyr');
+      },
     };
   }
 }

@@ -9,37 +9,42 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import { ECHARTS_RADAR_PARAMS, ECHARTS_COMMON_PARAMS, LEGEND_POSITION_OPTIONS } from '../schemas';
+import {
+  ECHARTS_RADAR_PARAMS,
+  ECHARTS_COMMON_PARAMS,
+  WIDGET_FIELD_SCHEMAS as F,
+  METRIC_CONFIG_LABELS as L,
+} from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Radar chart widget type implementation
  */
 export class RadarWidgetType extends AbstractChartWidgetType {
   protected readonly widgetType = 'radar' as const;
-  protected readonly widgetLabel = 'Radar Chart';
-  protected readonly widgetDescription = 'Graphique radar pour comparaison multi-axes';
+  protected get widgetLabel() {
+    return t('widgets.types.radar');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.radarDescription');
+  }
   protected readonly widgetIcon = PresentationChartLineIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = RadarChartWidgetAE as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      fill: { default: true, inputType: 'checkbox', label: 'Remplir la zone' },
-      opacity: { default: 0.25, inputType: 'number', label: 'Opacite (0-1)' },
+      fill: F.fill(),
+      opacity: F.opacity(0.25),
     };
   }
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: { default: '', inputType: 'text', label: 'Titre' },
-      legend: { default: true, inputType: 'checkbox', label: 'Afficher la legende' },
-      legendPosition: {
-        default: 'top',
-        inputType: 'select',
-        label: 'Position de la legende',
-        options: LEGEND_POSITION_OPTIONS,
-      },
-      showValues: { default: false, inputType: 'checkbox', label: 'Afficher les valeurs' },
+      title: F.title(),
+      legend: F.legend(),
+      legendPosition: F.legendPosition(),
+      showValues: F.showValues(),
       ...ECHARTS_COMMON_PARAMS,
       ...ECHARTS_RADAR_PARAMS,
     };
@@ -52,7 +57,9 @@ export class RadarWidgetType extends AbstractChartWidgetType {
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
-      label: 'Metriques',
+      get label() {
+        return L.metrics;
+      },
     };
   }
 
@@ -69,7 +76,9 @@ export class RadarWidgetType extends AbstractChartWidgetType {
       useGlobalFilters: true,
       useBuckets: false,
       allowMultipleDatasets: true,
-      datasetSectionTitle: 'Datasets (axes multiples)',
+      get datasetSectionTitle() {
+        return t('widgets.datasets.multiAxis');
+      },
     };
   }
 }

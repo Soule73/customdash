@@ -9,15 +9,20 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
-import { FORMAT_OPTIONS, CURRENCY_OPTIONS, TREND_TYPE_OPTIONS } from '../schemas';
+import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * KPI widget type implementation
  */
 export class KPIWidgetType extends AbstractWidgetType {
   protected readonly widgetType = 'kpi' as const;
-  protected readonly widgetLabel = 'KPI';
-  protected readonly widgetDescription = 'Indicateur de performance cle';
+  protected get widgetLabel() {
+    return t('widgets.types.kpi');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.kpiDescription');
+  }
   protected readonly widgetIcon = Squares2X2Icon;
   protected readonly widgetCategory: WidgetCategory = 'metric';
   protected readonly widgetComponent = KPIWidget as unknown as WidgetComponent;
@@ -28,37 +33,24 @@ export class KPIWidgetType extends AbstractWidgetType {
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: { default: '', inputType: 'text', label: 'Titre du KPI' },
-      valueColor: { default: '#6366f1', inputType: 'color', label: 'Couleur de la valeur' },
-      titleColor: { default: '#374151', inputType: 'color', label: 'Couleur du titre' },
-      showTrend: { default: true, inputType: 'checkbox', label: 'Afficher la tendance' },
-      showValue: { default: true, inputType: 'checkbox', label: 'Afficher la valeur' },
-      format: {
-        default: 'number',
-        inputType: 'select',
-        label: 'Format',
-        options: FORMAT_OPTIONS,
-      },
-      decimals: { default: 2, inputType: 'number', label: 'Decimales' },
-      currency: {
-        default: 'EUR',
-        inputType: 'select',
-        label: 'Devise',
-        options: CURRENCY_OPTIONS,
-      },
-      trendType: {
-        default: 'arrow',
-        inputType: 'select',
-        label: 'Type de tendance',
-        options: TREND_TYPE_OPTIONS,
-      },
+      title: F.title(),
+      valueColor: F.valueColor(),
+      titleColor: F.titleColor(),
+      showTrend: F.showTrend(),
+      showValue: F.showValue(),
+      format: F.format(),
+      decimals: F.decimals(),
+      currency: F.currency(),
+      trendType: F.trendType(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: false,
-      label: 'Metrique',
+      get label() {
+        return L.metric;
+      },
     };
   }
 

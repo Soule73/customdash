@@ -9,30 +9,39 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import { ECHARTS_BAR_PARAMS } from '../schemas';
+import {
+  ECHARTS_BAR_PARAMS,
+  WIDGET_FIELD_SCHEMAS as F,
+  METRIC_CONFIG_LABELS as L,
+} from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Bar chart widget type implementation
  */
 export class BarWidgetType extends AbstractChartWidgetType {
   protected readonly widgetType = 'bar' as const;
-  protected readonly widgetLabel = 'Bar Chart';
-  protected readonly widgetDescription = 'Graphique en barres pour comparer des valeurs';
+  protected get widgetLabel() {
+    return t('widgets.types.bar');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.barDescription');
+  }
   protected readonly widgetIcon = ChartBarIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = BarChartWidgetAE as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      barThickness: { default: undefined, inputType: 'number', label: 'Epaisseur des barres' },
-      borderRadius: { default: 0, inputType: 'number', label: 'Arrondi des barres' },
+      barThickness: F.barThickness(),
+      borderRadius: F.borderRadius(),
     };
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {
     return {
-      stacked: { default: false, inputType: 'checkbox', label: 'Empiler les barres' },
-      horizontal: { default: false, inputType: 'checkbox', label: 'Barres horizontales' },
+      stacked: F.stacked('bar'),
+      horizontal: F.horizontal(),
       ...ECHARTS_BAR_PARAMS,
     };
   }
@@ -40,7 +49,9 @@ export class BarWidgetType extends AbstractChartWidgetType {
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
-      label: 'Metriques',
+      get label() {
+        return L.metrics;
+      },
     };
   }
 
@@ -48,7 +59,9 @@ export class BarWidgetType extends AbstractChartWidgetType {
     return {
       allow: true,
       allowMultiple: true,
-      label: 'Groupements',
+      get label() {
+        return L.buckets;
+      },
     };
   }
 

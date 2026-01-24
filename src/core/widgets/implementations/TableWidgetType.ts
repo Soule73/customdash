@@ -9,14 +9,20 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
+import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Table widget type implementation
  */
 export class TableWidgetType extends AbstractWidgetType {
   protected readonly widgetType = 'table' as const;
-  protected readonly widgetLabel = 'Table';
-  protected readonly widgetDescription = 'Tableau de donnees';
+  protected get widgetLabel() {
+    return t('widgets.types.table');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.tableDescription');
+  }
   protected readonly widgetIcon = TableCellsIcon;
   protected readonly widgetCategory: WidgetCategory = 'data';
   protected readonly widgetComponent = TableWidget as unknown as WidgetComponent;
@@ -27,15 +33,23 @@ export class TableWidgetType extends AbstractWidgetType {
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: { default: '', inputType: 'text', label: 'Titre du tableau' },
-      pageSize: { default: 10, inputType: 'number', label: 'Lignes par page' },
+      title: F.title(),
+      pageSize: {
+        default: 10,
+        inputType: 'number',
+        get label() {
+          return t('widgets.params.pageSize');
+        },
+      },
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
-      label: 'Metriques',
+      get label() {
+        return L.metrics;
+      },
     };
   }
 
@@ -43,7 +57,9 @@ export class TableWidgetType extends AbstractWidgetType {
     return {
       allow: true,
       allowMultiple: true,
-      label: 'Groupements',
+      get label() {
+        return L.buckets;
+      },
     };
   }
 

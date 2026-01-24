@@ -1,179 +1,454 @@
 import type { FieldSchema, SelectOption } from '@/core/types';
+import { t } from '../utils/i18nHelper';
 
 export const ANIMATION_EASING_OPTIONS: SelectOption[] = [
-  { value: 'linear', label: 'Lineaire' },
-  { value: 'cubicIn', label: 'Cubic In' },
-  { value: 'cubicOut', label: 'Cubic Out' },
-  { value: 'cubicInOut', label: 'Cubic In-Out' },
-  { value: 'elasticOut', label: 'Elastic Out' },
-  { value: 'bounceOut', label: 'Bounce Out' },
+  {
+    value: 'linear',
+    get label() {
+      return t('widgets.options.animationEasing.linear');
+    },
+  },
+  {
+    value: 'cubicIn',
+    get label() {
+      return t('widgets.options.animationEasing.cubicIn');
+    },
+  },
+  {
+    value: 'cubicOut',
+    get label() {
+      return t('widgets.options.animationEasing.cubicOut');
+    },
+  },
+  {
+    value: 'cubicInOut',
+    get label() {
+      return t('widgets.options.animationEasing.cubicInOut');
+    },
+  },
+  {
+    value: 'elasticOut',
+    get label() {
+      return t('widgets.options.animationEasing.elasticOut');
+    },
+  },
+  {
+    value: 'bounceOut',
+    get label() {
+      return t('widgets.options.animationEasing.bounceOut');
+    },
+  },
 ];
 
 export const TOOLTIP_TRIGGER_OPTIONS: SelectOption[] = [
-  { value: 'item', label: 'Par element' },
-  { value: 'axis', label: 'Par axe' },
-  { value: 'none', label: 'Desactive' },
+  {
+    value: 'item',
+    get label() {
+      return t('widgets.options.tooltipTrigger.item');
+    },
+  },
+  {
+    value: 'axis',
+    get label() {
+      return t('widgets.options.tooltipTrigger.axis');
+    },
+  },
+  {
+    value: 'none',
+    get label() {
+      return t('widgets.options.tooltipTrigger.none');
+    },
+  },
 ];
 
 export const EMPHASIS_FOCUS_OPTIONS: SelectOption[] = [
-  { value: 'none', label: 'Aucun' },
-  { value: 'self', label: 'Element seul' },
-  { value: 'series', label: 'Serie complete' },
+  {
+    value: 'none',
+    get label() {
+      return t('widgets.options.emphasisFocus.none');
+    },
+  },
+  {
+    value: 'self',
+    get label() {
+      return t('widgets.options.emphasisFocus.self');
+    },
+  },
+  {
+    value: 'series',
+    get label() {
+      return t('widgets.options.emphasisFocus.series');
+    },
+  },
 ];
 
 export const LABEL_POSITION_OPTIONS: SelectOption[] = [
-  { value: 'top', label: 'Haut' },
-  { value: 'bottom', label: 'Bas' },
-  { value: 'left', label: 'Gauche' },
-  { value: 'right', label: 'Droite' },
-  { value: 'inside', label: 'Interieur' },
-  { value: 'insideTop', label: 'Int. haut' },
-  { value: 'insideBottom', label: 'Int. bas' },
-  { value: 'insideLeft', label: 'Int. gauche' },
-  { value: 'insideRight', label: 'Int. droite' },
+  {
+    value: 'top',
+    get label() {
+      return t('widgets.options.labelPositions.top');
+    },
+  },
+  {
+    value: 'bottom',
+    get label() {
+      return t('widgets.options.labelPositions.bottom');
+    },
+  },
+  {
+    value: 'left',
+    get label() {
+      return t('widgets.options.labelPositions.left');
+    },
+  },
+  {
+    value: 'right',
+    get label() {
+      return t('widgets.options.labelPositions.right');
+    },
+  },
+  {
+    value: 'inside',
+    get label() {
+      return t('widgets.options.labelPositions.inside');
+    },
+  },
+  {
+    value: 'insideTop',
+    get label() {
+      return t('widgets.options.labelPositions.insideTop');
+    },
+  },
+  {
+    value: 'insideBottom',
+    get label() {
+      return t('widgets.options.labelPositions.insideBottom');
+    },
+  },
+  {
+    value: 'insideLeft',
+    get label() {
+      return t('widgets.options.labelPositions.insideLeft');
+    },
+  },
+  {
+    value: 'insideRight',
+    get label() {
+      return t('widgets.options.labelPositions.insideRight');
+    },
+  },
 ];
 
 export const ROSE_TYPE_OPTIONS: SelectOption[] = [
-  { value: 'none', label: 'Desactive' },
-  { value: 'radius', label: 'Par rayon' },
-  { value: 'area', label: 'Par aire' },
+  {
+    value: 'none',
+    get label() {
+      return t('widgets.options.roseTypes.none');
+    },
+  },
+  {
+    value: 'radius',
+    get label() {
+      return t('widgets.options.roseTypes.radius');
+    },
+  },
+  {
+    value: 'area',
+    get label() {
+      return t('widgets.options.roseTypes.area');
+    },
+  },
 ];
 
 export const LINE_STEP_OPTIONS: SelectOption[] = [
-  { value: 'none', label: 'Desactive' },
-  { value: 'start', label: 'Debut' },
-  { value: 'middle', label: 'Milieu' },
-  { value: 'end', label: 'Fin' },
+  {
+    value: 'none',
+    get label() {
+      return t('widgets.options.lineSteps.none');
+    },
+  },
+  {
+    value: 'start',
+    get label() {
+      return t('widgets.options.lineSteps.start');
+    },
+  },
+  {
+    value: 'middle',
+    get label() {
+      return t('widgets.options.lineSteps.middle');
+    },
+  },
+  {
+    value: 'end',
+    get label() {
+      return t('widgets.options.lineSteps.end');
+    },
+  },
 ];
 
 export const SYMBOL_TYPE_OPTIONS: SelectOption[] = [
-  { value: 'circle', label: 'Cercle' },
-  { value: 'rect', label: 'Rectangle' },
-  { value: 'roundRect', label: 'Rect arrondi' },
-  { value: 'triangle', label: 'Triangle' },
-  { value: 'diamond', label: 'Losange' },
-  { value: 'pin', label: 'Epingle' },
-  { value: 'arrow', label: 'Fleche' },
-  { value: 'none', label: 'Aucun' },
+  {
+    value: 'circle',
+    get label() {
+      return t('widgets.options.symbolTypes.circle');
+    },
+  },
+  {
+    value: 'rect',
+    get label() {
+      return t('widgets.options.symbolTypes.rect');
+    },
+  },
+  {
+    value: 'roundRect',
+    get label() {
+      return t('widgets.options.symbolTypes.roundRect');
+    },
+  },
+  {
+    value: 'triangle',
+    get label() {
+      return t('widgets.options.symbolTypes.triangle');
+    },
+  },
+  {
+    value: 'diamond',
+    get label() {
+      return t('widgets.options.symbolTypes.diamond');
+    },
+  },
+  {
+    value: 'pin',
+    get label() {
+      return t('widgets.options.symbolTypes.pin');
+    },
+  },
+  {
+    value: 'arrow',
+    get label() {
+      return t('widgets.options.symbolTypes.arrow');
+    },
+  },
+  {
+    value: 'none',
+    get label() {
+      return t('widgets.options.symbolTypes.none');
+    },
+  },
 ];
 
 export const RADAR_SHAPE_OPTIONS: SelectOption[] = [
-  { value: 'polygon', label: 'Polygone' },
-  { value: 'circle', label: 'Cercle' },
+  {
+    value: 'polygon',
+    get label() {
+      return t('widgets.options.radarShapes.polygon');
+    },
+  },
+  {
+    value: 'circle',
+    get label() {
+      return t('widgets.options.radarShapes.circle');
+    },
+  },
 ];
 
 export const DATAZOOM_TYPE_OPTIONS: SelectOption[] = [
-  { value: 'inside', label: 'Interne (scroll)' },
-  { value: 'slider', label: 'Curseur externe' },
+  {
+    value: 'inside',
+    get label() {
+      return t('widgets.options.dataZoomTypes.inside');
+    },
+  },
+  {
+    value: 'slider',
+    get label() {
+      return t('widgets.options.dataZoomTypes.slider');
+    },
+  },
 ];
 
 export const GRADIENT_DIRECTION_OPTIONS: SelectOption[] = [
-  { value: 'vertical', label: 'Vertical' },
-  { value: 'horizontal', label: 'Horizontal' },
+  {
+    value: 'vertical',
+    get label() {
+      return t('widgets.options.gradientDirections.vertical');
+    },
+  },
+  {
+    value: 'horizontal',
+    get label() {
+      return t('widgets.options.gradientDirections.horizontal');
+    },
+  },
 ];
 
 export const ECHARTS_COMMON_PARAMS: Record<string, FieldSchema> = {
   'echarts.animation.enabled': {
     default: true,
     inputType: 'checkbox',
-    label: 'Activer les animations',
-    group: 'Animation',
+    get label() {
+      return t('widgets.echarts.animation.enabled');
+    },
+    get group() {
+      return t('widgets.groups.animation');
+    },
   },
   'echarts.animation.duration': {
     default: 1000,
     inputType: 'number',
-    label: 'Duree (ms)',
-    group: 'Animation',
+    get label() {
+      return t('widgets.echarts.animation.duration');
+    },
+    get group() {
+      return t('widgets.groups.animation');
+    },
   },
   'echarts.animation.easing': {
     default: 'cubicOut',
     inputType: 'select',
-    label: 'Type animation',
+    get label() {
+      return t('widgets.echarts.animation.easing');
+    },
     options: ANIMATION_EASING_OPTIONS,
-    group: 'Animation',
+    get group() {
+      return t('widgets.groups.animation');
+    },
   },
   'echarts.toolbox.show': {
     default: false,
     inputType: 'checkbox',
-    label: 'Afficher boite a outils',
-    group: 'Outils',
+    get label() {
+      return t('widgets.echarts.toolbox.show');
+    },
+    get group() {
+      return t('widgets.groups.tools');
+    },
   },
   'echarts.toolbox.saveAsImage': {
     default: true,
     inputType: 'checkbox',
-    label: 'Export image',
-    group: 'Outils',
+    get label() {
+      return t('widgets.echarts.toolbox.saveAsImage');
+    },
+    get group() {
+      return t('widgets.groups.tools');
+    },
   },
   'echarts.toolbox.dataView': {
     default: false,
     inputType: 'checkbox',
-    label: 'Vue donnees',
-    group: 'Outils',
+    get label() {
+      return t('widgets.echarts.toolbox.dataView');
+    },
+    get group() {
+      return t('widgets.groups.tools');
+    },
   },
   'echarts.toolbox.restore': {
     default: true,
     inputType: 'checkbox',
-    label: 'Restaurer',
-    group: 'Outils',
+    get label() {
+      return t('widgets.echarts.toolbox.restore');
+    },
+    get group() {
+      return t('widgets.groups.tools');
+    },
   },
   'echarts.dataZoom.enabled': {
     default: false,
     inputType: 'checkbox',
-    label: 'Activer le zoom',
-    group: 'Zoom',
+    get label() {
+      return t('widgets.echarts.dataZoom.enabled');
+    },
+    get group() {
+      return t('widgets.groups.zoom');
+    },
   },
   'echarts.dataZoom.type': {
     default: 'inside',
     inputType: 'select',
-    label: 'Type de zoom',
+    get label() {
+      return t('widgets.echarts.dataZoom.type');
+    },
     options: DATAZOOM_TYPE_OPTIONS,
-    group: 'Zoom',
+    get group() {
+      return t('widgets.groups.zoom');
+    },
   },
   'echarts.emphasis.focus': {
     default: 'none',
     inputType: 'select',
-    label: 'Focus au survol',
+    get label() {
+      return t('widgets.echarts.emphasis.focus');
+    },
     options: EMPHASIS_FOCUS_OPTIONS,
-    group: 'Interaction',
+    get group() {
+      return t('widgets.groups.interaction');
+    },
   },
   'echarts.emphasis.scale': {
     default: true,
     inputType: 'checkbox',
-    label: 'Agrandir au survol',
-    group: 'Interaction',
+    get label() {
+      return t('widgets.echarts.emphasis.scale');
+    },
+    get group() {
+      return t('widgets.groups.interaction');
+    },
   },
   'echarts.tooltipConfig.trigger': {
     default: 'item',
     inputType: 'select',
-    label: 'Declencheur tooltip',
+    get label() {
+      return t('widgets.echarts.tooltip.trigger');
+    },
     options: TOOLTIP_TRIGGER_OPTIONS,
-    group: 'Interaction',
+    get group() {
+      return t('widgets.groups.interaction');
+    },
   },
   'echarts.labelPosition': {
     default: 'top',
     inputType: 'select',
-    label: 'Position des labels',
+    get label() {
+      return t('widgets.echarts.labels.position');
+    },
     options: LABEL_POSITION_OPTIONS,
-    group: 'Labels',
+    get group() {
+      return t('widgets.groups.labels');
+    },
   },
   'echarts.labelRotate': {
     default: 0,
     inputType: 'number',
-    label: 'Rotation labels (degres)',
-    group: 'Labels',
+    get label() {
+      return t('widgets.echarts.labels.rotate');
+    },
+    get group() {
+      return t('widgets.groups.labels');
+    },
   },
   'echarts.gradient.enabled': {
     default: false,
     inputType: 'checkbox',
-    label: 'Activer le degrade',
-    group: 'Style',
+    get label() {
+      return t('widgets.echarts.gradient.enabled');
+    },
+    get group() {
+      return t('widgets.groups.style');
+    },
   },
   'echarts.gradient.direction': {
     default: 'vertical',
     inputType: 'select',
-    label: 'Direction du degrade',
+    get label() {
+      return t('widgets.echarts.gradient.direction');
+    },
     options: GRADIENT_DIRECTION_OPTIONS,
-    group: 'Style',
+    get group() {
+      return t('widgets.groups.style');
+    },
   },
 };
 
@@ -181,26 +456,42 @@ export const ECHARTS_BAR_PARAMS: Record<string, FieldSchema> = {
   'echarts.bar.barWidth': {
     default: undefined,
     inputType: 'number',
-    label: 'Largeur des barres',
-    group: 'Barres',
+    get label() {
+      return t('widgets.echarts.bar.barWidth');
+    },
+    get group() {
+      return t('widgets.groups.bars');
+    },
   },
   'echarts.bar.barGap': {
     default: '30%',
     inputType: 'text',
-    label: 'Ecart entre barres (%)',
-    group: 'Barres',
+    get label() {
+      return t('widgets.echarts.bar.barGap');
+    },
+    get group() {
+      return t('widgets.groups.bars');
+    },
   },
   'echarts.bar.barCategoryGap': {
     default: '20%',
     inputType: 'text',
-    label: 'Ecart entre categories (%)',
-    group: 'Barres',
+    get label() {
+      return t('widgets.echarts.bar.barCategoryGap');
+    },
+    get group() {
+      return t('widgets.groups.bars');
+    },
   },
   'echarts.bar.large': {
     default: false,
     inputType: 'checkbox',
-    label: 'Mode grandes donnees',
-    group: 'Performance',
+    get label() {
+      return t('widgets.echarts.bar.large');
+    },
+    get group() {
+      return t('widgets.groups.performance');
+    },
   },
 };
 
@@ -208,46 +499,74 @@ export const ECHARTS_LINE_PARAMS: Record<string, FieldSchema> = {
   'echarts.line.smooth': {
     default: false,
     inputType: 'checkbox',
-    label: 'Lignes lisses',
-    group: 'Ligne',
+    get label() {
+      return t('widgets.echarts.line.smooth');
+    },
+    get group() {
+      return t('widgets.groups.line');
+    },
   },
   'echarts.line.areaStyle': {
     default: false,
     inputType: 'checkbox',
-    label: 'Afficher aire sous courbe',
-    group: 'Ligne',
+    get label() {
+      return t('widgets.echarts.line.areaStyle');
+    },
+    get group() {
+      return t('widgets.groups.line');
+    },
   },
   'echarts.line.areaOpacity': {
     default: 0.3,
     inputType: 'number',
-    label: 'Opacite aire (0-1)',
-    group: 'Ligne',
+    get label() {
+      return t('widgets.echarts.line.areaOpacity');
+    },
+    get group() {
+      return t('widgets.groups.line');
+    },
   },
   'echarts.line.step': {
     default: 'none',
     inputType: 'select',
-    label: 'Ligne en escalier',
+    get label() {
+      return t('widgets.echarts.line.step');
+    },
     options: LINE_STEP_OPTIONS,
-    group: 'Ligne',
+    get group() {
+      return t('widgets.groups.line');
+    },
   },
   'echarts.line.connectNulls': {
     default: false,
     inputType: 'checkbox',
-    label: 'Connecter valeurs nulles',
-    group: 'Ligne',
+    get label() {
+      return t('widgets.echarts.line.connectNulls');
+    },
+    get group() {
+      return t('widgets.groups.line');
+    },
   },
   'echarts.line.symbol': {
     default: 'circle',
     inputType: 'select',
-    label: 'Symbole des points',
+    get label() {
+      return t('widgets.echarts.line.symbol');
+    },
     options: SYMBOL_TYPE_OPTIONS,
-    group: 'Points',
+    get group() {
+      return t('widgets.groups.points');
+    },
   },
   'echarts.line.symbolSize': {
     default: 4,
     inputType: 'number',
-    label: 'Taille des points',
-    group: 'Points',
+    get label() {
+      return t('widgets.echarts.line.symbolSize');
+    },
+    get group() {
+      return t('widgets.groups.points');
+    },
   },
 };
 
@@ -255,39 +574,63 @@ export const ECHARTS_PIE_PARAMS: Record<string, FieldSchema> = {
   'echarts.pie.roseType': {
     default: 'none',
     inputType: 'select',
-    label: 'Type Nightingale',
+    get label() {
+      return t('widgets.echarts.pie.roseType');
+    },
     options: ROSE_TYPE_OPTIONS,
-    group: 'Pie',
+    get group() {
+      return t('widgets.groups.pie');
+    },
   },
   'echarts.pie.startAngle': {
     default: 90,
     inputType: 'number',
-    label: 'Angle de depart',
-    group: 'Pie',
+    get label() {
+      return t('widgets.echarts.pie.startAngle');
+    },
+    get group() {
+      return t('widgets.groups.pie');
+    },
   },
   'echarts.pie.clockwise': {
     default: true,
     inputType: 'checkbox',
-    label: 'Sens horaire',
-    group: 'Pie',
+    get label() {
+      return t('widgets.echarts.pie.clockwise');
+    },
+    get group() {
+      return t('widgets.groups.pie');
+    },
   },
   'echarts.pie.padAngle': {
     default: 0,
     inputType: 'number',
-    label: 'Ecart entre sections',
-    group: 'Pie',
+    get label() {
+      return t('widgets.echarts.pie.padAngle');
+    },
+    get group() {
+      return t('widgets.groups.pie');
+    },
   },
   'echarts.pie.itemStyle.borderRadius': {
     default: 0,
     inputType: 'number',
-    label: 'Arrondi des sections',
-    group: 'Pie',
+    get label() {
+      return t('widgets.echarts.pie.borderRadius');
+    },
+    get group() {
+      return t('widgets.groups.pie');
+    },
   },
   'echarts.pie.avoidLabelOverlap': {
     default: true,
     inputType: 'checkbox',
-    label: 'Eviter chevauchement labels',
-    group: 'Labels',
+    get label() {
+      return t('widgets.echarts.pie.avoidLabelOverlap');
+    },
+    get group() {
+      return t('widgets.groups.labels');
+    },
   },
 };
 
@@ -295,33 +638,53 @@ export const ECHARTS_RADAR_PARAMS: Record<string, FieldSchema> = {
   'echarts.radar.shape': {
     default: 'polygon',
     inputType: 'select',
-    label: 'Forme du radar',
+    get label() {
+      return t('widgets.echarts.radar.shape');
+    },
     options: RADAR_SHAPE_OPTIONS,
-    group: 'Radar',
+    get group() {
+      return t('widgets.groups.radar');
+    },
   },
   'echarts.radar.splitNumber': {
     default: 5,
     inputType: 'number',
-    label: 'Nombre de cercles',
-    group: 'Radar',
+    get label() {
+      return t('widgets.echarts.radar.splitNumber');
+    },
+    get group() {
+      return t('widgets.groups.radar');
+    },
   },
   'echarts.radar.areaStyle': {
     default: true,
     inputType: 'checkbox',
-    label: 'Remplir la zone',
-    group: 'Radar',
+    get label() {
+      return t('widgets.echarts.radar.areaStyle');
+    },
+    get group() {
+      return t('widgets.groups.radar');
+    },
   },
   'echarts.radar.areaOpacity': {
     default: 0.25,
     inputType: 'number',
-    label: 'Opacite zone (0-1)',
-    group: 'Radar',
+    get label() {
+      return t('widgets.echarts.radar.areaOpacity');
+    },
+    get group() {
+      return t('widgets.groups.radar');
+    },
   },
   'echarts.radar.axisNameShow': {
     default: true,
     inputType: 'checkbox',
-    label: 'Afficher noms axes',
-    group: 'Radar',
+    get label() {
+      return t('widgets.echarts.radar.axisNameShow');
+    },
+    get group() {
+      return t('widgets.groups.radar');
+    },
   },
 };
 
@@ -329,19 +692,31 @@ export const ECHARTS_SCATTER_PARAMS: Record<string, FieldSchema> = {
   'echarts.scatter.symbolRotate': {
     default: 0,
     inputType: 'number',
-    label: 'Rotation symboles',
-    group: 'Points',
+    get label() {
+      return t('widgets.echarts.scatter.symbolRotate');
+    },
+    get group() {
+      return t('widgets.groups.points');
+    },
   },
   'echarts.scatter.large': {
     default: false,
     inputType: 'checkbox',
-    label: 'Mode grandes donnees',
-    group: 'Performance',
+    get label() {
+      return t('widgets.echarts.scatter.large');
+    },
+    get group() {
+      return t('widgets.groups.performance');
+    },
   },
   'echarts.scatter.largeThreshold': {
     default: 2000,
     inputType: 'number',
-    label: 'Seuil grandes donnees',
-    group: 'Performance',
+    get label() {
+      return t('widgets.echarts.scatter.largeThreshold');
+    },
+    get group() {
+      return t('widgets.groups.performance');
+    },
   },
 };

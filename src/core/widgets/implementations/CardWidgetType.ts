@@ -9,15 +9,20 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
-import { FORMAT_OPTIONS, CURRENCY_OPTIONS } from '../schemas';
+import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Card widget type implementation
  */
 export class CardWidgetType extends AbstractWidgetType {
   protected readonly widgetType = 'card' as const;
-  protected readonly widgetLabel = 'Card';
-  protected readonly widgetDescription = 'Carte avec valeur et icone';
+  protected get widgetLabel() {
+    return t('widgets.types.card');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.cardDescription');
+  }
   protected readonly widgetIcon = Squares2X2Icon;
   protected readonly widgetCategory: WidgetCategory = 'metric';
   protected readonly widgetComponent = CardWidget as unknown as WidgetComponent;
@@ -28,31 +33,23 @@ export class CardWidgetType extends AbstractWidgetType {
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: { default: '', inputType: 'text', label: 'Titre' },
-      description: { default: '', inputType: 'text', label: 'Description' },
-      showIcon: { default: true, inputType: 'checkbox', label: 'Afficher une icone' },
-      iconColor: { default: '#6366f1', inputType: 'color', label: "Couleur de l'icone" },
-      valueColor: { default: '#111827', inputType: 'color', label: 'Couleur de la valeur' },
-      format: {
-        default: 'number',
-        inputType: 'select',
-        label: 'Format',
-        options: FORMAT_OPTIONS,
-      },
-      decimals: { default: 2, inputType: 'number', label: 'Decimales' },
-      currency: {
-        default: 'EUR',
-        inputType: 'select',
-        label: 'Devise',
-        options: CURRENCY_OPTIONS,
-      },
+      title: F.title(),
+      description: F.description(),
+      showIcon: F.showIcon(),
+      iconColor: F.iconColor(),
+      valueColor: F.valueColor('#111827'),
+      format: F.format(),
+      decimals: F.decimals(),
+      currency: F.currency(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: false,
-      label: 'Metrique',
+      get label() {
+        return L.metric;
+      },
     };
   }
 

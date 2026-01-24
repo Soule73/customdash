@@ -13,26 +13,31 @@ import {
   ECHARTS_PIE_PARAMS,
   ECHARTS_COMMON_PARAMS,
   DEFAULT_CHART_COLORS,
-  LEGEND_POSITION_OPTIONS,
-  TITLE_ALIGN_OPTIONS,
+  WIDGET_FIELD_SCHEMAS as F,
+  METRIC_CONFIG_LABELS as L,
 } from '../schemas';
+import { t } from '../utils/i18nHelper';
 
 /**
  * Pie chart widget type implementation
  */
 export class PieWidgetType extends AbstractChartWidgetType {
   protected readonly widgetType = 'pie' as const;
-  protected readonly widgetLabel = 'Pie Chart';
-  protected readonly widgetDescription = 'Graphique circulaire pour les proportions';
+  protected get widgetLabel() {
+    return t('widgets.types.pie');
+  }
+  protected get widgetDescription() {
+    return t('widgets.types.pieDescription');
+  }
   protected readonly widgetIcon = ChartPieIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = PieChartWidgetAE as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      colors: { default: [...DEFAULT_CHART_COLORS], inputType: 'color-array', label: 'Couleurs' },
-      borderColor: { default: '#ffffff', inputType: 'color', label: 'Couleur de bordure' },
-      borderWidth: { default: 2, inputType: 'number', label: 'Epaisseur bordure' },
+      colors: F.colors(DEFAULT_CHART_COLORS),
+      borderColor: F.borderColor(),
+      borderWidth: F.borderWidth(),
     };
   }
 
@@ -42,22 +47,12 @@ export class PieWidgetType extends AbstractChartWidgetType {
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: { default: '', inputType: 'text', label: 'Titre' },
-      titleAlign: {
-        default: 'center',
-        inputType: 'select',
-        label: 'Alignement du titre',
-        options: TITLE_ALIGN_OPTIONS,
-      },
-      legend: { default: true, inputType: 'checkbox', label: 'Afficher la legende' },
-      legendPosition: {
-        default: 'right',
-        inputType: 'select',
-        label: 'Position de la legende',
-        options: LEGEND_POSITION_OPTIONS,
-      },
-      cutout: { default: '0%', inputType: 'text', label: 'Trou central (doughnut)' },
-      showValues: { default: false, inputType: 'checkbox', label: 'Afficher les valeurs' },
+      title: F.title(),
+      titleAlign: F.titleAlign(),
+      legend: F.legend(),
+      legendPosition: F.legendPosition('right'),
+      cutout: F.cutout(),
+      showValues: F.showValues(),
       ...ECHARTS_COMMON_PARAMS,
       ...ECHARTS_PIE_PARAMS,
     };
@@ -70,7 +65,9 @@ export class PieWidgetType extends AbstractChartWidgetType {
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: false,
-      label: 'Metrique',
+      get label() {
+        return L.metric;
+      },
     };
   }
 
@@ -78,10 +75,22 @@ export class PieWidgetType extends AbstractChartWidgetType {
     return {
       allow: true,
       allowMultiple: false,
-      label: 'Groupement',
+      get label() {
+        return L.bucket;
+      },
       allowedTypes: [
-        { value: 'terms', label: 'Termes' },
-        { value: 'range', label: 'Plages' },
+        {
+          value: 'terms',
+          get label() {
+            return t('widgets.options.bucketTypes.terms');
+          },
+        },
+        {
+          value: 'range',
+          get label() {
+            return t('widgets.options.bucketTypes.range');
+          },
+        },
       ],
     };
   }

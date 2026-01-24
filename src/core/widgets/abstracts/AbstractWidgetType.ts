@@ -24,8 +24,8 @@ import { AGGREGATION_OPTIONS, BUCKET_TYPE_OPTIONS } from '../schemas';
  */
 export abstract class AbstractWidgetType implements IWidgetType {
   protected abstract readonly widgetType: WidgetType;
-  protected abstract readonly widgetLabel: string;
-  protected abstract readonly widgetDescription: string;
+  protected abstract get widgetLabel(): string;
+  protected abstract get widgetDescription(): string;
   protected abstract readonly widgetIcon: ComponentType<{ className?: string }>;
   protected abstract readonly widgetCategory: WidgetCategory;
   protected abstract readonly widgetComponent: WidgetComponent;
@@ -82,7 +82,7 @@ export abstract class AbstractWidgetType implements IWidgetType {
       allowMultiple: partial.allowMultiple ?? true,
       defaultAgg: partial.defaultAgg ?? 'sum',
       allowedAggs: partial.allowedAggs ?? this.getDefaultAggregationOptions(),
-      label: partial.label ?? 'Metriques',
+      label: partial.label ?? 'Metrics',
     };
   }
 
@@ -90,7 +90,7 @@ export abstract class AbstractWidgetType implements IWidgetType {
     return {
       allow: partial.allow ?? true,
       allowMultiple: partial.allowMultiple ?? true,
-      label: partial.label ?? 'Groupements',
+      label: partial.label ?? 'Buckets',
       allowedTypes: partial.allowedTypes ?? this.getDefaultBucketTypeOptions(),
     };
   }

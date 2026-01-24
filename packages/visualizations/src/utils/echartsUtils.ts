@@ -64,9 +64,7 @@ function mapTitleAlign(align?: string): 'left' | 'center' | 'right' {
 /**
  * Maps widget legend position to ECharts legend config
  */
-function mapLegendPosition(
-  position?: string,
-): Partial<{
+function mapLegendPosition(position?: string): Partial<{
   top: string;
   bottom: string;
   left: string;

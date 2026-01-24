@@ -28,11 +28,9 @@ export interface LineChartWidgetProps {
  * @example
  * const lineChartVM = useLineChartVM({ data, config, widgetParams });
  */
-export function useLineChartVM({
-  data,
-  config,
-  widgetParams = {},
-}: LineChartWidgetProps): LineChartVM {
+export function useLineChartVM({ data, config, widgetParams }: LineChartWidgetProps): LineChartVM {
+  const params = widgetParams || config.widgetParams || {};
+
   const filteredData = useMemo(() => {
     return applyAllFilters(data, config.globalFilters);
   }, [data, config.globalFilters]);
@@ -80,8 +78,8 @@ export function useLineChartVM({
         data: values,
         backgroundColor,
         borderColor,
-        borderWidth: style.borderWidth ?? widgetParams.borderWidth ?? 2,
-        tension: style.tension ?? widgetParams.tension ?? 0.4,
+        borderWidth: style.borderWidth ?? params.borderWidth ?? 2,
+        tension: style.tension ?? params.tension ?? 0.4,
         fill: style.fill ?? false,
         pointRadius: style.pointRadius ?? 3,
         pointHoverRadius: style.pointHoverRadius ?? 5,
@@ -96,16 +94,16 @@ export function useLineChartVM({
     processedData,
     labels,
     filteredData,
-    widgetParams,
+    params,
   ]);
 
   const options = useMemo<ChartOptions<'line'>>(() => {
-    const baseOptions = createBaseOptions('line', widgetParams, labels) as ChartOptions<'line'>;
+    const baseOptions = createBaseOptions('line', params, labels) as ChartOptions<'line'>;
     return {
       ...baseOptions,
       elements: {
         line: {
-          tension: widgetParams.tension ?? 0.4,
+          tension: params.tension ?? 0.4,
         },
         point: {
           radius: 3,
@@ -113,7 +111,7 @@ export function useLineChartVM({
         },
       },
     };
-  }, [widgetParams, labels]);
+  }, [params, labels]);
 
   const chartData = useMemo<ChartData<'line'>>(
     () => ({

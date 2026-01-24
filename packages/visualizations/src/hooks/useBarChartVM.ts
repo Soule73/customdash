@@ -28,11 +28,9 @@ export interface BarChartWidgetProps {
  * @example
  * const barChartVM = useBarChartVM({ data, config, widgetParams });
  */
-export function useBarChartVM({
-  data,
-  config,
-  widgetParams = {},
-}: BarChartWidgetProps): BarChartVM {
+export function useBarChartVM({ data, config, widgetParams }: BarChartWidgetProps): BarChartVM {
+  const params = widgetParams || config.widgetParams || {};
+
   const filteredData = useMemo(() => {
     return applyAllFilters(data, config.globalFilters);
   }, [data, config.globalFilters]);
@@ -80,9 +78,9 @@ export function useBarChartVM({
         data: values,
         backgroundColor,
         borderColor,
-        borderWidth: style.borderWidth ?? widgetParams.borderWidth ?? 1,
-        barThickness: style.barThickness ?? widgetParams.barThickness,
-        borderRadius: style.borderRadius ?? widgetParams.borderRadius ?? 0,
+        borderWidth: style.borderWidth ?? params.borderWidth ?? 1,
+        barThickness: style.barThickness ?? params.barThickness,
+        borderRadius: style.borderRadius ?? params.borderRadius ?? 0,
         borderSkipped: false as const,
       };
     });
@@ -93,12 +91,12 @@ export function useBarChartVM({
     processedData,
     labels,
     filteredData,
-    widgetParams,
+    params,
   ]);
 
   const options = useMemo<ChartOptions<'bar'>>(() => {
-    return createBaseOptions('bar', widgetParams, labels) as ChartOptions<'bar'>;
-  }, [widgetParams, labels]);
+    return createBaseOptions('bar', params, labels) as ChartOptions<'bar'>;
+  }, [params, labels]);
 
   const chartData = useMemo<ChartData<'bar'>>(
     () => ({

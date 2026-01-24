@@ -28,11 +28,9 @@ export interface PieChartWidgetProps {
  * @example
  * const pieChartVM = usePieChartVM({ data, config, widgetParams });
  */
-export function usePieChartVM({
-  data,
-  config,
-  widgetParams = {},
-}: PieChartWidgetProps): PieChartVM {
+export function usePieChartVM({ data, config, widgetParams }: PieChartWidgetProps): PieChartVM {
+  const params = widgetParams || config.widgetParams || {};
+
   const filteredData = useMemo(() => {
     return applyAllFilters(data, config.globalFilters);
   }, [data, config.globalFilters]);
@@ -86,8 +84,8 @@ export function usePieChartVM({
   }, [config.metrics, config.metricStyles, config.buckets, processedData, labels, filteredData]);
 
   const options = useMemo<ChartOptions<'pie'>>(() => {
-    return createPieOptions(widgetParams);
-  }, [widgetParams]);
+    return createPieOptions(params);
+  }, [params]);
 
   const chartData = useMemo<ChartData<'pie'>>(
     () => ({

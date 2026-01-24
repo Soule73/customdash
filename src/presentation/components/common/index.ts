@@ -4,3 +4,5 @@ export { RequireAuth } from './RequireAuth';
 export { GuestOnly } from './GuestOnly';
 export { LanguageSelector } from './LanguageSelector';
 export { PageHeader } from './PageHeader';
+export { SortableList } from './SortableList';
+export { SortableItem } from './SortableItem';

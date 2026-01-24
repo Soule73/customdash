@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { TrashIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import { Input, Select, SearchSelect } from '@customdash/ui';
 import { BUCKET_TYPE_OPTIONS } from '@core/config';
 import type { BucketType, SelectOption } from '@customdash/visualizations';
@@ -55,11 +55,7 @@ export function BucketField({
   const showIntervalField = bucket.type === 'histogram' || bucket.type === 'date_histogram';
 
   return (
-    <div className="group flex items-start gap-2 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
-      <div className="flex cursor-grab items-center pt-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-        <Bars3Icon className="h-4 w-4" />
-      </div>
-
+    <div className="group flex items-start gap-2 rounded-lg border border-gray-200 bg-white p-3 pl-10 dark:border-gray-700 dark:bg-gray-800">
       <div className="flex-1 space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <Select

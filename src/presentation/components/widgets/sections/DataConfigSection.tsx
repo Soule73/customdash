@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { PlusIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
 import { MetricField } from '../fields/MetricField';
@@ -18,6 +19,7 @@ import type { SelectOption } from '@customdash/visualizations';
  * DataConfigSection component for configuring metrics, buckets, and filters
  */
 export function DataConfigSection() {
+  const { t } = useTranslation();
   const type = useWidgetFormType();
   const columns = useWidgetFormColumns();
   const metrics = useWidgetFormMetrics();
@@ -52,8 +54,8 @@ export function DataConfigSection() {
 
   const getSectionTitle = () => {
     if (dataConfig?.datasetSectionTitle) return dataConfig.datasetSectionTitle;
-    if (isDatasetWidget) return 'Datasets';
-    return dataConfig?.metrics?.label || 'Metriques';
+    if (isDatasetWidget) return t('widgets.datasets.title');
+    return dataConfig?.metrics?.label || t('widgets.metrics.label');
   };
 
   return (
@@ -71,7 +73,7 @@ export function DataConfigSection() {
                 leftIcon={<PlusIcon className="h-4 w-4" />}
                 onClick={addMetric}
               >
-                Ajouter
+                {t('widgets.actions.add')}
               </Button>
             )}
           </div>
@@ -98,7 +100,7 @@ export function DataConfigSection() {
         <Card>
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-              {dataConfig?.buckets?.label || 'Dimensions'}
+              {dataConfig?.buckets?.label || t('widgets.sections.dimensions')}
             </h3>
             {allowMultipleBuckets && (
               <Button
@@ -107,7 +109,7 @@ export function DataConfigSection() {
                 leftIcon={<PlusIcon className="h-4 w-4" />}
                 onClick={addBucket}
               >
-                Ajouter
+                {t('widgets.actions.add')}
               </Button>
             )}
           </div>
@@ -130,18 +132,22 @@ export function DataConfigSection() {
       {showFilters && (
         <Card>
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Filtres</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+              {t('widgets.sections.filters')}
+            </h3>
             <Button
               variant="ghost"
               size="sm"
               leftIcon={<FunnelIcon className="h-4 w-4" />}
               onClick={addGlobalFilter}
             >
-              Ajouter un filtre
+              {t('widgets.actions.addFilter')}
             </Button>
           </div>
           {globalFilters.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">Aucun filtre configure</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t('widgets.sections.noFilters')}
+            </p>
           ) : (
             <div className="space-y-3">
               {globalFilters.map((filter, index) => (

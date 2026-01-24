@@ -1,4 +1,5 @@
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Spinner } from '@customdash/ui';
 import { WidgetFormLayout } from '@components/widgets/layout';
 import { useWidgetForm } from '@hooks/widgets/useWidgetForm';
@@ -8,6 +9,7 @@ import { useWidgetFormTitle, useWidgetFormIsLoading } from '@stores/widgetFormSt
  * WidgetEditPage component for editing an existing widget
  */
 export function WidgetEditPage() {
+  const { t } = useTranslation();
   const { id: widgetId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -32,13 +34,8 @@ export function WidgetEditPage() {
 
   return (
     <WidgetFormLayout
-      title="Modifier le widget"
-      subtitle={name || 'Chargement...'}
-      // actions={
-      //   <Button variant="ghost" leftIcon={<ArrowLeftIcon className="h-4 w-4" />} onClick={handleBack}>
-      //     Retour
-      //   </Button>
-      // }
+      title={t('widgets.form.modifyWidget')}
+      subtitle={name || t('widgets.loading')}
       sources={sources}
       isSaving={isSaving}
       isEditMode={isEditMode}

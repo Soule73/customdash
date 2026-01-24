@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Modal, Button, SearchSelect } from '@customdash/ui';
 import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/config';
 import { useDataSources } from '@hooks/datasource.queries';
@@ -15,6 +16,7 @@ interface NewWidgetModalProps {
  * Modal for selecting datasource and widget type before creating a new widget
  */
 export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: dataSources, isLoading: isLoadingSources } = useDataSources();
 
@@ -43,10 +45,9 @@ export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalP
     );
   }, []);
 
-  const categoryLabels: Record<string, string> = {
-    chart: 'Graphiques',
-    metric: 'Metriques',
-    data: 'Donnees',
+  const getCategoryLabel = (category: string): string => {
+    const key = `widgets.categories.${category}` as const;
+    return t(key) || category;
   };
 
   const handleSourceChange = (value: string) => {
@@ -80,35 +81,35 @@ export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalP
   const isValid = selectedSourceId && selectedType;
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Nouveau widget" size="2xl">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('widgets.modal.newWidget')} size="2xl">
       <div className="space-y-5">
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Source de donnees
+            {t('widgets.form.dataSource')}
           </label>
           <SearchSelect
             options={sourceOptions}
             value={selectedSourceId}
             onChange={handleSourceChange}
-            placeholder={isLoadingSources ? 'Chargement...' : 'Selectionnez une source'}
+            placeholder={isLoadingSources ? t('widgets.loading') : t('widgets.form.selectSource')}
             disabled={isLoadingSources}
           />
           {sourceOptions.length === 0 && !isLoadingSources && (
             <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
-              Aucune source disponible. Creez d'abord une source de donnees.
+              {t('widgets.modal.noSourceAvailable')}
             </p>
           )}
         </div>
 
         <div>
           <label className="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Type de widget
+            {t('widgets.form.widgetType')}
           </label>
           <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
             {Object.entries(groupedTypes).map(([category, types]) => (
               <div key={category}>
                 <h4 className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  {categoryLabels[category] || category}
+                  {getCategoryLabel(category)}
                 </h4>
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
                   {types.map(({ type, label, icon: Icon }) => (
@@ -159,10 +160,10 @@ export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalP
 
         <div className="flex justify-end gap-3 pt-4">
           <Button variant="ghost" onClick={handleClose}>
-            Annuler
+            {t('widgets.actions.cancel')}
           </Button>
           <Button variant="primary" onClick={handleConfirm} disabled={!isValid}>
-            Continuer
+            {t('widgets.modal.continue')}
           </Button>
         </div>
       </div>

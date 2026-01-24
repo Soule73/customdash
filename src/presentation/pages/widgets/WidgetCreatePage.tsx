@@ -1,4 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useWidgetForm } from '@hooks/widgets/useWidgetForm';
 import type { WidgetType } from '@customdash/visualizations';
 import { WidgetFormLayout } from '@/presentation/components/widgets/layout';
@@ -7,6 +8,7 @@ import { WidgetFormLayout } from '@/presentation/components/widgets/layout';
  * WidgetCreatePage component for creating a new widget
  */
 export function WidgetCreatePage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -26,13 +28,8 @@ export function WidgetCreatePage() {
 
   return (
     <WidgetFormLayout
-      title="Configurer le widget"
-      subtitle="Configurez les donnees, le style et les parametres du widget"
-      // actions={
-      //   <Button variant="ghost" leftIcon={<ArrowLeftIcon className="h-4 w-4" />} onClick={handleBack}>
-      //     Retour
-      //   </Button>
-      // }
+      title={t('widgets.form.configure')}
+      subtitle={t('widgets.form.configureSubtitle')}
       sources={sources}
       isSaving={isSaving}
       isEditMode={isEditMode}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { TrashIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { Input, Select } from '@customdash/ui';
 import { BUCKET_TYPE_OPTIONS } from '@core/config';
@@ -26,6 +27,8 @@ export function BucketField({
   onUpdate,
   onRemove,
 }: BucketFieldProps) {
+  const { t } = useTranslation();
+
   const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onUpdate(index, { type: e.target.value as BucketType });
   };
@@ -60,31 +63,31 @@ export function BucketField({
       <div className="flex-1 space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <Select
-            label="Type"
+            label={t('widgets.buckets.type')}
             value={bucket.type}
             onChange={handleTypeChange}
             options={allowedTypes}
           />
           <Select
-            label="Champ"
+            label={t('widgets.buckets.field')}
             value={bucket.field}
             onChange={handleFieldChange}
             options={columns}
-            placeholder="Selectionner..."
+            placeholder={t('widgets.actions.select')}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Label"
+            label={t('widgets.buckets.groupLabel')}
             value={bucket.label || ''}
             onChange={handleLabelChange}
-            placeholder="Label du groupement"
+            placeholder={t('widgets.buckets.groupLabel')}
           />
           {showSizeField && (
             <Input
               type="number"
-              label="Nombre max"
+              label={t('widgets.buckets.maxCount')}
               value={bucket.size?.toString() || '10'}
               onChange={handleSizeChange}
               min={1}
@@ -93,7 +96,7 @@ export function BucketField({
           {showIntervalField && (
             <Input
               type="number"
-              label="Intervalle"
+              label={t('widgets.buckets.interval')}
               value={bucket.interval?.toString() || ''}
               onChange={handleIntervalChange}
               min={1}
@@ -107,7 +110,7 @@ export function BucketField({
         onClick={() => onRemove(index)}
         disabled={!canDelete}
         className="mt-2 rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50 dark:hover:bg-red-900/20"
-        aria-label="Supprimer le groupement"
+        aria-label={t('widgets.buckets.deleteBucket')}
       >
         <TrashIcon className="h-4 w-4" />
       </button>

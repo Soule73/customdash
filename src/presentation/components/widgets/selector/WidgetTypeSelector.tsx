@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/config';
 import type { WidgetType } from '@customdash/visualizations';
 
@@ -10,6 +11,8 @@ interface WidgetTypeSelectorProps {
  * WidgetTypeSelector component for choosing the widget type
  */
 export function WidgetTypeSelector({ selectedType, onSelectType }: WidgetTypeSelectorProps) {
+  const { t } = useTranslation();
+
   const groupedTypes = WIDGET_TYPES.reduce(
     (acc, definition) => {
       const category = definition.category;
@@ -22,10 +25,9 @@ export function WidgetTypeSelector({ selectedType, onSelectType }: WidgetTypeSel
     {} as Record<string, WidgetTypeDefinition[]>,
   );
 
-  const categoryLabels: Record<string, string> = {
-    chart: 'Graphiques',
-    metric: 'Metriques',
-    data: 'Donnees',
+  const getCategoryLabel = (category: string): string => {
+    const key = `widgets.categories.${category}` as const;
+    return t(key) || category;
   };
 
   return (
@@ -33,7 +35,7 @@ export function WidgetTypeSelector({ selectedType, onSelectType }: WidgetTypeSel
       {Object.entries(groupedTypes).map(([category, types]) => (
         <div key={category}>
           <h3 className="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">
-            {categoryLabels[category] || category}
+            {getCategoryLabel(category)}
           </h3>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {types.map(({ type, label, icon: Icon }) => (

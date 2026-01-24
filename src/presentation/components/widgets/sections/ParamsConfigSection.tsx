@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@customdash/ui';
 import { ParamField, ParamGroup } from '../fields/ParamField';
 import { getWidgetConfigSchema } from '@core/config';
@@ -19,6 +20,7 @@ interface GroupedParams {
  * ParamsConfigSection component for configuring widget parameters
  */
 export function ParamsConfigSection() {
+  const { t } = useTranslation();
   const type = useWidgetFormType();
   const params = useWidgetFormParams();
   const { updateWidgetParam } = useWidgetFormActions();
@@ -62,7 +64,7 @@ export function ParamsConfigSection() {
     return (
       <Card>
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-          Aucun parametre disponible pour ce type de widget.
+          {t('widgets.sections.noParams')}
         </p>
       </Card>
     );
@@ -74,7 +76,7 @@ export function ParamsConfigSection() {
     <div className="space-y-6">
       <Card>
         <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
-          Parametres generaux
+          {t('widgets.sections.generalParams')}
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {groupedParams.basic.map(([key, schema]) => (
@@ -92,7 +94,7 @@ export function ParamsConfigSection() {
       {showEChartsSection && (
         <Card>
           <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
-            Options ECharts avancees
+            {t('widgets.sections.advancedEcharts')}
           </h3>
           <Accordion
             type="multiple"

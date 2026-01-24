@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlusIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Spinner } from '@customdash/ui';
 import { useWidgets } from '@hooks/index';
 import { NewWidgetModal } from '@components/widgets/modal';
 
 export function WidgetsPage() {
+  const { t } = useTranslation();
   const { data: widgets, isLoading } = useWidgets();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -23,17 +25,17 @@ export function WidgetsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Widgets</h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Gerez vos composants de visualisation
-          </p>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            {t('widgets.title')}
+          </h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('widgets.subtitle')}</p>
         </div>
         <Button
           variant="secondary"
           leftIcon={<PlusIcon className="h-4 w-4" />}
           onClick={handleOpenModal}
         >
-          Nouveau widget
+          {t('widgets.newWidget')}
         </Button>
       </div>
 
@@ -61,9 +63,11 @@ export function WidgetsPage() {
       ) : (
         <Card className="py-12 text-center">
           <ChartBarIcon className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600" />
-          <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">Aucun widget</h3>
+          <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
+            {t('widgets.noWidget')}
+          </h3>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Creez votre premier widget de visualisation
+            {t('widgets.createFirst')}
           </p>
           <Button
             variant="secondary"
@@ -71,7 +75,7 @@ export function WidgetsPage() {
             leftIcon={<PlusIcon className="h-4 w-4" />}
             onClick={handleOpenModal}
           >
-            Creer un widget
+            {t('widgets.create')}
           </Button>
         </Card>
       )}

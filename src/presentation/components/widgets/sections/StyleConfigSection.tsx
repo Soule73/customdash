@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Card } from '@customdash/ui';
 import { MetricStyleFields } from '../fields/StyleField';
 import { getWidgetConfigSchema } from '@core/config';
@@ -12,6 +13,7 @@ import {
  * StyleConfigSection component for configuring metric styles per metric
  */
 export function StyleConfigSection() {
+  const { t } = useTranslation();
   const type = useWidgetFormType();
   const metrics = useWidgetFormMetrics();
   const metricStyles = useWidgetFormMetricStyles();
@@ -25,7 +27,7 @@ export function StyleConfigSection() {
     return (
       <Card>
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-          Aucun style configurable pour ce type de widget.
+          {t('widgets.styles.noStyles')}
         </p>
       </Card>
     );
@@ -35,7 +37,7 @@ export function StyleConfigSection() {
     return (
       <Card>
         <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-          Ajoutez des metriques pour configurer leurs styles.
+          {t('widgets.styles.addMetricsFirst')}
         </p>
       </Card>
     );
@@ -45,7 +47,7 @@ export function StyleConfigSection() {
     <div className="space-y-6">
       <Card>
         <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
-          Styles par metrique
+          {t('widgets.styles.perMetric')}
         </h3>
         <div className="space-y-4">
           {metrics.map((metric, index) => {
@@ -54,7 +56,7 @@ export function StyleConfigSection() {
               <MetricStyleFields
                 key={metric.id}
                 metricIndex={index}
-                metricLabel={metric.label || `Metrique ${metric.field}`}
+                metricLabel={metric.label || `${t('widgets.metrics.singular')} ${metric.field}`}
                 styles={style}
                 schema={metricStylesSchema}
                 onChange={updateMetricStyle}

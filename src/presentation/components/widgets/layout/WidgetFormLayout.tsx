@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ChartBarIcon,
   PaintBrushIcon,
@@ -32,14 +33,16 @@ interface WidgetFormLayoutProps {
   onCancel: () => void;
 }
 
-const TABS: Array<{
+interface TabDefinition {
   id: WidgetFormTab;
-  label: string;
+  labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
-}> = [
-  { id: 'data', label: 'Donnees', icon: ChartBarIcon },
-  { id: 'style', label: 'Style', icon: PaintBrushIcon },
-  { id: 'params', label: 'Parametres', icon: AdjustmentsHorizontalIcon },
+}
+
+const TAB_DEFINITIONS: TabDefinition[] = [
+  { id: 'data', labelKey: 'widgets.form.tabs.data', icon: ChartBarIcon },
+  { id: 'style', labelKey: 'widgets.form.tabs.style', icon: PaintBrushIcon },
+  { id: 'params', labelKey: 'widgets.form.tabs.params', icon: AdjustmentsHorizontalIcon },
 ];
 
 /**
@@ -55,6 +58,7 @@ export function WidgetFormLayout({
   onSave,
   onCancel,
 }: WidgetFormLayoutProps) {
+  const { t } = useTranslation();
   const type = useWidgetFormType();
   const sourceId = useWidgetFormSourceId();
   const name = useWidgetFormTitle();
@@ -64,6 +68,13 @@ export function WidgetFormLayout({
   const { setWidgetTitle, setWidgetDescription, setActiveTab } = useWidgetFormActions();
 
   const [showSaveModal, setShowSaveModal] = useState(false);
+
+  const tabs = useMemo(() => {
+    return TAB_DEFINITIONS.map(tab => ({
+      ...tab,
+      label: t(tab.labelKey),
+    }));
+  }, [t]);
 
   const handleTabChange = (tab: WidgetFormTab) => {
     setActiveTab(tab);
@@ -86,10 +97,10 @@ export function WidgetFormLayout({
         actions={
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" onClick={onCancel} disabled={isSaving}>
-              Annuler
+              {t('widgets.actions.cancel')}
             </Button>
             <Button size="sm" onClick={handleSaveClick} isLoading={isSaving} disabled={!sourceId}>
-              {isEditMode ? 'Mettre a jour' : 'Enregistrer'}
+              {isEditMode ? t('widgets.actions.update') : t('widgets.actions.save')}
             </Button>
           </div>
         }
@@ -98,7 +109,7 @@ export function WidgetFormLayout({
       <div className="flex h-full flex-col flex-1 overflow-hidden p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {isEditMode ? 'Modifier le widget' : 'Configurer le widget'}
+            {isEditMode ? t('widgets.form.modifyWidget') : t('widgets.form.configure')}
           </h2>
         </div>
 
@@ -107,16 +118,16 @@ export function WidgetFormLayout({
             <Card className="shrink-0">
               <div className="grid gap-4">
                 <Select
-                  label="Source de donnees"
+                  label={t('widgets.form.dataSource')}
                   value={sourceId}
                   onChange={e => onSourceChange(e.target.value)}
                   options={sources}
-                  placeholder="Selectionnez une source"
+                  placeholder={t('widgets.form.selectSource')}
                   required
                 />
                 <div>
                   <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Type de widget
+                    {t('widgets.form.widgetType')}
                   </span>
                   <div className="flex h-10 items-center rounded-md border border-gray-300 bg-gray-50 px-3 dark:border-gray-600 dark:bg-gray-700">
                     <span className="text-sm text-gray-700 dark:text-gray-300">
@@ -129,7 +140,7 @@ export function WidgetFormLayout({
 
             <div className="flex flex-1 flex-col overflow-hidden">
               <div className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Apercu
+                {t('widgets.form.preview')}
               </div>
               <div className="flex-1 overflow-hidden">
                 <WidgetPreview isLoading={isLoading} />
@@ -140,7 +151,7 @@ export function WidgetFormLayout({
           <div className="flex w-3/5 flex-col overflow-hidden">
             <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
               <nav className="-mb-px flex space-x-4">
-                {TABS.map(({ id, label, icon: Icon }) => (
+                {tabs.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
                     type="button"
@@ -172,28 +183,28 @@ export function WidgetFormLayout({
         <Modal
           isOpen={showSaveModal}
           onClose={() => setShowSaveModal(false)}
-          title={isEditMode ? 'Mettre a jour le widget' : 'Enregistrer le widget'}
+          title={isEditMode ? t('widgets.modal.updateWidget') : t('widgets.modal.saveWidget')}
         >
           <div className="space-y-4">
             <Input
-              label="Nom du widget"
+              label={t('widgets.form.widgetName')}
               value={name}
               onChange={e => setWidgetTitle(e.target.value)}
-              placeholder="Ex: Ventes mensuelles"
+              placeholder={t('widgets.form.widgetNamePlaceholder')}
               required
             />
             <Input
-              label="Description (optionnel)"
+              label={t('widgets.form.descriptionOptional')}
               value={description}
               onChange={e => setWidgetDescription(e.target.value)}
-              placeholder="Ex: Graphique des ventes par mois"
+              placeholder={t('widgets.form.descriptionPlaceholder')}
             />
             <div className="flex justify-end gap-3 pt-4">
               <Button variant="outline" onClick={() => setShowSaveModal(false)}>
-                Annuler
+                {t('widgets.actions.cancel')}
               </Button>
               <Button onClick={handleConfirmSave} disabled={!name}>
-                {isEditMode ? 'Mettre a jour' : 'Enregistrer'}
+                {isEditMode ? t('widgets.actions.update') : t('widgets.actions.save')}
               </Button>
             </div>
           </div>

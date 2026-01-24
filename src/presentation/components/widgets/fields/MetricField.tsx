@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { TrashIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import { Button, Checkbox, Input, Select } from '@customdash/ui';
 import { AGGREGATION_OPTIONS } from '@core/config';
@@ -30,6 +31,8 @@ export function MetricField({
   showR = false,
   showFields = false,
 }: MetricFieldProps) {
+  const { t } = useTranslation();
+
   const handleAggChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onUpdate(index, { agg: e.target.value as AggregationType });
   };
@@ -65,17 +68,17 @@ export function MetricField({
         {!showXY && !showFields && (
           <div className="grid grid-cols-2 gap-3">
             <Select
-              label="Agregation"
+              label={t('widgets.metrics.aggregation')}
               value={metric.agg}
               onChange={handleAggChange}
               options={AGGREGATION_OPTIONS}
             />
             <Select
-              label="Champ"
+              label={t('widgets.metrics.field')}
               value={metric.field}
               onChange={handleFieldChange}
               options={columns}
-              placeholder="Selectionner..."
+              placeholder={t('widgets.actions.select')}
             />
           </div>
         )}
@@ -83,36 +86,36 @@ export function MetricField({
         {showXY && (
           <div className="grid grid-cols-2 gap-3">
             <Select
-              label="Champ X"
+              label={t('widgets.metrics.xField')}
               value={metric.x || ''}
               onChange={handleXChange}
               options={columns}
-              placeholder="Selectionner..."
+              placeholder={t('widgets.actions.select')}
             />
             <Select
-              label="Champ Y"
+              label={t('widgets.metrics.yField')}
               value={metric.y || ''}
               onChange={handleYChange}
               options={columns}
-              placeholder="Selectionner..."
+              placeholder={t('widgets.actions.select')}
             />
           </div>
         )}
 
         {showR && (
           <Select
-            label="Champ R (rayon)"
+            label={t('widgets.metrics.rField')}
             value={metric.r || ''}
             onChange={handleRChange}
             options={columns}
-            placeholder="Selectionner..."
+            placeholder={t('widgets.actions.select')}
           />
         )}
 
         {showFields && (
           <div className="space-y-2">
             <span className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Axes a inclure
+              {t('widgets.metrics.axesToInclude')}
             </span>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
               {columns.map(col => {
@@ -138,11 +141,13 @@ export function MetricField({
         )}
 
         <Input
-          label="Label du dataset"
+          label={t('widgets.metrics.datasetLabel')}
           value={metric.label}
           onChange={handleLabelChange}
           placeholder={
-            showXY || showFields ? 'Ex: Serie 1, Donnees 2024...' : 'Label de la metrique'
+            showXY || showFields
+              ? t('widgets.metrics.datasetPlaceholder')
+              : t('widgets.metrics.metricLabel')
           }
         />
       </div>
@@ -153,7 +158,7 @@ export function MetricField({
         onClick={() => onRemove(index)}
         disabled={!canDelete}
         className="mt-2 text-gray-400 hover:text-red-500 disabled:opacity-50"
-        aria-label="Supprimer la metrique"
+        aria-label={t('widgets.metrics.deleteMetric')}
       >
         <TrashIcon className="h-4 w-4" />
       </Button>

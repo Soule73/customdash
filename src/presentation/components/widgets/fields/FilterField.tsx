@@ -1,19 +1,21 @@
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Select, Input } from '@customdash/ui';
 import type { FilterOperator, SelectOption } from '@customdash/visualizations';
 import type { GlobalFilter } from '@type/widget-form.types';
 
-const OPERATOR_OPTIONS: SelectOption<FilterOperator>[] = [
-  { value: 'equals', label: 'Egal a' },
-  { value: 'not_equals', label: 'Different de' },
-  { value: 'contains', label: 'Contient' },
-  { value: 'not_contains', label: 'Ne contient pas' },
-  { value: 'greater_than', label: 'Superieur a' },
-  { value: 'less_than', label: 'Inferieur a' },
-  { value: 'greater_equal', label: 'Superieur ou egal' },
-  { value: 'less_equal', label: 'Inferieur ou egal' },
-  { value: 'starts_with', label: 'Commence par' },
-  { value: 'ends_with', label: 'Termine par' },
+const OPERATOR_KEYS: FilterOperator[] = [
+  'equals',
+  'not_equals',
+  'contains',
+  'not_contains',
+  'greater_than',
+  'less_than',
+  'greater_equal',
+  'less_equal',
+  'starts_with',
+  'ends_with',
 ];
 
 interface FilterFieldProps {
@@ -28,6 +30,15 @@ interface FilterFieldProps {
  * FilterField component for configuring a single global filter
  */
 export function FilterField({ filter, index, columns, onUpdate, onRemove }: FilterFieldProps) {
+  const { t } = useTranslation();
+
+  const operatorOptions: SelectOption<FilterOperator>[] = useMemo(() => {
+    return OPERATOR_KEYS.map(key => ({
+      value: key,
+      label: t(`widgets.operators.${key}`),
+    }));
+  }, [t]);
+
   const handleFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onUpdate(index, { field: e.target.value });
   };
@@ -44,23 +55,23 @@ export function FilterField({ filter, index, columns, onUpdate, onRemove }: Filt
     <div className="flex items-end gap-2 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
       <div className="flex-1 grid grid-cols-3 gap-3">
         <Select
-          label="Champ"
+          label={t('widgets.filters.field')}
           value={filter.field}
           onChange={handleFieldChange}
           options={columns}
-          placeholder="Selectionner..."
+          placeholder={t('widgets.actions.select')}
         />
         <Select
-          label="Operateur"
+          label={t('widgets.filters.operator')}
           value={filter.operator}
           onChange={handleOperatorChange}
-          options={OPERATOR_OPTIONS}
+          options={operatorOptions}
         />
         <Input
-          label="Valeur"
+          label={t('widgets.filters.value')}
           value={String(filter.value)}
           onChange={handleValueChange}
-          placeholder="Valeur..."
+          placeholder={t('widgets.filters.valuePlaceholder')}
         />
       </div>
 
@@ -68,7 +79,7 @@ export function FilterField({ filter, index, columns, onUpdate, onRemove }: Filt
         type="button"
         onClick={() => onRemove(index)}
         className="mb-1 rounded p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
-        aria-label="Supprimer le filtre"
+        aria-label={t('widgets.filters.deleteFilter')}
       >
         <TrashIcon className="h-4 w-4" />
       </button>

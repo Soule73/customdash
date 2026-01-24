@@ -11,10 +11,11 @@ import {
   ChatBubbleLeftRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  GlobeAltIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Avatar, Tooltip } from '@customdash/ui';
 import { cn } from '@customdash/utils';
-import { Logo, ThemeToggle } from '@components/common';
+import { Logo, ThemeToggle, LanguageSelector } from '@components/common';
 import { useAuthStore } from '@stores/authStore';
 import { useLogout } from '@hooks/index';
 import { useAppTranslation, type TranslationKey } from '@hooks/useAppTranslation';
@@ -61,18 +62,18 @@ export function AppLayout() {
       <aside
         className={cn(
           'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950',
-          'lg:static lg:translate-x-0 transition-all duration-200',
+          'lg:static lg:translate-x-0 transition-all duration-300 ease-in-out',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-          collapsed ? 'w-16' : 'w-64',
+          collapsed ? 'w-[72px]' : 'w-64',
         )}
       >
-        <div className="flex h-14 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-800">
-          {!collapsed && <Logo size="sm" />}
-          {collapsed && (
-            <div className="w-full flex justify-center">
-              <Logo size="sm" showText={false} />
-            </div>
+        <div
+          className={cn(
+            'flex h-16 shrink-0 items-center border-b border-gray-200 dark:border-gray-800',
+            collapsed ? 'justify-center px-2' : 'justify-between px-4',
           )}
+        >
+          {collapsed ? <Logo size="sm" showText={false} /> : <Logo size="sm" />}
           <Button
             variant="ghost"
             size="sm"
@@ -83,7 +84,7 @@ export function AppLayout() {
           </Button>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-1 p-3">
+        <nav className="flex flex-1 flex-col overflow-y-auto p-3">
           <div className="flex-1 space-y-1">
             {navigation.map(item => (
               <Tooltip
@@ -91,107 +92,191 @@ export function AppLayout() {
                 content={t(item.nameKey)}
                 position="right"
                 disabled={!collapsed}
+                className={collapsed ? '' : 'w-full'}
               >
                 <NavLink
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
                       collapsed && 'justify-center px-2',
                       isActive
-                        ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
+                        ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
                     )
                   }
                 >
-                  <item.icon className="h-5 w-5 shrink-0" />
-                  {!collapsed && t(item.nameKey)}
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary-600 dark:bg-primary-500" />
+                      )}
+                      <item.icon
+                        className={cn(
+                          'h-5 w-5 shrink-0 transition-transform duration-200',
+                          !isActive && 'group-hover:scale-110',
+                        )}
+                      />
+                      {!collapsed && <span>{t(item.nameKey)}</span>}
+                    </>
+                  )}
                 </NavLink>
               </Tooltip>
             ))}
           </div>
 
-          <div className="border-t border-gray-200 pt-3 dark:border-gray-800">
+          <div className="mt-auto space-y-3 border-t border-gray-200 pt-3 dark:border-gray-800">
             {bottomNav.map(item => (
               <Tooltip
                 key={item.nameKey}
                 content={t(item.nameKey)}
                 position="right"
                 disabled={!collapsed}
+                className={collapsed ? '' : 'w-full'}
               >
                 <NavLink
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
                     cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
                       collapsed && 'justify-center px-2',
                       isActive
-                        ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
+                        ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
                     )
                   }
                 >
-                  <item.icon className="h-5 w-5 shrink-0" />
-                  {!collapsed && t(item.nameKey)}
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary-600 dark:bg-primary-500" />
+                      )}
+                      <item.icon
+                        className={cn(
+                          'h-5 w-5 shrink-0 transition-transform duration-200',
+                          !isActive && 'group-hover:scale-110',
+                        )}
+                      />
+                      {!collapsed && <span>{t(item.nameKey)}</span>}
+                    </>
+                  )}
                 </NavLink>
               </Tooltip>
             ))}
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCollapsed(!collapsed)}
+            <div
               className={cn(
-                'hidden lg:flex w-full mt-2 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium',
-                'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800/50 dark:hover:text-white',
-                collapsed && 'justify-center px-2',
+                'flex items-center gap-2',
+                collapsed ? 'flex-col' : 'justify-between px-1',
               )}
             >
-              {collapsed ? (
-                <ChevronRightIcon className="h-5 w-5 shrink-0" />
-              ) : (
-                <>
-                  <ChevronLeftIcon className="h-5 w-5 shrink-0" />
-                  {t('layout.collapse')}
-                </>
+              <Tooltip content={t('layout.theme')} position="right" disabled={!collapsed}>
+                <ThemeToggle />
+              </Tooltip>
+              {!collapsed && <LanguageSelector className="w-28" />}
+              {collapsed && (
+                <Tooltip content={t('layout.language')} position="right">
+                  <button
+                    type="button"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                  >
+                    <GlobeAltIcon className="h-5 w-5" />
+                  </button>
+                </Tooltip>
               )}
-            </Button>
+            </div>
+
+            <Tooltip
+              content={collapsed ? t('layout.expand') : t('layout.collapse')}
+              position="right"
+              disabled={!collapsed}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCollapsed(!collapsed)}
+                className={cn(
+                  'hidden lg:flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
+                  'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
+                  collapsed && 'justify-center px-2',
+                )}
+              >
+                {collapsed ? (
+                  <ChevronRightIcon className="h-5 w-5 shrink-0" />
+                ) : (
+                  <>
+                    <ChevronLeftIcon className="h-5 w-5 shrink-0" />
+                    <span>{t('layout.collapse')}</span>
+                  </>
+                )}
+              </Button>
+            </Tooltip>
           </div>
         </nav>
-      </aside>
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-950">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden"
+        <div
+          className={cn(
+            'border-t border-gray-200 p-3 dark:border-gray-800',
+            collapsed && 'flex justify-center',
+          )}
+        >
+          <div
+            className={cn(
+              'flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800',
+              collapsed && 'justify-center p-1',
+            )}
           >
-            <Bars3Icon className="h-5 w-5" />
-          </Button>
-
-          <div className="flex-1 lg:ml-0" />
-
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-
-            <div className="flex items-center gap-2 border-l border-gray-200 pl-3 dark:border-gray-700">
-              <Avatar size="sm" name={user?.username || t('layout.user')} />
-              <div className="hidden sm:block">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
+            <Avatar size="sm" name={user?.username || t('layout.user')} />
+            {!collapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                   {user?.username || t('layout.user')}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email || ''}</p>
+                <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                  {user?.email || ''}
+                </p>
               </div>
-              <Tooltip content={t('auth.logout')} position="bottom">
-                <Button variant="ghost" size="sm" onClick={handleLogout}>
+            )}
+            {!collapsed && (
+              <Tooltip content={t('auth.logout')} position="top">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="shrink-0 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                >
                   <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
                 </Button>
               </Tooltip>
-            </div>
+            )}
+          </div>
+          {collapsed && (
+            <Tooltip content={t('auth.logout')} position="right">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="mt-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+              >
+                <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
+              </Button>
+            </Tooltip>
+          )}
+        </div>
+      </aside>
+
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <header className="flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 lg:hidden dark:border-gray-800 dark:bg-gray-950">
+          <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)}>
+            <Bars3Icon className="h-5 w-5" />
+          </Button>
+
+          <Logo size="sm" />
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
           </div>
         </header>
 

@@ -17,4 +17,6 @@ export const layout = {
   darkMode: 'Dark mode',
   collapse: 'Collapse',
   expand: 'Expand',
+  theme: 'Theme',
+  language: 'Language',
 };

@@ -109,15 +109,15 @@ export function WidgetFormLayout({
         }
       />
 
-      <div className="flex h-full flex-col flex-1 overflow-hidden p-6">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="flex h-full flex-col flex-1 overflow-hidden">
+        {/* <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             {isEditMode ? t('widgets.form.modifyWidget') : t('widgets.form.configure')}
           </h2>
-        </div>
+        </div> */}
 
         <div className="flex flex-1 gap-6 overflow-hidden">
-          <div className="flex w-2/5 flex-col gap-4">
+          <div className="flex w-1/2 flex-col gap-4">
             <Card className="shrink-0">
               <div className="grid gap-4">
                 <Select
@@ -151,7 +151,7 @@ export function WidgetFormLayout({
             </div>
           </div>
 
-          <div className="flex w-3/5 flex-col overflow-hidden">
+          <div className="flex w-1/2 flex-col overflow-hidden">
             <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
               <nav className="-mb-px flex space-x-4">
                 {tabs.map(({ id, label, icon: Icon }) => (

@@ -17,4 +17,6 @@ export const layout = {
   darkMode: 'Mode sombre',
   collapse: 'Reduire',
   expand: 'Agrandir',
+  theme: 'Theme',
+  language: 'Langue',
 };

@@ -7,3 +7,5 @@ export * from './datasource.queries';
 export * from './processing.queries';
 export * from './ai-conversation.queries';
 export * from './useAppTranslation';
+export * from './useNotifications';
+export * from './widgets';

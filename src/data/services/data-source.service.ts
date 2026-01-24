@@ -14,6 +14,15 @@ export const dataSourceService = {
     return httpClient.get<DataSource>(`/datasources/${id}`);
   },
 
+  async getData(id: string): Promise<Record<string, unknown>[]> {
+    const response = await httpClient.get<{
+      success: boolean;
+      data: Record<string, unknown>[];
+      total: number;
+    }>(`/processing/datasources/${id}/data`);
+    return response.data;
+  },
+
   async create(data: CreateDataSourceData): Promise<DataSource> {
     return httpClient.post<DataSource>('/datasources', data);
   },

@@ -1,5 +1,5 @@
 import { ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
-import { BubbleChartWidgetAE } from '@customdash/visualizations';
+import { BubbleChartWidget } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import type {
   IMetricsConfig,
@@ -29,7 +29,7 @@ export class BubbleWidgetType extends AbstractChartWidgetType {
   }
   protected readonly widgetIcon = ChatBubbleLeftIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
-  protected readonly widgetComponent = BubbleChartWidgetAE as unknown as WidgetComponent;
+  protected readonly widgetComponent = BubbleChartWidget as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {

@@ -1,5 +1,5 @@
 import { ChartBarIcon } from '@heroicons/react/24/outline';
-import { BarChartWidgetAE } from '@customdash/visualizations';
+import { BarChartWidget } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import type {
   IMetricsConfig,
@@ -29,7 +29,7 @@ export class BarWidgetType extends AbstractChartWidgetType {
   }
   protected readonly widgetIcon = ChartBarIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
-  protected readonly widgetComponent = BarChartWidgetAE as unknown as WidgetComponent;
+  protected readonly widgetComponent = BarChartWidget as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {

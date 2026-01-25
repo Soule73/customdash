@@ -1,5 +1,5 @@
 import { ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
-import { LineChartWidgetAE } from '@customdash/visualizations';
+import { LineChartWidget } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import type {
   IMetricsConfig,
@@ -29,7 +29,7 @@ export class LineWidgetType extends AbstractChartWidgetType {
   }
   protected readonly widgetIcon = ArrowTrendingUpIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
-  protected readonly widgetComponent = LineChartWidgetAE as unknown as WidgetComponent;
+  protected readonly widgetComponent = LineChartWidget as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {

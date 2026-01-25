@@ -1,22 +1,22 @@
 export const navigation = {
   dashboard: 'Tableau de bord',
   dashboards: 'Tableaux de bord',
-  datasources: 'Sources de donnees',
+  datasources: 'Sources de données',
   widgets: 'Widgets',
-  settings: 'Parametres',
+  settings: 'Paramètres',
   users: 'Utilisateurs',
-  roles: 'Roles',
+  roles: 'Rôles',
   profile: 'Profil',
   aiAssistant: 'Assistant IA',
 };
 
 export const layout = {
-  footer: "CustomDash - Plateforme d'analyse de donnees",
+  footer: "CustomDash - Plateforme d'analyse de données",
   user: 'Utilisateur',
   lightMode: 'Mode clair',
   darkMode: 'Mode sombre',
-  collapse: 'Reduire',
+  collapse: 'Réduire',
   expand: 'Agrandir',
-  theme: 'Theme',
+  theme: 'Thème',
   language: 'Langue',
 };

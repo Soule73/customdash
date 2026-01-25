@@ -1,5 +1,5 @@
 import { CursorArrowRaysIcon } from '@heroicons/react/24/outline';
-import { ScatterChartWidgetAE } from '@customdash/visualizations';
+import { ScatterChartWidget } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import type {
   IMetricsConfig,
@@ -29,7 +29,7 @@ export class ScatterWidgetType extends AbstractChartWidgetType {
   }
   protected readonly widgetIcon = CursorArrowRaysIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
-  protected readonly widgetComponent = ScatterChartWidgetAE as unknown as WidgetComponent;
+  protected readonly widgetComponent = ScatterChartWidget as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {

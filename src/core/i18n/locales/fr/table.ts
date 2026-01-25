@@ -1,9 +1,9 @@
 export const table = {
   search: 'Rechercher...',
-  noResults: 'Aucun resultat trouve',
+  noResults: 'Aucun résultat trouvé',
   showing: 'Affichage de',
   of: 'sur',
-  results: 'resultats',
+  results: 'résultats',
   rowsPerPage: 'Lignes par page',
 };
 
@@ -11,7 +11,7 @@ export const columnTypes = {
   string: 'Texte',
   number: 'Nombre',
   integer: 'Entier',
-  boolean: 'Booleen',
+  boolean: 'Booléen',
   date: 'Date',
   datetime: 'Date/Heure',
   object: 'Objet',

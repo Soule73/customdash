@@ -1,5 +1,5 @@
 import { PresentationChartLineIcon } from '@heroicons/react/24/outline';
-import { RadarChartWidgetAE } from '@customdash/visualizations';
+import { RadarChartWidget } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import type {
   IMetricsConfig,
@@ -30,7 +30,7 @@ export class RadarWidgetType extends AbstractChartWidgetType {
   }
   protected readonly widgetIcon = PresentationChartLineIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
-  protected readonly widgetComponent = RadarChartWidgetAE as unknown as WidgetComponent;
+  protected readonly widgetComponent = RadarChartWidget as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {

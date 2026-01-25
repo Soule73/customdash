@@ -1,5 +1,5 @@
 import { ChartPieIcon } from '@heroicons/react/24/outline';
-import { PieChartWidgetAE } from '@customdash/visualizations';
+import { PieChartWidget } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import type {
   IMetricsConfig,
@@ -31,7 +31,7 @@ export class PieWidgetType extends AbstractChartWidgetType {
   }
   protected readonly widgetIcon = ChartPieIcon;
   protected readonly widgetCategory: WidgetCategory = 'chart';
-  protected readonly widgetComponent = PieChartWidgetAE as unknown as WidgetComponent;
+  protected readonly widgetComponent = PieChartWidget as unknown as WidgetComponent;
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {

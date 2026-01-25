@@ -1,10 +1,17 @@
-import type { WidgetType, WidgetParams, MetricStyle, Filter } from '@customdash/visualizations';
+import type {
+  WidgetType,
+  WidgetParams,
+  MetricStyle,
+  Filter,
+  ChartConfig,
+} from '@customdash/visualizations';
 import type {
   MetricConfig,
   BucketConfig,
   WidgetFormConfig,
   FieldSchema,
 } from '@type/widget-form.types';
+import type { Widget } from '@type/widget.types';
 import type { IWidgetConfigSchema, IWidgetDataConfig } from '../interfaces';
 
 /**
@@ -78,4 +85,6 @@ export interface IWidgetFormService {
   applySchemaDefaults(type: WidgetType, existingParams: WidgetParams): WidgetParams;
 
   setNestedParam(params: WidgetParams, key: string, value: unknown): WidgetParams;
+
+  buildChartConfig(widget: Widget): ChartConfig;
 }

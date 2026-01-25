@@ -6,7 +6,6 @@ import {
   CloudArrowUpIcon,
   PencilSquareIcon,
   TrashIcon,
-  // EyeIcon,
   GlobeAltIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
@@ -14,6 +13,7 @@ import { Button, Card, Table, Skeleton, Badge, Modal } from '@customdash/ui';
 import { useDataSources, useDeleteDataSource } from '@hooks/index';
 import { useAppTranslation } from '@hooks/useAppTranslation';
 import { formatDate } from '@customdash/utils';
+import { usePaginatedSearch } from '@hooks/usePaginatedSearch';
 import { CsvUploadModal } from './CsvUploadModal';
 import type { DataSource } from '@type/datasource.types';
 
@@ -56,29 +56,33 @@ export function DataSourcesPage() {
   const { data: dataSources, isLoading } = useDataSources();
   const deleteDataSource = useDeleteDataSource();
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [csvModalOpen, setCsvModalOpen] = useState(false);
   const [selectedSource, setSelectedSource] = useState<DataSource | null>(null);
 
-  const filteredSources = useMemo(() => {
+  const typeFilteredSources = useMemo(() => {
     if (!dataSources) return [];
+    if (typeFilter === 'all') return dataSources;
+    return dataSources.filter(source => source.type === typeFilter);
+  }, [dataSources, typeFilter]);
 
-    return dataSources.filter(source => {
-      const matchesSearch = source.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesType = typeFilter === 'all' || source.type === typeFilter;
-      return matchesSearch && matchesType;
-    });
-  }, [dataSources, searchQuery, typeFilter]);
-
-  const paginatedSources = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredSources.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredSources, currentPage]);
-
-  const totalPages = Math.ceil(filteredSources.length / ITEMS_PER_PAGE);
+  const {
+    paginatedData: paginatedSources,
+    totalPages,
+    totalItems,
+    currentPage,
+    search: searchQuery,
+    setSearch: setSearchQuery,
+    goToFirstPage,
+    goToLastPage,
+    goToPrevPage,
+    goToNextPage,
+  } = usePaginatedSearch<DataSource>({
+    data: typeFilteredSources,
+    searchFields: ['name'],
+    pageSize: ITEMS_PER_PAGE,
+  });
 
   const handleDelete = (source: DataSource) => {
     setSelectedSource(source);
@@ -249,19 +253,19 @@ export function DataSourcesPage() {
             </Table.Body>
           </Table>
 
-          {filteredSources.length === 0 && <Table.Empty title={t('table.noResults')} />}
+          {paginatedSources.length === 0 && <Table.Empty title={t('table.noResults')} />}
 
           {totalPages > 1 && (
             <div className="mt-4">
               <Table.Pagination
                 currentPage={currentPage - 1}
                 totalPages={totalPages}
-                totalRows={filteredSources.length}
+                totalRows={totalItems}
                 pageSize={ITEMS_PER_PAGE}
-                onFirst={() => setCurrentPage(1)}
-                onPrev={() => setCurrentPage(p => Math.max(1, p - 1))}
-                onNext={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                onLast={() => setCurrentPage(totalPages)}
+                onFirst={goToFirstPage}
+                onPrev={goToPrevPage}
+                onNext={goToNextPage}
+                onLast={goToLastPage}
               />
             </div>
           )}

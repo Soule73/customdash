@@ -6,7 +6,12 @@ import type {
   Filter,
   AggregationType,
   BucketType,
+  FilterOperator,
+  Metric,
+  MultiBucketConfig,
+  ChartConfig,
 } from '@customdash/visualizations';
+import type { Widget } from '@type/widget.types';
 import type {
   MetricConfig,
   BucketConfig,
@@ -225,6 +230,70 @@ export class WidgetFormService implements IWidgetFormService {
       return setNestedValue(params as Record<string, unknown>, key, value) as WidgetParams;
     }
     return { ...params, [key]: value };
+  }
+
+  buildChartConfig(widget: Widget): ChartConfig {
+    const { config, type } = widget;
+    const isDatasetChart = type === 'scatter' || type === 'bubble' || type === 'radar';
+
+    interface RawMetricConfig {
+      field?: string;
+      agg?: string;
+      label?: string;
+      x?: string;
+      y?: string;
+      r?: string;
+      fields?: string[];
+    }
+
+    const rawMetrics = (config.metrics || []) as RawMetricConfig[];
+
+    const metrics: Metric[] = rawMetrics
+      .filter((m): m is RawMetricConfig => {
+        if (isDatasetChart) {
+          if (type === 'scatter') return Boolean(m.x && m.y);
+          if (type === 'bubble') return Boolean(m.x && m.y && m.r);
+          if (type === 'radar') return Boolean(m.fields && m.fields.length > 0);
+        }
+        return Boolean(m.field);
+      })
+      .map(m => ({
+        field: m.field || '',
+        agg: (m.agg || 'count') as AggregationType,
+        label: m.label || m.field || '',
+        x: m.x,
+        y: m.y,
+        r: m.r,
+        fields: m.fields,
+      }));
+
+    const buckets: MultiBucketConfig[] = (config.buckets || [])
+      .filter(b => b.field)
+      .map(b => ({
+        field: b.field,
+        type: (b.type || 'terms') as BucketType,
+        label: b.label || b.field,
+        size: b.size,
+        interval: b.interval,
+      }));
+
+    const globalFilters: Filter[] = (config.globalFilters || [])
+      .filter(f => f.field && f.value !== undefined)
+      .map(f => ({
+        field: f.field,
+        operator: f.operator as FilterOperator,
+        value: f.value as string | number | boolean | (string | number)[],
+      }));
+
+    const metricStyles = (config.metricStyles || []).map(s => ({ ...s }));
+
+    return {
+      metrics,
+      buckets,
+      globalFilters,
+      metricStyles,
+      widgetParams: (config.widgetParams || {}) as WidgetParams,
+    };
   }
 
   private getDataConfigByType(datasetType: string): IWidgetDataConfig | undefined {

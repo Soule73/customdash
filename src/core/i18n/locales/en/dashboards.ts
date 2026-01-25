@@ -10,4 +10,13 @@ export const dashboards = {
   delete: 'Delete dashboard',
   addWidget: 'Add widget',
   emptyState: 'No widgets yet. Add your first widget to get started.',
+  searchPlaceholder: 'Search dashboards...',
+  confirmDelete: 'Delete dashboard',
+  deleteWarning: 'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
+  table: {
+    name: 'Name',
+    widgets: 'Widgets',
+    visibility: 'Visibility',
+    createdAt: 'Created at',
+  },
 };

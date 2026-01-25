@@ -1,6 +1,6 @@
 export interface Dashboard {
   id: string;
-  name: string;
+  title: string;
   description?: string;
   ownerId: string;
   layout: LayoutItem[];
@@ -11,6 +11,7 @@ export interface Dashboard {
 }
 
 export interface LayoutItem {
+  i: string;
   widgetId: string;
   x: number;
   y: number;
@@ -21,13 +22,14 @@ export interface LayoutItem {
 }
 
 export interface CreateDashboardData {
-  name: string;
+  title: string;
   description?: string;
+  layout?: LayoutItem[];
   visibility?: 'private' | 'public' | 'shared';
 }
 
 export interface UpdateDashboardData {
-  name?: string;
+  title?: string;
   description?: string;
   layout?: LayoutItem[];
   visibility?: 'private' | 'public' | 'shared';

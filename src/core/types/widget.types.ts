@@ -22,7 +22,7 @@ export interface WidgetConfigData {
     operator: string;
     value: unknown;
   }>;
-  styles?: Record<string, unknown>;
+  widgetParams?: Record<string, unknown>;
   metricStyles?: Array<Record<string, unknown>>;
   [key: string]: unknown;
 }

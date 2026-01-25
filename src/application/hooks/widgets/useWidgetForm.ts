@@ -5,7 +5,7 @@ import { useDataSources } from '@hooks/datasource.queries';
 import { widgetService } from '@services/widget.service';
 import { dataSourceService } from '@services/data-source.service';
 import { useNotifications } from '../useNotifications';
-import type { WidgetType } from '@customdash/visualizations';
+import type { WidgetType, WidgetParams } from '@customdash/visualizations';
 import type { MetricConfig, BucketConfig, WidgetFormConfig } from '@type/widget-form.types';
 
 interface UseWidgetFormOptions {
@@ -94,6 +94,7 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
           })),
           globalFilters: widgetConfig.globalFilters,
           metricStyles: widgetConfig.metricStyles,
+          widgetParams: widgetConfig.widgetParams as WidgetParams,
         };
         store.initializeForm({
           type: widget.type as WidgetType,
@@ -156,7 +157,7 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
           operator: f.operator,
           value: f.value,
         })),
-        styles: store.config.widgetParams as Record<string, unknown>,
+        widgetParams: store.config.widgetParams as Record<string, unknown>,
         metricStyles: store.config.metricStyles as Array<Record<string, unknown>>,
       };
 

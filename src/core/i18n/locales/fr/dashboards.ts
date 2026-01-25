@@ -10,4 +10,13 @@ export const dashboards = {
   delete: 'Supprimer le tableau de bord',
   addWidget: 'Ajouter un widget',
   emptyState: 'Aucun widget pour le moment. Ajoutez votre premier widget pour commencer.',
+  searchPlaceholder: 'Rechercher un tableau de bord...',
+  confirmDelete: 'Supprimer le tableau de bord',
+  deleteWarning: 'Êtes-vous sûr de vouloir supprimer "{{name}}" ? Cette action est irréversible.',
+  table: {
+    name: 'Nom',
+    widgets: 'Widgets',
+    visibility: 'Visibilité',
+    createdAt: 'Créé le',
+  },
 };

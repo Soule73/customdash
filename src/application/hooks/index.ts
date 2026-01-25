@@ -8,4 +8,6 @@ export * from './processing.queries';
 export * from './ai-conversation.queries';
 export * from './useAppTranslation';
 export * from './useNotifications';
+export * from './usePaginatedSearch';
 export * from './widgets';
+export * from './dashboards';

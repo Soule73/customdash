@@ -4,6 +4,7 @@ import { RequireAuth, GuestOnly } from '@components/common';
 import {
   LoginPage,
   DashboardsPage,
+  DashboardPage,
   WidgetsPage,
   WidgetCreatePage,
   WidgetEditPage,
@@ -38,6 +39,8 @@ function App() {
         }
       >
         <Route path="/dashboards" element={<DashboardsPage />} />
+        <Route path="/dashboards/new" element={<DashboardPage />} />
+        <Route path="/dashboards/:id" element={<DashboardPage />} />
         <Route path="/widgets" element={<WidgetsPage />} />
         <Route path="/widgets/new" element={<WidgetCreatePage />} />
         <Route path="/widgets/:id/edit" element={<WidgetEditPage />} />

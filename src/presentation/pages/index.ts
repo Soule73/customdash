@@ -1,5 +1,5 @@
 export { LoginPage } from './auth';
-export { DashboardsPage } from './dashboards';
+export { DashboardsPage, DashboardPage } from './dashboards';
 export { WidgetsPage, WidgetCreatePage, WidgetEditPage } from './widgets';
 export {
   DataSourcesPage,

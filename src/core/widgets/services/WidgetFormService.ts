@@ -204,13 +204,13 @@ export class WidgetFormService implements IWidgetFormService {
   applySchemaDefaults(type: WidgetType, existingParams: WidgetParams): WidgetParams {
     const configSchema = this.getConfigSchema(type);
     const schemaDefaults = this.getSchemaDefaults(configSchema?.widgetParams);
-    const result: Record<string, unknown> = { ...existingParams };
+    let result: Record<string, unknown> = { ...existingParams };
 
     for (const [key, value] of Object.entries(schemaDefaults)) {
       if (isNestedPath(key)) {
         const existingValue = getNestedValue(result, key);
         if (existingValue === undefined) {
-          setNestedValue(result, key, value);
+          result = setNestedValue(result, key, value);
         }
       } else if (result[key] === undefined) {
         result[key] = value;

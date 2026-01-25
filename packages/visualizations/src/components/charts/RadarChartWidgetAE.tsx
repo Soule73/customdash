@@ -9,6 +9,7 @@ export interface RadarChartWidgetAEProps {
   height?: number;
   className?: string;
   loading?: boolean;
+  editMode?: boolean;
 }
 
 /**
@@ -20,6 +21,7 @@ export function RadarChartWidgetAE({
   height = 350,
   className = '',
   loading = false,
+  editMode = false,
 }: RadarChartWidgetAEProps): JSX.Element {
   const { option, isValid, validationErrors } = useRadarChartVMAE({ data, config });
 
@@ -54,6 +56,7 @@ export function RadarChartWidgetAE({
       className={className}
       style={{ height, minHeight: height }}
       loading={loading}
+      editMode={editMode}
     />
   );
 }

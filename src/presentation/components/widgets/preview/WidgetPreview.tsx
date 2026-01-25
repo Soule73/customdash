@@ -171,7 +171,7 @@ function WidgetRenderer({ type, data, config }: WidgetRendererProps) {
 
   return (
     <div className="h-full w-full">
-      <WidgetComponent data={data} config={config} />
+      <WidgetComponent data={data} config={config} editMode />
     </div>
   );
 }

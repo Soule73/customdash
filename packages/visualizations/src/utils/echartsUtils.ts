@@ -55,7 +55,7 @@ export function createAnimationOptions(config?: AnimationConfig): Partial<EChart
 export function createToolboxOptions(
   features?: ToolboxFeatures,
 ): Record<string, unknown> | undefined {
-  if (!features) return undefined;
+  if (!features || features.show === false) return undefined;
 
   const toolboxFeatures: Record<string, unknown> = {};
 

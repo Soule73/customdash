@@ -11,6 +11,7 @@ import type { FieldSchema } from '@type/widget-form.types';
 export interface WidgetComponentProps {
   data: Record<string, unknown>[];
   config: ChartConfig;
+  editMode?: boolean;
 }
 
 export type WidgetComponent = ComponentType<WidgetComponentProps>;

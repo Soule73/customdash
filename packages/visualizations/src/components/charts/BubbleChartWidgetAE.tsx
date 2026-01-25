@@ -9,6 +9,7 @@ export interface BubbleChartWidgetAEProps {
   height?: number;
   className?: string;
   loading?: boolean;
+  editMode?: boolean;
 }
 
 /**
@@ -20,6 +21,7 @@ export function BubbleChartWidgetAE({
   height = 350,
   className = '',
   loading = false,
+  editMode = false,
 }: BubbleChartWidgetAEProps): JSX.Element {
   const { option, isValid, validationErrors } = useBubbleChartVMAE({ data, config });
 
@@ -54,6 +56,7 @@ export function BubbleChartWidgetAE({
       className={className}
       style={{ height, minHeight: height }}
       loading={loading}
+      editMode={editMode}
     />
   );
 }

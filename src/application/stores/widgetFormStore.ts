@@ -316,11 +316,13 @@ export const useWidgetFormSourceId = () => useWidgetFormStore(s => s.sourceId);
 export const useWidgetFormColumns = () => useWidgetFormStore(s => s.columns);
 export const useWidgetFormColumnTypes = () => useWidgetFormStore(s => s.columnTypes);
 export const useWidgetFormData = () => useWidgetFormStore(s => s.dataPreview);
-export const useWidgetFormConfig = () => useWidgetFormStore(s => s.config);
-export const useWidgetFormMetrics = () => useWidgetFormStore(s => s.config.metrics);
-export const useWidgetFormBuckets = () => useWidgetFormStore(s => s.config.buckets);
-export const useWidgetFormFilters = () => useWidgetFormStore(s => s.config.globalFilters);
-export const useWidgetFormMetricStyles = () => useWidgetFormStore(s => s.config.metricStyles);
+export const useWidgetFormConfig = () => useWidgetFormStore(useShallow(s => s.config));
+export const useWidgetFormMetrics = () => useWidgetFormStore(useShallow(s => s.config.metrics));
+export const useWidgetFormBuckets = () => useWidgetFormStore(useShallow(s => s.config.buckets));
+export const useWidgetFormFilters = () =>
+  useWidgetFormStore(useShallow(s => s.config.globalFilters));
+export const useWidgetFormMetricStyles = () =>
+  useWidgetFormStore(useShallow(s => s.config.metricStyles));
 export const useWidgetFormParams = () => useWidgetFormStore(s => s.config.widgetParams);
 export const useWidgetFormTitle = () => useWidgetFormStore(s => s.widgetTitle);
 export const useWidgetFormDescription = () => useWidgetFormStore(s => s.widgetDescription);

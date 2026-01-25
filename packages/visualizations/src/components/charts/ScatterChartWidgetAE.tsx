@@ -9,6 +9,7 @@ export interface ScatterChartWidgetAEProps {
   height?: number;
   className?: string;
   loading?: boolean;
+  editMode?: boolean;
 }
 
 /**
@@ -20,6 +21,7 @@ export function ScatterChartWidgetAE({
   height = 350,
   className = '',
   loading = false,
+  editMode = false,
 }: ScatterChartWidgetAEProps): JSX.Element {
   const { option, isValid, validationErrors } = useScatterChartVMAE({ data, config });
 
@@ -54,6 +56,7 @@ export function ScatterChartWidgetAE({
       className={className}
       style={{ height, minHeight: height }}
       loading={loading}
+      editMode={editMode}
     />
   );
 }

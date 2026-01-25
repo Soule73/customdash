@@ -10,12 +10,14 @@ export interface BaseChartAEProps {
   theme?: string | object;
   notMerge?: boolean;
   lazyUpdate?: boolean;
+  editMode?: boolean;
   onEvents?: Record<string, (params: unknown) => void>;
 }
 
 /**
  * Base wrapper component for Apache ECharts visualizations.
  * Provides consistent styling and event handling across all chart types.
+ * @param editMode - When true, forces notMerge=true for real-time updates during editing
  */
 export function BaseChartAE({
   option,
@@ -23,10 +25,12 @@ export function BaseChartAE({
   className,
   loading = false,
   theme,
-  notMerge = false,
+  notMerge,
   lazyUpdate = false,
+  editMode = false,
   onEvents,
 }: BaseChartAEProps) {
+  const shouldNotMerge = notMerge ?? editMode;
   const defaultStyle: CSSProperties = {
     // width: '100%',
     // height: '100%',
@@ -46,7 +50,7 @@ export function BaseChartAE({
       className={className}
       showLoading={loading}
       theme={theme}
-      notMerge={notMerge}
+      notMerge={shouldNotMerge}
       lazyUpdate={lazyUpdate}
       onEvents={onEvents}
       opts={{ renderer: 'canvas' }}

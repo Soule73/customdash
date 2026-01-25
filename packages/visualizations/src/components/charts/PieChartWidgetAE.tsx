@@ -10,6 +10,7 @@ export interface PieChartWidgetAEProps {
   height?: number;
   className?: string;
   loading?: boolean;
+  editMode?: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ export function PieChartWidgetAE({
   height = 300,
   className = '',
   loading = false,
+  editMode = false,
 }: PieChartWidgetAEProps): JSX.Element {
   const { option } = usePieChartVMAE({ data, config, widgetParams });
 
@@ -58,6 +60,7 @@ export function PieChartWidgetAE({
       className={className}
       style={{ height, minHeight: height }}
       loading={loading}
+      editMode={editMode}
     />
   );
 }

@@ -163,7 +163,7 @@ export const widgets = {
     },
     toolbox: {
       group: 'Tools',
-      show: 'Show toolbox',
+      show: 'Enable toolbox',
       saveAsImage: 'Export image',
       dataView: 'Data view',
       restore: 'Restore',

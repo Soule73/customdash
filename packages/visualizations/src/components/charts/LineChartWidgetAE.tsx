@@ -10,6 +10,7 @@ export interface LineChartWidgetAEProps {
   height?: number;
   className?: string;
   loading?: boolean;
+  editMode?: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ export function LineChartWidgetAE({
   height = 300,
   className = '',
   loading = false,
+  editMode = false,
 }: LineChartWidgetAEProps): JSX.Element {
   const { option } = useLineChartVMAE({ data, config, widgetParams });
 
@@ -58,6 +60,7 @@ export function LineChartWidgetAE({
       className={className}
       style={{ height, minHeight: height }}
       loading={loading}
+      editMode={editMode}
     />
   );
 }

@@ -10,6 +10,7 @@ export interface BarChartWidgetAEProps {
   height?: number;
   className?: string;
   loading?: boolean;
+  editMode?: boolean;
 }
 
 /**
@@ -40,6 +41,7 @@ export function BarChartWidgetAE({
   height = 300,
   className = '',
   loading = false,
+  editMode = false,
 }: BarChartWidgetAEProps): JSX.Element {
   const { option } = useBarChartVMAE({ data, config, widgetParams });
 
@@ -76,6 +78,7 @@ export function BarChartWidgetAE({
       className={className}
       style={{ height, minHeight: height }}
       loading={loading}
+      editMode={editMode}
     />
   );
 }

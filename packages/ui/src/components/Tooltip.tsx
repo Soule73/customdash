@@ -12,7 +12,6 @@ interface TooltipProps {
   disabled?: boolean;
 }
 
-const ARROW_SIZE = 4;
 const OFFSET = 8;
 
 /**

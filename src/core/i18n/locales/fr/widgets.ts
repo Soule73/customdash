@@ -393,7 +393,7 @@ export const widgets = {
     filtersNotAvailable: 'Filtres non disponibles',
     filtersNotAvailableDescription: 'Ce type de widget ne prend pas en charge les filtres globaux.',
     generalParams: 'Parametres generaux',
-    advancedEcharts: 'Options ECharts avancees',
+    advancedEcharts: 'Options avancées',
     noParams: 'Aucun parametre disponible pour ce type de widget.',
   },
   filters: {

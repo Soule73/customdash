@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PlusIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
 import { FilterField } from '../fields/FilterField';
-import { getWidgetDataConfig } from '@core/config';
+import { getWidgetDataConfig } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormColumns,

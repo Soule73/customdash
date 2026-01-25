@@ -73,14 +73,6 @@ export class WidgetRegistry {
   }
 
   /**
-   * Gets the component for a widget type
-   */
-  getComponent(type: WidgetType) {
-    const widget = this.get(type);
-    return widget?.getComponent();
-  }
-
-  /**
    * Gets the config schema for a widget type
    */
   getConfigSchema(type: WidgetType) {
@@ -94,6 +86,18 @@ export class WidgetRegistry {
   getDataConfig(type: WidgetType) {
     const widget = this.get(type);
     return widget?.getDataConfig();
+  }
+
+  /**
+   * Gets all components as a record keyed by widget type
+   */
+  getAllComponents(): Record<WidgetType, ReturnType<IWidgetType['getComponent']>> {
+    const components = {} as Record<WidgetType, ReturnType<IWidgetType['getComponent']>>;
+    for (const widget of this.getAll()) {
+      const def = widget.getDefinition();
+      components[def.type] = widget.getComponent();
+    }
+    return components;
   }
 
   private initializeDefaultWidgets(): void {

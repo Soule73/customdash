@@ -1,43 +1,17 @@
 import type {
   WidgetType,
   AggregationType,
-  FilterOperator,
   BucketType,
   DateInterval,
   SortOrder,
-  LegendPosition,
-  TitleAlign,
-  FormatType,
-  TrendType,
-} from '@customdash/visualizations';
-
-import type {
-  SelectOption,
   Filter,
   RangeConfig,
   MetricStyle,
-  ChartStyles,
   WidgetParams,
+  SelectOption,
 } from '@customdash/visualizations';
 
-export type {
-  AggregationType,
-  FilterOperator,
-  BucketType,
-  DateInterval,
-  SortOrder,
-  LegendPosition,
-  TitleAlign,
-  FormatType,
-  TrendType,
-  SelectOption,
-  RangeConfig,
-  ChartStyles,
-};
-
 export type GlobalFilter = Filter;
-export type MetricStyleConfig = MetricStyle;
-export type WidgetParamsConfig = WidgetParams;
 
 export interface MetricConfig {
   id: string;
@@ -68,8 +42,8 @@ export interface WidgetFormConfig {
   metrics: MetricConfig[];
   buckets: BucketConfig[];
   globalFilters: GlobalFilter[];
-  metricStyles: MetricStyleConfig[];
-  widgetParams: WidgetParamsConfig;
+  metricStyles: MetricStyle[];
+  widgetParams: WidgetParams;
 }
 
 export type WidgetFormTab = 'data' | 'style' | 'params' | 'filters';
@@ -117,7 +91,7 @@ export interface WidgetFormActions {
   addGlobalFilter: () => void;
   updateGlobalFilter: (index: number, updates: Partial<GlobalFilter>) => void;
   removeGlobalFilter: (index: number) => void;
-  updateMetricStyle: (index: number, updates: Partial<MetricStyleConfig>) => void;
+  updateMetricStyle: (index: number, updates: Partial<MetricStyle>) => void;
   resetForm: () => void;
   setErrors: (errors: Record<string, string>) => void;
 }
@@ -130,21 +104,6 @@ export interface InitializeFormParams {
   widgetDescription?: string;
 }
 
-export interface WidgetDefinitionConfig {
-  type: WidgetType;
-  label: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  enableFilter?: boolean;
-  allowMultipleMetrics?: boolean;
-  hideBucket?: boolean;
-  configSchema: {
-    metricStyles: Record<string, FieldSchema>;
-    widgetParams: Record<string, FieldSchema>;
-    globalFilters?: FieldSchema;
-  };
-}
-
 export interface FieldSchema {
   default: unknown;
   inputType: 'text' | 'number' | 'color' | 'checkbox' | 'select' | 'color-array';
@@ -152,38 +111,4 @@ export interface FieldSchema {
   group?: string;
   key?: string;
   options?: SelectOption[];
-}
-
-export type DatasetType = 'xy' | 'xyr' | 'multiAxis' | 'metric';
-
-export interface DataConfigEntry {
-  metrics: {
-    allowMultiple: boolean;
-    defaultAgg: AggregationType;
-    allowedAggs: SelectOption<AggregationType>[];
-    label: string;
-  };
-  buckets?: {
-    allow: boolean;
-    allowMultiple: boolean;
-    label: string;
-    allowedTypes: SelectOption<BucketType>[];
-  };
-  datasetType?: DatasetType;
-  useMetricSection?: boolean;
-  useMetricStyles?: boolean;
-  useDatasetSection?: boolean;
-  useGlobalFilters?: boolean;
-  useBuckets?: boolean;
-  allowMultipleDatasets?: boolean;
-  allowMultipleMetrics?: boolean;
-  datasetSectionTitle?: string;
-}
-
-export interface WidgetConfig {
-  metrics?: MetricConfig[];
-  buckets?: BucketConfig[];
-  globalFilters?: GlobalFilter[];
-  styles?: WidgetParamsConfig;
-  metricStyles?: MetricStyleConfig[];
 }

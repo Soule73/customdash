@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@customdash/ui';
-import { ParamField, ParamGroup } from '../fields/ParamField';
-import { getWidgetConfigSchema } from '@core/config';
+import { SchemaField } from '../fields/SchemaField';
+import { ParamGroup } from '../fields/ParamField';
+import { getWidgetConfigSchema } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormParams,
@@ -80,7 +81,7 @@ export function ParamsConfigSection() {
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {groupedParams.basic.map(([key, schema]) => (
-            <ParamField
+            <SchemaField
               key={key}
               fieldKey={key}
               schema={schema}
@@ -108,7 +109,7 @@ export function ParamsConfigSection() {
                 <AccordionContent>
                   <ParamGroup title="">
                     {fields.map(([key, schema]) => (
-                      <ParamField
+                      <SchemaField
                         key={key}
                         fieldKey={key}
                         schema={schema}

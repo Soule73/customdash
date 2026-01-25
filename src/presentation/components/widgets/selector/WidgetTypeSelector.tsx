@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/config';
+import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/widgets';
 import type { WidgetType } from '@customdash/visualizations';
 
 interface WidgetTypeSelectorProps {

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Card } from '@customdash/ui';
-import { MetricStyleFields } from '../fields/StyleField';
-import { getWidgetConfigSchema } from '@core/config';
+import { MetricStyleFields } from '../fields/SchemaField';
+import { getWidgetConfigSchema } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormMetrics,

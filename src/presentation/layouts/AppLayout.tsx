@@ -216,20 +216,26 @@ export function AppLayout() {
           </div>
         </nav>
 
-        <div
-          className={cn(
-            'border-t border-gray-200 p-3 dark:border-gray-800',
-            collapsed && 'flex justify-center',
-          )}
-        >
-          <div
-            className={cn(
-              'flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800',
-              collapsed && 'justify-center p-1',
-            )}
-          >
-            <Avatar size="sm" name={user?.username || t('layout.user')} />
-            {!collapsed && (
+        <div className="border-t border-gray-200 p-3 dark:border-gray-800">
+          {collapsed ? (
+            <div className="flex flex-col items-center gap-2">
+              <Tooltip content={user?.username || t('layout.user')} position="right">
+                <Avatar size="sm" name={user?.username || t('layout.user')} />
+              </Tooltip>
+              <Tooltip content={t('auth.logout')} position="right">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                >
+                  <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
+                </Button>
+              </Tooltip>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">
+              <Avatar size="sm" name={user?.username || t('layout.user')} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                   {user?.username || t('layout.user')}
@@ -238,8 +244,6 @@ export function AppLayout() {
                   {user?.email || ''}
                 </p>
               </div>
-            )}
-            {!collapsed && (
               <Tooltip content={t('auth.logout')} position="top">
                 <Button
                   variant="ghost"
@@ -250,19 +254,7 @@ export function AppLayout() {
                   <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
                 </Button>
               </Tooltip>
-            )}
-          </div>
-          {collapsed && (
-            <Tooltip content={t('auth.logout')} position="right">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="mt-2 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-              >
-                <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
-              </Button>
-            </Tooltip>
+            </div>
           )}
         </div>
       </aside>

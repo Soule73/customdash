@@ -1,4 +1,5 @@
-import type { FieldSchema, SelectOption } from '@/core/types';
+import type { FieldSchema } from '@/core/types';
+import type { SelectOption } from '@customdash/visualizations';
 import { t } from '../utils/i18nHelper';
 
 export const ANIMATION_EASING_OPTIONS: SelectOption[] = [

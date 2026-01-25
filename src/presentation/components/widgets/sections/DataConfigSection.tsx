@@ -4,7 +4,7 @@ import { Button, Card } from '@customdash/ui';
 import { SortableList, SortableItem } from '../../common';
 import { MetricField } from '../fields/MetricField';
 import { BucketField } from '../fields/BucketField';
-import { getWidgetDataConfig } from '@core/config';
+import { getWidgetDataConfig } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormColumns,

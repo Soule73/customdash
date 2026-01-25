@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Input, Select, SearchSelect } from '@customdash/ui';
-import { BUCKET_TYPE_OPTIONS } from '@core/config';
+import { BUCKET_TYPE_OPTIONS } from '@core/widgets';
 import type { BucketType, SelectOption } from '@customdash/visualizations';
 import type { BucketConfig } from '@type/widget-form.types';
 

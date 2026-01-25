@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, SearchSelect } from '@customdash/ui';
-import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/config';
+import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/widgets';
 import { useDataSources } from '@hooks/datasource.queries';
 import type { WidgetType, SelectOption } from '@customdash/visualizations';
 

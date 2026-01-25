@@ -1,8 +1,8 @@
 import { Input, Select, Switch } from '@customdash/ui';
-import type { SelectOption } from '@customdash/visualizations';
-import type { FieldSchema, MetricStyleConfig } from '@type/widget-form.types';
+import type { SelectOption, MetricStyle } from '@customdash/visualizations';
+import type { FieldSchema } from '@type/widget-form.types';
 
-interface StyleFieldProps {
+interface SchemaFieldProps {
   fieldKey: string;
   schema: FieldSchema;
   value: unknown;
@@ -10,9 +10,9 @@ interface StyleFieldProps {
 }
 
 /**
- * StyleField component for rendering dynamic style configuration fields
+ * Universal schema-driven field component for rendering form fields based on FieldSchema
  */
-export function StyleField({ fieldKey, schema, value, onChange }: StyleFieldProps) {
+export function SchemaField({ fieldKey, schema, value, onChange }: SchemaFieldProps) {
   const handleChange = (newValue: unknown) => {
     onChange(fieldKey, newValue);
   };
@@ -157,9 +157,9 @@ function ColorArrayField({ label, value, onChange }: ColorArrayFieldProps) {
 interface MetricStyleFieldsProps {
   metricIndex: number;
   metricLabel: string;
-  styles: MetricStyleConfig;
+  styles: MetricStyle;
   schema: Record<string, FieldSchema>;
-  onChange: (index: number, updates: Partial<MetricStyleConfig>) => void;
+  onChange: (index: number, updates: Partial<MetricStyle>) => void;
 }
 
 /**
@@ -189,11 +189,11 @@ export function MetricStyleFields({
       </h4>
       <div className="grid gap-4 sm:grid-cols-2">
         {schemaEntries.map(([key, fieldSchema]) => (
-          <StyleField
+          <SchemaField
             key={key}
             fieldKey={key}
             schema={fieldSchema}
-            value={styles[key as keyof MetricStyleConfig]}
+            value={styles[key as keyof MetricStyle]}
             onChange={handleFieldChange}
           />
         ))}

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Button, Checkbox, Input, Select, SearchSelect } from '@customdash/ui';
-import { AGGREGATION_OPTIONS } from '@core/config';
+import { AGGREGATION_OPTIONS } from '@core/widgets';
 import type { AggregationType, SelectOption } from '@customdash/visualizations';
 import type { MetricConfig } from '@type/widget-form.types';
 

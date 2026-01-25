@@ -28,11 +28,16 @@ export function BaseChartAE({
   onEvents,
 }: BaseChartAEProps) {
   const defaultStyle: CSSProperties = {
+    // width: '100%',
+    // height: '100%',
+    // minHeight: 300,
     width: '100%',
+    maxWidth: '100%',
     height: '100%',
-    minHeight: 300,
+    minWidth: 0,
     ...style,
   };
+  // style={{ width: "100%", maxWidth: "100%", height: "auto", minWidth: 0 }}
 
   return (
     <ReactECharts

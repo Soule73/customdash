@@ -1,14 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { useShallow } from 'zustand/react/shallow';
-import { generateId, setNestedValue, isNestedPath } from '@customdash/utils';
-import type {
-  WidgetType,
-  AggregationType,
-  Filter,
-  MetricStyle,
-  WidgetParams,
-} from '@customdash/visualizations';
+import { widgetFormService } from '@core/widgets';
+import type { WidgetType, WidgetParams, MetricStyle } from '@customdash/visualizations';
 import type {
   WidgetFormState,
   WidgetFormActions,
@@ -17,58 +11,12 @@ import type {
   MetricConfig,
   BucketConfig,
   GlobalFilter,
-  MetricStyleConfig,
-  WidgetParamsConfig,
   InitializeFormParams,
 } from '@type/widget-form.types';
 
-const DEFAULT_METRIC = (): MetricConfig => ({
-  id: generateId('metric'),
-  field: '',
-  agg: 'sum' as AggregationType,
-  label: '',
-});
-
-const DEFAULT_BUCKET = (): BucketConfig => ({
-  id: generateId('bucket'),
-  field: '',
-  type: 'terms',
-  size: 10,
-});
-
-const DEFAULT_FILTER = (): Filter => ({
-  field: '',
-  operator: 'equals',
-  value: '',
-});
-
-const DEFAULT_METRIC_STYLE = (): MetricStyle => ({
-  color: '#6366f1',
-  borderColor: '#4f46e5',
-  borderWidth: 1,
-});
-
-const DEFAULT_WIDGET_PARAMS: WidgetParams = {
-  title: '',
-  titleAlign: 'center',
-  legend: true,
-  legendPosition: 'top',
-  showGrid: true,
-  showValues: false,
-  labelFontSize: 12,
-  labelColor: '#374151',
-  format: 'number',
-  currency: 'EUR',
-  decimals: 2,
-};
-
-const DEFAULT_CONFIG: WidgetFormConfig = {
-  metrics: [DEFAULT_METRIC()],
-  buckets: [DEFAULT_BUCKET()],
-  globalFilters: [],
-  metricStyles: [DEFAULT_METRIC_STYLE()],
-  widgetParams: { ...DEFAULT_WIDGET_PARAMS },
-};
+function createInitialConfig(): WidgetFormConfig {
+  return widgetFormService.createFormConfig({ type: 'bar' });
+}
 
 const INITIAL_STATE: WidgetFormState = {
   type: 'bar',
@@ -76,7 +24,7 @@ const INITIAL_STATE: WidgetFormState = {
   columns: [],
   columnTypes: {},
   dataPreview: [],
-  config: { ...DEFAULT_CONFIG },
+  config: createInitialConfig(),
   activeTab: 'data',
   widgetTitle: '',
   widgetDescription: '',
@@ -92,7 +40,31 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
       ...INITIAL_STATE,
 
       setType: (type: WidgetType) => {
-        set({ type, isDirty: true });
+        const state = get();
+        const dataConfig = widgetFormService.getDataConfig(type);
+        const updatedParams = widgetFormService.applySchemaDefaults(
+          type,
+          state.config.widgetParams,
+        );
+        const dsType = dataConfig?.datasetType;
+
+        const updatedMetrics = state.config.metrics.map(metric => ({
+          ...metric,
+          x: dsType === 'xy' || dsType === 'xyr' ? metric.x : undefined,
+          y: dsType === 'xy' || dsType === 'xyr' ? metric.y : undefined,
+          r: dsType === 'xyr' ? metric.r : undefined,
+          fields: dsType === 'multiAxis' ? metric.fields : undefined,
+        }));
+
+        set({
+          type,
+          config: {
+            ...state.config,
+            metrics: updatedMetrics,
+            widgetParams: updatedParams,
+          },
+          isDirty: true,
+        });
       },
 
       setSourceId: (sourceId: string) => {
@@ -124,31 +96,12 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
           widgetDescription = '',
         } = params;
 
-        const baseConfig = { ...DEFAULT_CONFIG };
-
-        if (existingConfig) {
-          if (existingConfig.metrics?.length) {
-            baseConfig.metrics = existingConfig.metrics;
-            baseConfig.metricStyles = existingConfig.metrics.map(() => DEFAULT_METRIC_STYLE());
-          }
-          if (existingConfig.buckets?.length) {
-            baseConfig.buckets = existingConfig.buckets;
-          }
-          if (existingConfig.globalFilters) {
-            baseConfig.globalFilters = existingConfig.globalFilters;
-          }
-          if (existingConfig.metricStyles) {
-            baseConfig.metricStyles = existingConfig.metricStyles;
-          }
-          if (existingConfig.widgetParams) {
-            baseConfig.widgetParams = { ...DEFAULT_WIDGET_PARAMS, ...existingConfig.widgetParams };
-          }
-        }
+        const config = widgetFormService.createFormConfig({ type, existingConfig });
 
         set({
           type,
           sourceId,
-          config: baseConfig,
+          config,
           widgetTitle,
           widgetDescription,
           activeTab: 'data',
@@ -164,23 +117,14 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
         columnTypes: Record<string, string>,
       ) => {
         const state = get();
-        const firstColumn = columns[0] || '';
-        const secondColumn = columns[1] || columns[0] || '';
-        const thirdColumn = columns[2] || columns[1] || columns[0] || '';
+        const dataConfig = widgetFormService.getDataConfig(state.type);
 
-        const updatedMetrics = state.config.metrics.map((metric, index) => ({
-          ...metric,
-          field: metric.field || (index === 0 ? firstColumn : ''),
-          x: metric.x || firstColumn,
-          y: metric.y || secondColumn,
-          r: metric.r || thirdColumn,
-          fields: metric.fields?.length ? metric.fields : [firstColumn, secondColumn],
-        }));
-
-        const updatedBuckets = state.config.buckets.map((bucket, index) => ({
-          ...bucket,
-          field: bucket.field || (index === 0 ? firstColumn : ''),
-        }));
+        const result = widgetFormService.applySourceData({
+          columns,
+          datasetType: dataConfig?.datasetType,
+          currentMetrics: state.config.metrics,
+          currentBuckets: state.config.buckets,
+        });
 
         set({
           sourceId,
@@ -189,8 +133,8 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
           columnTypes,
           config: {
             ...state.config,
-            metrics: updatedMetrics,
-            buckets: updatedBuckets,
+            metrics: result.metrics,
+            buckets: result.buckets,
           },
           isDirty: true,
         });
@@ -205,37 +149,35 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
 
       updateWidgetParam: (key: string, value: unknown) => {
         set(state => {
-          let updatedParams: WidgetParamsConfig;
-
-          if (isNestedPath(key)) {
-            updatedParams = setNestedValue(
-              state.config.widgetParams as Record<string, unknown>,
-              key,
-              value,
-            ) as WidgetParamsConfig;
-          } else {
-            updatedParams = { ...state.config.widgetParams, [key]: value };
-          }
-
+          const newParams = widgetFormService.setNestedParam(
+            state.config.widgetParams as WidgetParams,
+            key,
+            value,
+          );
           return {
-            config: {
-              ...state.config,
-              widgetParams: updatedParams,
-            },
+            config: { ...state.config, widgetParams: newParams },
             isDirty: true,
           };
         });
       },
 
       addMetric: () => {
-        set(state => ({
+        const state = get();
+        const dataConfig = widgetFormService.getDataConfig(state.type);
+
+        const newMetric = widgetFormService.createMetric({
+          columns: state.columns,
+          datasetType: dataConfig?.datasetType,
+        });
+
+        set({
           config: {
             ...state.config,
-            metrics: [...state.config.metrics, DEFAULT_METRIC()],
-            metricStyles: [...state.config.metricStyles, DEFAULT_METRIC_STYLE()],
+            metrics: [...state.config.metrics, newMetric],
+            metricStyles: [...state.config.metricStyles, widgetFormService.createMetricStyle()],
           },
           isDirty: true,
-        }));
+        });
       },
 
       updateMetric: (index: number, updates: Partial<MetricConfig>) => {
@@ -243,7 +185,6 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
           const metrics = [...state.config.metrics];
           if (metrics[index]) {
             metrics[index] = { ...metrics[index], ...updates };
-
             if (updates.field && !metrics[index].label) {
               metrics[index].label = updates.field;
             }
@@ -255,14 +196,9 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
       removeMetric: (index: number) => {
         set(state => {
           if (state.config.metrics.length <= 1) return state;
-
           const metrics = state.config.metrics.filter((_, i) => i !== index);
           const metricStyles = state.config.metricStyles.filter((_, i) => i !== index);
-
-          return {
-            config: { ...state.config, metrics, metricStyles },
-            isDirty: true,
-          };
+          return { config: { ...state.config, metrics, metricStyles }, isDirty: true };
         });
       },
 
@@ -270,17 +206,11 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
         set(state => {
           const metrics = [...state.config.metrics];
           const metricStyles = [...state.config.metricStyles];
-
           const [movedMetric] = metrics.splice(fromIndex, 1);
           const [movedStyle] = metricStyles.splice(fromIndex, 1);
-
           metrics.splice(toIndex, 0, movedMetric);
           metricStyles.splice(toIndex, 0, movedStyle);
-
-          return {
-            config: { ...state.config, metrics, metricStyles },
-            isDirty: true,
-          };
+          return { config: { ...state.config, metrics, metricStyles }, isDirty: true };
         });
       },
 
@@ -288,7 +218,7 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
         set(state => ({
           config: {
             ...state.config,
-            buckets: [...state.config.buckets, DEFAULT_BUCKET()],
+            buckets: [...state.config.buckets, widgetFormService.createBucket()],
           },
           isDirty: true,
         }));
@@ -307,7 +237,6 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
       removeBucket: (index: number) => {
         set(state => {
           if (state.config.buckets.length <= 1) return state;
-
           const buckets = state.config.buckets.filter((_, i) => i !== index);
           return { config: { ...state.config, buckets }, isDirty: true };
         });
@@ -318,7 +247,6 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
           const buckets = [...state.config.buckets];
           const [movedBucket] = buckets.splice(fromIndex, 1);
           buckets.splice(toIndex, 0, movedBucket);
-
           return { config: { ...state.config, buckets }, isDirty: true };
         });
       },
@@ -327,7 +255,7 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
         set(state => ({
           config: {
             ...state.config,
-            globalFilters: [...state.config.globalFilters, DEFAULT_FILTER()],
+            globalFilters: [...state.config.globalFilters, widgetFormService.createFilter()],
           },
           isDirty: true,
         }));
@@ -350,7 +278,7 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
         });
       },
 
-      updateMetricStyle: (index: number, updates: Partial<MetricStyleConfig>) => {
+      updateMetricStyle: (index: number, updates: Partial<MetricStyle>) => {
         set(state => {
           const metricStyles = [...state.config.metricStyles];
           if (metricStyles[index]) {
@@ -361,7 +289,7 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
       },
 
       resetForm: () => {
-        set({ ...INITIAL_STATE, config: { ...DEFAULT_CONFIG } });
+        set({ ...INITIAL_STATE, config: createInitialConfig() });
       },
 
       setErrors: (errors: Record<string, string>) => {
@@ -386,6 +314,7 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
 export const useWidgetFormType = () => useWidgetFormStore(s => s.type);
 export const useWidgetFormSourceId = () => useWidgetFormStore(s => s.sourceId);
 export const useWidgetFormColumns = () => useWidgetFormStore(s => s.columns);
+export const useWidgetFormColumnTypes = () => useWidgetFormStore(s => s.columnTypes);
 export const useWidgetFormData = () => useWidgetFormStore(s => s.dataPreview);
 export const useWidgetFormConfig = () => useWidgetFormStore(s => s.config);
 export const useWidgetFormMetrics = () => useWidgetFormStore(s => s.config.metrics);
@@ -395,6 +324,7 @@ export const useWidgetFormMetricStyles = () => useWidgetFormStore(s => s.config.
 export const useWidgetFormParams = () => useWidgetFormStore(s => s.config.widgetParams);
 export const useWidgetFormTitle = () => useWidgetFormStore(s => s.widgetTitle);
 export const useWidgetFormDescription = () => useWidgetFormStore(s => s.widgetDescription);
+export const useWidgetFormVisibility = () => useWidgetFormStore(s => s.visibility);
 export const useWidgetFormActiveTab = () => useWidgetFormStore(s => s.activeTab);
 export const useWidgetFormIsLoading = () => useWidgetFormStore(s => s.isLoading);
 export const useWidgetFormIsDirty = () => useWidgetFormStore(s => s.isDirty);

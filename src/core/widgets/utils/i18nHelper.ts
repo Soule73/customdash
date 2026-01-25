@@ -1,5 +1,6 @@
 import i18n from '@/core/i18n';
-import type { FieldSchema, SelectOption } from '@/core/types';
+import type { FieldSchema } from '@/core/types';
+import type { SelectOption } from '@customdash/visualizations';
 
 type TranslationKey = string;
 

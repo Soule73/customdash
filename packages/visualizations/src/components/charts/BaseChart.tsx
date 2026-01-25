@@ -2,7 +2,7 @@ import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 import type { CSSProperties } from 'react';
 
-export interface BaseChartAEProps {
+export interface BaseChartProps {
   option: EChartsOption;
   style?: CSSProperties;
   className?: string;
@@ -19,7 +19,7 @@ export interface BaseChartAEProps {
  * Provides consistent styling and event handling across all chart types.
  * @param editMode - When true, forces notMerge=true for real-time updates during editing
  */
-export function BaseChartAE({
+export function BaseChart({
   option,
   style,
   className,
@@ -29,7 +29,7 @@ export function BaseChartAE({
   lazyUpdate = false,
   editMode = false,
   onEvents,
-}: BaseChartAEProps) {
+}: BaseChartProps) {
   const shouldNotMerge = notMerge ?? editMode;
   const defaultStyle: CSSProperties = {
     // width: '100%',

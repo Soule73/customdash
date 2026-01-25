@@ -1,5 +1,5 @@
 import type { JSX } from 'react';
-import { useCardWidgetVM, type CardWidgetProps } from '../../hooks/useCardWidgetVM';
+import { useCardWidgetVM, type CardWidgetInput } from '../../hooks/useCardWidgetVM';
 
 interface IconProps {
   name: string;
@@ -52,7 +52,7 @@ function CardIcon({ name, color }: IconProps) {
  *    }}
  * />
  */
-export default function CardWidget({ data, config }: CardWidgetProps): JSX.Element {
+export default function CardWidget({ data, config }: CardWidgetInput): JSX.Element {
   const {
     formattedValue,
     title,

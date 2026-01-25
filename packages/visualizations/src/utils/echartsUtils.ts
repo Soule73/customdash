@@ -28,10 +28,6 @@ const DEFAULT_COLORS = [
   '#ea7ccc',
 ];
 
-export interface ExtendedWidgetParams extends WidgetParams {
-  echarts?: EChartsWidgetParams;
-}
-
 /**
  * Creates animation options from config
  */

@@ -1,13 +1,6 @@
 import { useMemo } from 'react';
-import type { Metric, CardConfig, FilterableConfig } from '../interfaces';
-import {
-  applyKPIFilters,
-  calculateKPIValue,
-  getCardColors,
-  getKPITitle,
-  getKPIWidgetParams,
-  formatValue,
-} from '../utils';
+import type { CardConfig, CardDataContext } from '../interfaces';
+import { CardWidgetService } from '../core/services/CardWidgetService';
 
 export interface CardWidgetVM {
   formattedValue: string;
@@ -20,94 +13,36 @@ export interface CardWidgetVM {
   iconName: string;
 }
 
-export interface CardWidgetProps {
+export interface CardWidgetInput {
   data: Record<string, unknown>[];
   config: CardConfig;
 }
 
 /**
  * ViewModel hook for CardWidget handling data processing, formatting and styling
- * @param props - The properties for the Card widget
- * @returns The ViewModel containing formatted value, title, description, colors, and icon info
- *
- * @example
- * const data = [
- *   { date: '2024-01', sales: 1500 },
- *   { date: '2024-02', sales: 1800 },
- *   { date: '2024-03', sales: 1700 },
- * ];
- * const config = {
- *   metrics: [{ field: 'sales', agg: 'sum', label: 'Total Sales' }],
- *   globalFilters: [
- *     { field: 'region', operator: 'equals', value: 'Europe' },
- *   ],
- *   widgetParams: {
- *     format: 'currency',
- *     currency: 'EUR',
- *     description: 'Sales in Europe',
- *     icon: 'shopping-cart',
- *     iconColor: '#10b981',
- *     valueColor: '#ef4444',
- *     descriptionColor: '#6b7280',
- *     showIcon: true,
- *   },
- * };
- * const cardWidgetVM = useCardWidgetVM({ data, config });
- * // Result: {
- * //   formattedValue: '€5,100.00',
- * //   title: 'Total Sales',
- * //   description: 'Sales in Europe',
- * //   iconColor: '#10b981',
- * //   valueColor: '#ef4444',
- * //   descriptionColor: '#6b7280',
- * //   showIcon: true,
- * //   iconName: 'shopping-cart',
- * // }
+ * Uses CardWidgetService for business logic delegation
  */
-export function useCardWidgetVM({ data, config }: CardWidgetProps): CardWidgetVM {
-  const filteredData = useMemo(() => {
-    return applyKPIFilters(data, config as FilterableConfig);
-  }, [data, config]);
+export function useCardWidgetVM({ data, config }: CardWidgetInput): CardWidgetVM {
+  const context = useMemo<CardDataContext>(
+    () => CardWidgetService.createDataContext({ data, config }),
+    [data, config],
+  );
 
-  const metric: Metric | undefined = config.metrics?.[0];
-
-  const value = useMemo(() => {
-    return calculateKPIValue(metric, filteredData);
-  }, [filteredData, metric]);
-
-  const title = getKPITitle(config, metric, 'Synthese');
-
-  const description =
-    (typeof config.widgetParams?.description === 'string'
-      ? config.widgetParams.description
-      : undefined) || '';
-
-  const { iconColor, valueColor, descriptionColor } = getCardColors(config);
-
-  const showIcon = config.widgetParams?.showIcon !== false;
-
-  const iconName = useMemo(() => {
-    return (
-      (typeof config.widgetParams?.icon === 'string' ? config.widgetParams.icon : undefined) ||
-      'chart-bar'
-    );
-  }, [config]);
-
-  const { format, decimals, currency } = useMemo(() => getKPIWidgetParams(config), [config]);
+  const value = useMemo(() => CardWidgetService.calculateValue(context), [context]);
 
   const formattedValue = useMemo(
-    () => formatValue(value, format, { decimals, currency }),
-    [value, format, decimals, currency],
+    () => CardWidgetService.formatValue(value, context),
+    [value, context],
   );
 
   return {
     formattedValue,
-    title,
-    description,
-    iconColor,
-    valueColor,
-    descriptionColor,
-    showIcon,
-    iconName,
+    title: context.title,
+    description: context.widgetParams.description,
+    iconColor: context.widgetParams.iconColor,
+    valueColor: context.widgetParams.valueColor,
+    descriptionColor: context.widgetParams.descriptionColor,
+    showIcon: context.widgetParams.showIcon,
+    iconName: context.widgetParams.icon,
   };
 }

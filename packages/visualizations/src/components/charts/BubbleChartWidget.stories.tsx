@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { BubbleChartWidgetAE } from './BubbleChartWidgetAE';
+import { BubbleChartWidget, type BubbleChartWidgetProps } from './BubbleChartWidget';
 
-const meta: Meta<typeof BubbleChartWidgetAE> = {
-  title: 'Visualizations/Charts/BubbleChartWidgetAE',
-  component: BubbleChartWidgetAE,
+const meta: Meta<typeof BubbleChartWidget> = {
+  title: 'Visualizations/Charts/BubbleChartWidget',
+  component: BubbleChartWidget,
   parameters: {
     layout: 'padded',
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof BubbleChartWidgetAE> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof BubbleChartWidgetAE>;
+type Story = StoryObj<BubbleChartWidgetProps>;
 
 const sampleData = [
   { revenue: 150, profit: 45, employees: 120 },

@@ -1,78 +1,88 @@
-import { useMemo } from 'react';
 import type { EChartsOption, ScatterSeriesOption } from 'echarts';
 import type {
   ScatterMetricConfig,
-  ScatterChartConfig,
-  MetricStyle,
-  ScatterValidationResult,
-} from '../interfaces';
-import type { EChartsWidgetParams } from '../types/echarts.types';
-import { prepareMetricStyles } from '../utils/metricStyleUtils';
-import { mergeWidgetParams } from '../utils/widgetParamsUtils';
+  ExtendedWidgetParams,
+  ScatterDataContext,
+  ScatterChartInput,
+  ChartValidationResult,
+} from '../../interfaces';
+import { prepareMetricStyles } from '../../utils/metricStyleUtils';
+import { mergeWidgetParams } from '../../utils/widgetParamsUtils';
 import {
   processScatterMetrics,
   validateScatterConfiguration,
   generateScatterMetricLabel,
   calculateScatterScales,
-} from '../utils/scatterChartUtils';
+} from '../../utils/scatterChartUtils';
 import {
   createBaseOptions,
   createEmphasisOptions,
   createAdvancedLabelConfig,
   mergeOptions,
   getDefaultColor,
-  type ExtendedWidgetParams,
-} from '../utils/echartsUtils';
-
-export interface ScatterChartVMAE {
-  option: EChartsOption;
-  validDatasets: ScatterMetricConfig[];
-  isValid: boolean;
-  validationErrors: string[];
-  validationWarnings: string[];
-}
-
-export interface ScatterChartWidgetAEProps {
-  data: Record<string, unknown>[];
-  config: ScatterChartConfig & { echarts?: EChartsWidgetParams };
-}
+} from '../../utils/echartsUtils';
 
 /**
- * Hook to create the ViewModel for a Scatter Chart using Apache ECharts
+ * Service for processing Scatter chart data and configuration
+ * Follows the same pattern as ChartDataService but specialized for X/Y metric charts
  */
-export function useScatterChartVMAE({ data, config }: ScatterChartWidgetAEProps): ScatterChartVMAE {
-  const widgetParams: ExtendedWidgetParams = useMemo(
-    () => ({
+export class ScatterChartService {
+  /**
+   * Merge widget params with echarts configuration
+   */
+  static mergeWidgetParams(config: ScatterChartInput['config']): ExtendedWidgetParams {
+    return {
       ...mergeWidgetParams(config.widgetParams),
-      echarts: (config as { echarts?: EChartsWidgetParams }).echarts,
-    }),
-    [config],
-  );
+      echarts: config.echarts,
+    };
+  }
 
-  const echartsConfig = widgetParams.echarts;
-  const scatterConfig = echartsConfig?.scatter;
+  /**
+   * Validate scatter chart configuration
+   */
+  static validateConfig(metrics: ScatterMetricConfig[]): ChartValidationResult {
+    const result = validateScatterConfiguration(metrics);
+    return {
+      isValid: result.isValid,
+      errors: result.errors,
+      warnings: result.warnings,
+    };
+  }
 
-  const validMetrics = useMemo<ScatterMetricConfig[]>(() => {
-    return config.metrics || [];
-  }, [config.metrics]);
+  /**
+   * Create the complete data context for scatter chart processing
+   */
+  static createDataContext(input: ScatterChartInput): ScatterDataContext {
+    const widgetParams = this.mergeWidgetParams(input.config);
+    const echartsConfig = widgetParams.echarts;
+    const scatterConfig = echartsConfig?.scatter;
+    const validMetrics = input.config.metrics || [];
+    const metricStyles = prepareMetricStyles(input.config.metricStyles);
+    const validation = validateScatterConfiguration(validMetrics);
+    const processedMetrics = processScatterMetrics(
+      input.data,
+      validMetrics,
+      input.config.globalFilters,
+    );
+    const scales = calculateScatterScales(input.data, validMetrics);
 
-  const metricStyles = useMemo<MetricStyle[]>(() => {
-    return prepareMetricStyles(config.metricStyles);
-  }, [config.metricStyles]);
+    return {
+      widgetParams,
+      echartsConfig,
+      scatterConfig,
+      validMetrics,
+      metricStyles,
+      validation,
+      processedMetrics,
+      scales,
+    };
+  }
 
-  const validation = useMemo<ScatterValidationResult>(() => {
-    return validateScatterConfiguration(validMetrics);
-  }, [validMetrics]);
-
-  const processedMetrics = useMemo(() => {
-    return processScatterMetrics(data, validMetrics, config.globalFilters);
-  }, [data, validMetrics, config.globalFilters]);
-
-  const scales = useMemo(() => {
-    return calculateScatterScales(data, validMetrics);
-  }, [data, validMetrics]);
-
-  const series = useMemo<ScatterSeriesOption[]>(() => {
+  /**
+   * Build series configuration for scatter chart
+   */
+  static buildSeries(context: ScatterDataContext): ScatterSeriesOption[] {
+    const { processedMetrics, metricStyles, widgetParams, echartsConfig, scatterConfig } = context;
     const emphasisConfig = createEmphasisOptions(echartsConfig?.emphasis);
     const labelConfig = createAdvancedLabelConfig(
       widgetParams.showValues,
@@ -109,9 +119,13 @@ export function useScatterChartVMAE({ data, config }: ScatterChartWidgetAEProps)
           : undefined,
       } as ScatterSeriesOption;
     });
-  }, [processedMetrics, metricStyles, widgetParams, echartsConfig, scatterConfig]);
+  }
 
-  const option = useMemo<EChartsOption>(() => {
+  /**
+   * Build complete ECharts options for scatter chart
+   */
+  static buildOptions(context: ScatterDataContext, series: ScatterSeriesOption[]): EChartsOption {
+    const { widgetParams, echartsConfig, scales } = context;
     const baseOptions = createBaseOptions(widgetParams);
     const axisConfig = echartsConfig?.axisConfig;
 
@@ -138,17 +152,8 @@ export function useScatterChartVMAE({ data, config }: ScatterChartWidgetAEProps)
         min: scales.yMin,
         max: scales.yMax,
         splitLine: { show: widgetParams.showGrid !== false },
-        splitArea: axisConfig?.splitAreaShow ? { show: true } : undefined,
       },
       series,
     });
-  }, [widgetParams, scales, series, echartsConfig]);
-
-  return {
-    option,
-    validDatasets: validMetrics,
-    isValid: validation.isValid,
-    validationErrors: validation.errors,
-    validationWarnings: validation.warnings,
-  };
+  }
 }

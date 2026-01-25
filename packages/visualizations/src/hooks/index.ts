@@ -1,29 +1,29 @@
-export { useBarChartVMAE } from './useBarChartVMAE';
-export type { BarChartVMAE, BarChartWidgetAEProps } from './useBarChartVMAE';
+export { useBarChartVM } from './useBarChartVM';
+export type { BarChartVM, BarChartInput } from './useBarChartVM';
 
-export { useLineChartVMAE } from './useLineChartVMAE';
-export type { LineChartVMAE, LineChartWidgetAEProps } from './useLineChartVMAE';
+export { useLineChartVM } from './useLineChartVM';
+export type { LineChartVM, LineChartInput } from './useLineChartVM';
 
-export { usePieChartVMAE } from './usePieChartVMAE';
-export type { PieChartVMAE, PieChartWidgetAEProps } from './usePieChartVMAE';
+export { usePieChartVM } from './usePieChartVM';
+export type { PieChartVM, PieChartInput } from './usePieChartVM';
 
-export { useBubbleChartVMAE } from './useBubbleChartVMAE';
-export type { BubbleChartVMAE, BubbleChartWidgetAEProps } from './useBubbleChartVMAE';
+export { useBubbleChartVM } from './useBubbleChartVM';
+export type { BubbleChartVM, BubbleChartInput } from './useBubbleChartVM';
 
-export { useScatterChartVMAE } from './useScatterChartVMAE';
-export type { ScatterChartVMAE, ScatterChartWidgetAEProps } from './useScatterChartVMAE';
+export { useScatterChartVM } from './useScatterChartVM';
+export type { ScatterChartVM, ScatterChartInput } from './useScatterChartVM';
 
-export { useRadarChartVMAE } from './useRadarChartVMAE';
-export type { RadarChartVMAE, RadarChartWidgetAEProps } from './useRadarChartVMAE';
+export { useRadarChartVM } from './useRadarChartVM';
+export type { RadarChartVM, RadarChartInput } from './useRadarChartVM';
 
 export { useKPIWidgetVM } from './useKPIWidgetVM';
-export type { KPIWidgetVM, KPIWidgetProps } from './useKPIWidgetVM';
+export type { KPIWidgetVM, KPIWidgetInput } from './useKPIWidgetVM';
 
 export { useKPIGroupVM } from './useKPIGroupVM';
-export type { KPIGroupWidgetVM, KPIGroupWidgetProps } from './useKPIGroupVM';
+export type { KPIGroupWidgetVM, KPIGroupInput } from './useKPIGroupVM';
 
 export { useCardWidgetVM } from './useCardWidgetVM';
-export type { CardWidgetVM, CardWidgetProps } from './useCardWidgetVM';
+export type { CardWidgetVM, CardWidgetInput } from './useCardWidgetVM';
 
 export { useTableWidgetVM } from './useTableWidgetVM';
-export type { TableWidgetVM, TableWidgetProps } from './useTableWidgetVM';
+export type { TableWidgetVM, TableWidgetInput } from './useTableWidgetVM';

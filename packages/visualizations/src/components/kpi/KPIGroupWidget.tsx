@@ -1,4 +1,4 @@
-import { useKPIGroupVM, type KPIGroupWidgetProps } from '../../hooks/useKPIGroupVM';
+import { useKPIGroupVM, type KPIGroupInput } from '../../hooks/useKPIGroupVM';
 import type { Metric } from '../../interfaces';
 import KPIWidget from './KPIWidget';
 
@@ -31,7 +31,7 @@ import KPIWidget from './KPIWidget';
  *   config={config}
  * />
  */
-export default function KPIGroupWidget({ data, config }: KPIGroupWidgetProps) {
+export default function KPIGroupWidget({ data, config }: KPIGroupInput) {
   const { metrics, gridColumns, widgetParamsList } = useKPIGroupVM(config);
 
   if (!data || !config.metrics || !Array.isArray(config.metrics) || !config.metrics[0]) {

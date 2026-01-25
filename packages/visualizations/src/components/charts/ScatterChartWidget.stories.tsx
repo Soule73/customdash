@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ScatterChartWidgetAE } from './ScatterChartWidgetAE';
+import { ScatterChartWidget, type ScatterChartWidgetProps } from './ScatterChartWidget';
 
-const meta: Meta<typeof ScatterChartWidgetAE> = {
-  title: 'Visualizations/Charts/ScatterChartWidgetAE',
-  component: ScatterChartWidgetAE,
+const meta: Meta<typeof ScatterChartWidget> = {
+  title: 'Visualizations/Charts/ScatterChartWidget',
+  component: ScatterChartWidget,
   parameters: {
     layout: 'padded',
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof ScatterChartWidgetAE> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ScatterChartWidgetAE>;
+type Story = StoryObj<ScatterChartWidgetProps>;
 
 const sampleData = [
   { height: 170, weight: 70, age: 25 },

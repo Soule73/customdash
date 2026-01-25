@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { RadarChartWidgetAE } from './RadarChartWidgetAE';
+import { RadarChartWidget, type RadarChartWidgetProps } from './RadarChartWidget';
 
-const meta: Meta<typeof RadarChartWidgetAE> = {
-  title: 'Visualizations/Charts/RadarChartWidgetAE',
-  component: RadarChartWidgetAE,
+const meta: Meta<typeof RadarChartWidget> = {
+  title: 'Visualizations/Charts/RadarChartWidget',
+  component: RadarChartWidget,
   parameters: {
     layout: 'padded',
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof RadarChartWidgetAE> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RadarChartWidgetAE>;
+type Story = StoryObj<RadarChartWidgetProps>;
 
 const sampleData = [
   { speed: 85, reliability: 92, features: 78, price: 65, support: 88 },

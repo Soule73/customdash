@@ -2,10 +2,10 @@
  * Charts components exports (Apache ECharts)
  */
 
-export { BarChartWidgetAE } from './BarChartWidgetAE';
-export { LineChartWidgetAE } from './LineChartWidgetAE';
-export { PieChartWidgetAE } from './PieChartWidgetAE';
-export { BubbleChartWidgetAE } from './BubbleChartWidgetAE';
-export { ScatterChartWidgetAE } from './ScatterChartWidgetAE';
-export { RadarChartWidgetAE } from './RadarChartWidgetAE';
-export { BaseChartAE } from './BaseChartAE';
+export { BarChartWidget } from './BarChartWidget';
+export { LineChartWidget } from './LineChartWidget';
+export { PieChartWidget } from './PieChartWidget';
+export { BubbleChartWidget } from './BubbleChartWidget';
+export { ScatterChartWidget } from './ScatterChartWidget';
+export { RadarChartWidget } from './RadarChartWidget';
+export { BaseChart } from './BaseChart';

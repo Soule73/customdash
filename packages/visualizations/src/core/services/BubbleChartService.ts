@@ -1,20 +1,19 @@
-import { useMemo } from 'react';
 import type { EChartsOption, ScatterSeriesOption } from 'echarts';
 import type {
   BubbleMetricConfig,
-  BubbleChartConfig,
-  MetricStyle,
-  BubbleValidationResult,
-} from '../interfaces';
-import type { EChartsWidgetParams } from '../types/echarts.types';
-import { prepareMetricStyles } from '../utils/metricStyleUtils';
-import { mergeWidgetParams } from '../utils/widgetParamsUtils';
+  ExtendedWidgetParams,
+  BubbleDataContext,
+  BubbleChartInput,
+  ChartValidationResult,
+} from '../../interfaces';
+import { prepareMetricStyles } from '../../utils/metricStyleUtils';
+import { mergeWidgetParams } from '../../utils/widgetParamsUtils';
 import {
   processBubbleMetrics,
   validateBubbleConfiguration,
   generateBubbleMetricLabel,
   calculateBubbleScales,
-} from '../utils/bubbleChartUtils';
+} from '../../utils/bubbleChartUtils';
 import {
   createBaseOptions,
   createEmphasisOptions,
@@ -22,58 +21,82 @@ import {
   createGradientColor,
   mergeOptions,
   getDefaultColor,
-  type ExtendedWidgetParams,
-} from '../utils/echartsUtils';
-
-export interface BubbleChartVMAE {
-  option: EChartsOption;
-  validDatasets: BubbleMetricConfig[];
-  isValid: boolean;
-  validationErrors: string[];
-  validationWarnings: string[];
-}
-
-export interface BubbleChartWidgetAEProps {
-  data: Record<string, unknown>[];
-  config: BubbleChartConfig & { echarts?: EChartsWidgetParams };
-}
+} from '../../utils/echartsUtils';
 
 /**
- * Hook to create the ViewModel for a Bubble Chart using Apache ECharts
+ * Service for processing Bubble chart data and configuration
+ * Extends scatter chart functionality with size dimension
  */
-export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): BubbleChartVMAE {
-  const widgetParams: ExtendedWidgetParams = useMemo(
-    () => ({
+export class BubbleChartService {
+  /**
+   * Merge widget params with echarts configuration
+   */
+  static mergeWidgetParams(config: BubbleChartInput['config']): ExtendedWidgetParams {
+    return {
       ...mergeWidgetParams(config.widgetParams),
-      echarts: (config as { echarts?: EChartsWidgetParams }).echarts,
-    }),
-    [config],
-  );
+      echarts: config.echarts,
+    };
+  }
 
-  const echartsConfig = widgetParams.echarts;
-  const scatterConfig = echartsConfig?.scatter;
+  /**
+   * Validate bubble chart configuration
+   */
+  static validateConfig(metrics: BubbleMetricConfig[]): ChartValidationResult {
+    const result = validateBubbleConfiguration(metrics);
+    return {
+      isValid: result.isValid,
+      errors: result.errors,
+      warnings: result.warnings,
+    };
+  }
 
-  const validMetrics = useMemo<BubbleMetricConfig[]>(() => {
-    return config.metrics || [];
-  }, [config.metrics]);
+  /**
+   * Create the complete data context for bubble chart processing
+   */
+  static createDataContext(input: BubbleChartInput): BubbleDataContext {
+    const widgetParams = this.mergeWidgetParams(input.config);
+    const echartsConfig = widgetParams.echarts;
+    const scatterConfig = echartsConfig?.scatter;
+    const validMetrics = input.config.metrics || [];
+    const metricStyles = prepareMetricStyles(input.config.metricStyles);
+    const validation = validateBubbleConfiguration(validMetrics);
+    const processedMetrics = processBubbleMetrics(
+      input.data,
+      validMetrics,
+      input.config.globalFilters,
+    );
+    const scales = calculateBubbleScales(input.data, validMetrics);
 
-  const metricStyles = useMemo<MetricStyle[]>(() => {
-    return prepareMetricStyles(config.metricStyles);
-  }, [config.metricStyles]);
+    return {
+      widgetParams,
+      echartsConfig,
+      scatterConfig,
+      validMetrics,
+      metricStyles,
+      validation,
+      processedMetrics,
+      scales,
+    };
+  }
 
-  const validation = useMemo<BubbleValidationResult>(() => {
-    return validateBubbleConfiguration(validMetrics);
-  }, [validMetrics]);
+  /**
+   * Calculate symbol size based on radius value
+   */
+  static calculateSymbolSize(
+    radius: number,
+    maxRadius: number,
+    minSize = 10,
+    maxSize = 50,
+  ): number {
+    const safeMaxRadius = maxRadius || 1;
+    return minSize + (radius / safeMaxRadius) * (maxSize - minSize);
+  }
 
-  const processedMetrics = useMemo(() => {
-    return processBubbleMetrics(data, validMetrics, config.globalFilters);
-  }, [data, validMetrics, config.globalFilters]);
-
-  const scales = useMemo(() => {
-    return calculateBubbleScales(data, validMetrics);
-  }, [data, validMetrics]);
-
-  const series = useMemo<ScatterSeriesOption[]>(() => {
+  /**
+   * Build series configuration for bubble chart
+   */
+  static buildSeries(context: BubbleDataContext): ScatterSeriesOption[] {
+    const { processedMetrics, metricStyles, widgetParams, echartsConfig, scatterConfig } = context;
     const emphasisConfig = createEmphasisOptions(echartsConfig?.emphasis);
     const labelConfig = createAdvancedLabelConfig(
       widgetParams.showValues,
@@ -91,15 +114,13 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
         : baseColor;
 
       const maxR = Math.max(...bubbleData.map(d => d.r), 1);
-      const minSize = 10;
-      const maxSize = 50;
 
       return {
         type: 'scatter',
         name: label,
         data: bubbleData.map(point => ({
           value: [point.x, point.y],
-          symbolSize: minSize + (point.r / maxR) * (maxSize - minSize),
+          symbolSize: this.calculateSymbolSize(point.r, maxR),
         })),
         symbolRotate: scatterConfig?.symbolRotate,
         large: scatterConfig?.large,
@@ -120,9 +141,13 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
           : undefined,
       } as ScatterSeriesOption;
     });
-  }, [processedMetrics, metricStyles, widgetParams, echartsConfig, scatterConfig]);
+  }
 
-  const option = useMemo<EChartsOption>(() => {
+  /**
+   * Build complete ECharts options for bubble chart
+   */
+  static buildOptions(context: BubbleDataContext, series: ScatterSeriesOption[]): EChartsOption {
+    const { widgetParams, echartsConfig, scales } = context;
     const baseOptions = createBaseOptions(widgetParams);
     const axisConfig = echartsConfig?.axisConfig;
 
@@ -153,17 +178,8 @@ export function useBubbleChartVMAE({ data, config }: BubbleChartWidgetAEProps): 
         min: scales.yMin,
         max: scales.yMax,
         splitLine: { show: widgetParams.showGrid !== false },
-        splitArea: axisConfig?.splitAreaShow ? { show: true } : undefined,
       },
       series,
     });
-  }, [widgetParams, scales, series, echartsConfig]);
-
-  return {
-    option,
-    validDatasets: validMetrics,
-    isValid: validation.isValid,
-    validationErrors: validation.errors,
-    validationWarnings: validation.warnings,
-  };
+  }
 }

@@ -1,17 +1,8 @@
-import type {
-  ValidationResult,
-  BubbleMetricConfig,
-  ScatterMetricConfig,
-  RadarMetricConfig,
-} from '../../interfaces';
+import type { BubbleMetricConfig, ScatterMetricConfig, RadarMetricConfig } from '../common';
 
 export interface ChartValidationConfig {
   metrics: Array<{ fields?: string[]; x?: string; y?: string; r?: string; agg?: string }>;
   chartType: 'bubble' | 'scatter' | 'radar';
-}
-
-export interface ChartValidationResult extends ValidationResult {
-  warnings: string[];
 }
 
 export interface ScaleResult {

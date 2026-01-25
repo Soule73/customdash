@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { LineChartWidgetAE } from './LineChartWidgetAE';
+import { LineChartWidget } from './LineChartWidget';
 
-const meta: Meta<typeof LineChartWidgetAE> = {
-  title: 'Visualizations/Charts/LineChartWidgetAE',
-  component: LineChartWidgetAE,
+const meta: Meta<typeof LineChartWidget> = {
+  title: 'Visualizations/Charts/LineChartWidget',
+  component: LineChartWidget,
   parameters: {
     layout: 'padded',
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof LineChartWidgetAE> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof LineChartWidgetAE>;
+type Story = StoryObj<typeof LineChartWidget>;
 
 const sampleData = [
   { month: 'January', revenue: 4000, profit: 2400 },

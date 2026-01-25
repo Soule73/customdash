@@ -80,13 +80,16 @@ export interface MetricStyle extends ChartStyles {
   colors?: string[];
 }
 
-export interface ChartConfig {
-  metrics: Metric[];
-  buckets?: MultiBucketConfig[];
+export interface BaseChartConfig {
   globalFilters?: Filter[];
-  styles?: ChartStyles;
   metricStyles?: MetricStyle[];
   widgetParams?: WidgetParams;
+}
+
+export interface ChartConfig extends BaseChartConfig {
+  metrics: Metric[];
+  buckets?: MultiBucketConfig[];
+  styles?: ChartStyles;
 }
 
 export interface WidgetParams {
@@ -138,26 +141,17 @@ export interface RadarMetricConfig {
   datasetFilters?: Filter[];
 }
 
-export interface BubbleChartConfig {
+export interface BubbleChartConfig extends BaseChartConfig {
   metrics: BubbleMetricConfig[];
-  globalFilters?: Filter[];
-  metricStyles?: MetricStyle[];
-  widgetParams?: WidgetParams;
 }
 
-export interface ScatterChartConfig {
+export interface ScatterChartConfig extends BaseChartConfig {
   metrics: ScatterMetricConfig[];
-  globalFilters?: Filter[];
-  metricStyles?: MetricStyle[];
-  widgetParams?: WidgetParams;
 }
 
-export interface RadarChartConfig {
+export interface RadarChartConfig extends BaseChartConfig {
   metrics: RadarMetricConfig[];
   buckets?: MultiBucketConfig[];
-  globalFilters?: Filter[];
-  metricStyles?: MetricStyle[];
-  widgetParams?: WidgetParams;
 }
 
 export interface KPIWidgetParams extends WidgetParams {

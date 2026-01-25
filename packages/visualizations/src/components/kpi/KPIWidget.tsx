@@ -1,5 +1,5 @@
 import type { TrendDirection } from '../../types';
-import { useKPIWidgetVM, type KPIWidgetProps } from '../../hooks/useKPIWidgetVM';
+import { useKPIWidgetVM, type KPIWidgetInput } from '../../hooks/useKPIWidgetVM';
 
 interface TrendIconProps {
   direction: TrendDirection;
@@ -68,7 +68,7 @@ function TrendIcon({ direction, type }: TrendIconProps) {
  * };
  * <KPIWidget data={data} config={config} />
  */
-export default function KPIWidget({ data, config }: KPIWidgetProps) {
+export default function KPIWidget({ data, config }: KPIWidgetInput) {
   const {
     value,
     title,

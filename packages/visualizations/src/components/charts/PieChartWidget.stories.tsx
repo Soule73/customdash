@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { PieChartWidgetAE } from './PieChartWidgetAE';
+import { PieChartWidget } from './PieChartWidget';
 
-const meta: Meta<typeof PieChartWidgetAE> = {
-  title: 'Visualizations/Charts/PieChartWidgetAE',
-  component: PieChartWidgetAE,
+const meta: Meta<typeof PieChartWidget> = {
+  title: 'Visualizations/Charts/PieChartWidget',
+  component: PieChartWidget,
   parameters: {
     layout: 'padded',
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof PieChartWidgetAE> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof PieChartWidgetAE>;
+type Story = StoryObj<typeof PieChartWidget>;
 
 const sampleData = [
   { category: 'Electronics', sales: 4500 },

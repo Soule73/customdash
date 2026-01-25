@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { BarChartWidgetAE } from './BarChartWidgetAE';
+import { BarChartWidget } from './BarChartWidget';
 
-const meta: Meta<typeof BarChartWidgetAE> = {
-  title: 'Visualizations/Charts/BarChartWidgetAE',
-  component: BarChartWidgetAE,
+const meta: Meta<typeof BarChartWidget> = {
+  title: 'Visualizations/Charts/BarChartWidget',
+  component: BarChartWidget,
   parameters: {
     layout: 'padded',
   },
@@ -17,7 +17,7 @@ const meta: Meta<typeof BarChartWidgetAE> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof BarChartWidgetAE>;
+type Story = StoryObj<typeof BarChartWidget>;
 
 const sampleData = [
   { category: 'January', sales: 4000, expenses: 2400 },

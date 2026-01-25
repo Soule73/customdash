@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { Table } from '@customdash/ui';
-import { useTableWidgetVM, type TableWidgetProps } from '../../hooks/useTableWidgetVM';
+import { useTableWidgetVM, type TableWidgetInput } from '../../hooks/useTableWidgetVM';
 import { formatValue } from '../../utils';
 import type { TableColumn } from '../../interfaces';
 
@@ -79,7 +79,7 @@ function TableContent({
  * TableWidget component with optimized rendering, sorting, searching and pagination
  * Uses the Table component from @customdash/ui for consistent styling
  */
-export default function TableWidget({ data, config }: TableWidgetProps) {
+export default function TableWidget({ data, config }: TableWidgetInput) {
   const {
     columns,
     paginatedData,

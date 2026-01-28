@@ -1,8 +1,10 @@
 import { ChatBubbleLeftRightIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Spinner } from '@customdash/ui';
 import { useAIConversations } from '@hooks/index';
+import { useAppTranslation } from '@hooks/useAppTranslation';
 
 export function AIPage() {
+  const { t } = useAppTranslation();
   const { data: conversations, isLoading } = useAIConversations();
 
   if (isLoading) {
@@ -17,13 +19,11 @@ export function AIPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Assistant IA</h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Generez des widgets avec l'aide de l'intelligence artificielle
-          </p>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">{t('ai.title')}</h1>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('ai.subtitle')}</p>
         </div>
         <Button variant="secondary" leftIcon={<PlusIcon className="h-4 w-4" />}>
-          Nouvelle conversation
+          {t('ai.newConversation')}
         </Button>
       </div>
 
@@ -34,20 +34,20 @@ export function AIPage() {
           </div>
           <div className="flex-1">
             <h3 className="font-medium text-gray-900 dark:text-white">
-              Generation automatique de widgets
+              {t('ai.autoGeneration.title')}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Decrivez vos donnees et laissez l'IA creer les visualisations adaptees
+              {t('ai.autoGeneration.description')}
             </p>
           </div>
-          <Button variant="outline">Commencer</Button>
+          <Button variant="outline">{t('ai.autoGeneration.start')}</Button>
         </div>
       </Card>
 
       {conversations && conversations.length > 0 ? (
         <div className="space-y-3">
           <h2 className="text-sm font-medium text-gray-900 dark:text-white">
-            Conversations recentes
+            {t('ai.conversations.recent')}
           </h2>
           {conversations.map(conv => (
             <Card
@@ -62,7 +62,7 @@ export function AIPage() {
                     {conv.title}
                   </h3>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {conv.messages.length} messages
+                    {t('ai.conversations.messages', { count: conv.messages.length })}
                   </p>
                 </div>
               </div>
@@ -73,10 +73,10 @@ export function AIPage() {
         <Card className="py-12 text-center">
           <ChatBubbleLeftRightIcon className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600" />
           <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
-            Aucune conversation
+            {t('ai.conversations.empty')}
           </h3>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Demarrez une conversation avec l'assistant IA
+            {t('ai.conversations.emptyHint')}
           </p>
         </Card>
       )}

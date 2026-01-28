@@ -1,55 +1,44 @@
 import { UserCircleIcon, KeyIcon, BellIcon, PaintBrushIcon } from '@heroicons/react/24/outline';
 import { Card, Avatar } from '@customdash/ui';
 import { useAuthStore } from '@stores/authStore';
+import { useAppTranslation } from '@hooks/useAppTranslation';
 
-const settingsSections = [
-  {
-    id: 'profile',
-    name: 'Profil',
-    description: 'Gerez vos informations personnelles',
-    icon: UserCircleIcon,
-  },
-  {
-    id: 'security',
-    name: 'Securite',
-    description: 'Mot de passe et authentification',
-    icon: KeyIcon,
-  },
-  {
-    id: 'notifications',
-    name: 'Notifications',
-    description: 'Preferences de notification',
-    icon: BellIcon,
-  },
-  {
-    id: 'appearance',
-    name: 'Apparence',
-    description: 'Theme et personnalisation',
-    icon: PaintBrushIcon,
-  },
+type SectionId = 'profile' | 'security' | 'notifications' | 'appearance';
+
+interface SettingsSection {
+  id: SectionId;
+  icon: typeof UserCircleIcon;
+}
+
+const settingsSections: SettingsSection[] = [
+  { id: 'profile', icon: UserCircleIcon },
+  { id: 'security', icon: KeyIcon },
+  { id: 'notifications', icon: BellIcon },
+  { id: 'appearance', icon: PaintBrushIcon },
 ];
 
 export function SettingsPage() {
+  const { t } = useAppTranslation();
   const { user } = useAuthStore();
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Parametres</h1>
-        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-          Gerez votre compte et vos preferences
-        </p>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          {t('settings.title')}
+        </h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.subtitle')}</p>
       </div>
 
       <Card>
         <div className="flex items-center gap-4">
-          <Avatar size="xl" name={user?.username || 'Utilisateur'} />
+          <Avatar size="xl" name={user?.username || t('settings.defaultUser')} />
           <div>
             <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-              {user?.username || 'Utilisateur'}
+              {user?.username || t('settings.defaultUser')}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {user?.email || 'email@exemple.com'}
+              {user?.email || t('settings.defaultEmail')}
             </p>
           </div>
         </div>
@@ -66,8 +55,12 @@ export function SettingsPage() {
                 <section.icon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </div>
               <div>
-                <h3 className="font-medium text-gray-900 dark:text-white">{section.name}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{section.description}</p>
+                <h3 className="font-medium text-gray-900 dark:text-white">
+                  {t(`settings.sections.${section.id}.name` as const)}
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t(`settings.sections.${section.id}.description` as const)}
+                </p>
               </div>
             </div>
           </Card>

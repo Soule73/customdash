@@ -234,7 +234,7 @@ export function DataSourceForm({
                 label={t('datasources.name')}
                 value={form.name}
                 onChange={e => updateField('name', e.target.value)}
-                placeholder="Ex: API Products"
+                placeholder={t('datasources.form.namePlaceholder')}
                 error={errors.name}
               />
               {typeReadOnly ? (
@@ -271,7 +271,7 @@ export function DataSourceForm({
                   label={t('datasources.form.urlEndpoint')}
                   value={form.endpoint}
                   onChange={e => updateField('endpoint', e.target.value)}
-                  placeholder="https://api.example.com/data"
+                  placeholder={t('datasources.form.endpointPlaceholder')}
                   error={errors.endpoint}
                 />
                 <Select
@@ -293,7 +293,7 @@ export function DataSourceForm({
                 label={t('datasources.form.filePath')}
                 value={form.filePath}
                 onChange={e => updateField('filePath', e.target.value)}
-                placeholder="/uploads/data.csv"
+                placeholder={t('datasources.form.filePathPlaceholder')}
                 error={errors.filePath}
               />
             </div>
@@ -309,14 +309,14 @@ export function DataSourceForm({
                   label={t('datasources.form.clusterUrl')}
                   value={form.endpoint}
                   onChange={e => updateField('endpoint', e.target.value)}
-                  placeholder="https://es.example.com:9200"
+                  placeholder={t('datasources.form.clusterUrlPlaceholder')}
                   error={errors.endpoint}
                 />
                 <Input
                   label={t('datasources.form.index')}
                   value={form.esIndex}
                   onChange={e => updateField('esIndex', e.target.value)}
-                  placeholder="my-index"
+                  placeholder={t('datasources.form.indexPlaceholder')}
                   error={errors.esIndex}
                 />
               </div>
@@ -359,7 +359,7 @@ export function DataSourceForm({
                       label={t('datasources.form.header')}
                       value={form.apiKeyHeader}
                       onChange={e => updateField('apiKeyHeader', e.target.value)}
-                      placeholder="X-API-Key"
+                      placeholder={t('datasources.form.headerPlaceholder')}
                     />
                   </>
                 )}

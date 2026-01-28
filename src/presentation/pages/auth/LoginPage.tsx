@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Alert } from '@customdash/ui';
+import { Button, Input, Alert, Checkbox } from '@customdash/ui';
 import { useLogin } from '@hooks/index';
 import { Logo } from '@components/common';
 import { useAppTranslation } from '@hooks/useAppTranslation';
@@ -64,7 +64,7 @@ export function LoginPage() {
         <Input
           label={t('auth.email')}
           type="email"
-          placeholder="vous@exemple.com"
+          placeholder={t('auth.emailPlaceholder')}
           autoComplete="email"
           error={errors.email?.message}
           {...register('email')}
@@ -74,28 +74,27 @@ export function LoginPage() {
           <Input
             label={t('auth.password')}
             type={showPassword ? 'text' : 'password'}
-            placeholder="********"
+            placeholder={t('auth.passwordPlaceholder')}
             autoComplete="current-password"
             error={errors.password?.message}
             {...register('password')}
           />
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-8 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
             {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-          </button>
+          </Button>
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800"
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400">{t('auth.rememberMe')}</span>
-          </label>
+          <Checkbox
+            label={t('auth.rememberMe')}
+            className="text-sm text-gray-600 dark:text-gray-400"
+          />
           <Link
             to="/forgot-password"
             className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
@@ -109,7 +108,7 @@ export function LoginPage() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+      {/* <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
         {t('auth.noAccount')}{' '}
         <Link
           to="/register"
@@ -117,7 +116,7 @@ export function LoginPage() {
         >
           {t('auth.createAccount')}
         </Link>
-      </p>
+      </p> */}
     </div>
   );
 }

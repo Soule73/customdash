@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthLayout, AppLayout } from '@/presentation/layouts';
 import { RequireAuth, GuestOnly } from '@components/common';
+import { useAppStore } from '@stores/appStore';
 import {
   LoginPage,
   DashboardsPage,
@@ -16,7 +18,29 @@ import {
   NotFoundPage,
 } from '@pages/index';
 
+function useInitializeApp() {
+  const theme = useAppStore(s => s.theme);
+  const language = useAppStore(s => s.language);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (theme === 'dark' || (theme === 'system' && systemDark)) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+}
+
 function App() {
+  useInitializeApp();
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/dashboards" replace />} />

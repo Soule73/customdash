@@ -1,32 +1,15 @@
-import { useEffect, useState } from 'react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { Button, Tooltip } from '@customdash/ui';
-import { getLocalStorage, setLocalStorage } from '@customdash/utils';
 import { useAppTranslation } from '@hooks/useAppTranslation';
-
-type Theme = 'light' | 'dark' | 'system';
+import { useAppStore } from '@stores/appStore';
 
 export function ThemeToggle() {
   const { t } = useAppTranslation();
-  const [theme, setTheme] = useState<Theme>(() => {
-    return getLocalStorage<Theme>('theme', 'system');
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (theme === 'dark' || (theme === 'system' && systemDark)) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-
-    setLocalStorage('theme', theme);
-  }, [theme]);
+  const theme = useAppStore(s => s.theme);
+  const setTheme = useAppStore(s => s.setTheme);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   const isDark =

@@ -1,5 +1,6 @@
-import { useAppTranslation } from '@hooks/useAppTranslation';
 import { Select } from '@customdash/ui';
+import { useAppStore } from '@stores/appStore';
+import type { Language } from '@type/app.types';
 import type { ChangeEvent } from 'react';
 
 interface LanguageSelectorProps {
@@ -12,15 +13,16 @@ const LANGUAGE_OPTIONS = [
 ];
 
 export function LanguageSelector({ className }: LanguageSelectorProps) {
-  const { currentLanguage, changeLanguage } = useAppTranslation();
+  const language = useAppStore(s => s.language);
+  const setLanguage = useAppStore(s => s.setLanguage);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    changeLanguage(e.target.value as 'en' | 'fr');
+    setLanguage(e.target.value as Language);
   };
 
   return (
     <Select
-      value={currentLanguage}
+      value={language}
       onChange={handleChange}
       options={LANGUAGE_OPTIONS}
       className={className}

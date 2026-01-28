@@ -14,13 +14,9 @@ type NestedKeyOf<T, K extends string = ''> = T extends object
 export type TranslationKey = NestedKeyOf<TranslationKeys>;
 
 export function useAppTranslation() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return {
     t: (key: TranslationKey, options?: Record<string, unknown>) => t(key, options),
-    i18n,
-    currentLanguage: i18n.language,
-    changeLanguage: (lang: 'en' | 'fr') => i18n.changeLanguage(lang),
-    languages: ['en', 'fr'] as const,
   };
 }

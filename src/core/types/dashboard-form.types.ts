@@ -1,4 +1,4 @@
-import type { LayoutItem, Dashboard } from './dashboard.types';
+import type { LayoutItem, Dashboard, DashboardStyles, LayoutItemStyles } from './dashboard.types';
 import type { Widget } from './widget.types';
 
 export type DashboardVisibility = 'private' | 'public' | 'shared';
@@ -26,6 +26,7 @@ export interface DashboardFormConfig {
   description: string;
   visibility: DashboardVisibility;
   layout: LayoutItem[];
+  styles?: DashboardStyles;
   timeRange: TimeRangeConfig;
   autoRefresh: AutoRefreshConfig;
   globalFilters: DashboardFilter[];
@@ -45,6 +46,8 @@ export interface DashboardFormState {
   config: DashboardFormConfig;
   widgets: Map<string, Widget>;
   editMode: boolean;
+  selectedItemId: string | null;
+  stylePanelOpen: boolean;
   isDirty: boolean;
   isLoading: boolean;
   isSaving: boolean;
@@ -67,6 +70,10 @@ export interface DashboardFormActions {
   addFilter: (filter: DashboardFilter) => void;
   removeFilter: (filterId: string) => void;
   updateFilter: (filterId: string, updates: Partial<DashboardFilter>) => void;
+  selectItem: (itemId: string | null) => void;
+  setStylePanelOpen: (open: boolean) => void;
+  setDashboardStyles: (styles: Partial<DashboardStyles>) => void;
+  setItemStyles: (widgetId: string, styles: Partial<LayoutItemStyles>) => void;
   initializeForm: (params: InitializeDashboardFormParams) => void;
   resetForm: () => void;
   markDirty: () => void;
@@ -100,6 +107,7 @@ export interface DashboardSaveData {
   title: string;
   description?: string;
   layout: LayoutItem[];
+  styles?: DashboardStyles;
   visibility: DashboardVisibility;
   timeRange?: TimeRangeConfig;
   autoRefreshIntervalValue?: number;

@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
+import { useAppStore } from '@stores/appStore';
 import { useDashboard, useCreateDashboard, useUpdateDashboard } from '@hooks/dashboard.queries';
 import { useWidgets } from '@hooks/widget.queries';
 import { dashboardFormService } from '@/core/dashboards';
 import { useNotifications } from '../useNotifications';
+import { useAppTranslation } from '../useAppTranslation';
 import type { Widget } from '@type/widget.types';
 
 interface UseDashboardFormOptions {
@@ -29,6 +31,7 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useAppTranslation();
   const { showSuccess, showError } = useNotifications();
 
   const dashboardId = options.dashboardId || params.id;
@@ -44,6 +47,8 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
 
   const createMutation = useCreateDashboard();
   const updateMutation = useUpdateDashboard();
+  const setLayoutStyles = useAppStore(s => s.setLayoutStyles);
+  const resetLayoutStyles = useAppStore(s => s.resetLayoutStyles);
 
   const { data: dashboard, isLoading: isDashboardLoading } = useDashboard(
     isCreateMode ? '' : dashboardId || '',
@@ -57,6 +62,7 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
       isInitializedRef.current = true;
       initializeForm({ isCreateMode: true });
       setEditMode(true);
+      resetLayoutStyles();
       return;
     }
 
@@ -70,17 +76,39 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
         widgets,
         isCreateMode: false,
       });
+
+      if (dashboard.styles) {
+        setLayoutStyles({
+          backgroundColor: dashboard.styles.backgroundColor,
+          backgroundGradient: dashboard.styles.backgroundGradient,
+          padding: dashboard.styles.padding,
+        });
+      }
     }
-  }, [dashboard, allWidgets, isCreateMode, initializeForm, setEditMode]);
+  }, [
+    dashboard,
+    allWidgets,
+    isCreateMode,
+    initializeForm,
+    setEditMode,
+    setLayoutStyles,
+    resetLayoutStyles,
+  ]);
 
   useEffect(() => {
     return () => {
       isInitializedRef.current = false;
+      resetLayoutStyles();
     };
-  }, [dashboardId]);
+  }, [dashboardId, resetLayoutStyles]);
 
   const save = useCallback(async () => {
-    const validationErrors = dashboardFormService.validateConfig(config);
+    const validationErrors = dashboardFormService.validateConfig(config, {
+      titleRequired: t('dashboards.validation.titleRequired'),
+      titleMinLength: t('dashboards.validation.titleMinLength'),
+      titleMaxLength: t('dashboards.validation.titleMaxLength'),
+      autoRefreshInterval: t('dashboards.validation.autoRefreshInterval'),
+    });
 
     if (Object.keys(validationErrors).length > 0) {
       showError(Object.values(validationErrors)[0]);
@@ -95,9 +123,10 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
           title: payload.title,
           description: payload.description,
           layout: payload.layout,
+          styles: payload.styles,
           visibility: payload.visibility,
         });
-        showSuccess('Tableau de bord cree avec succes');
+        showSuccess(t('dashboards.notifications.createSuccess'));
         navigate(`/dashboards/${newDashboard.id}`);
       } else if (dashboardId) {
         await updateMutation.mutateAsync({
@@ -106,15 +135,16 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
             title: payload.title,
             description: payload.description,
             layout: payload.layout,
+            styles: payload.styles,
             visibility: payload.visibility,
           },
         });
-        showSuccess('Tableau de bord mis a jour');
+        showSuccess(t('dashboards.notifications.updateSuccess'));
         markClean();
         setEditMode(false);
       }
     } catch {
-      showError('Erreur lors de la sauvegarde');
+      showError(t('dashboards.notifications.saveError'));
     }
   }, [
     config,
@@ -127,6 +157,7 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
     showError,
     markClean,
     setEditMode,
+    t,
   ]);
 
   const cancel = useCallback(() => {

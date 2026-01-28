@@ -8,6 +8,13 @@ import type {
 } from '@type/dashboard-form.types';
 import type { LayoutItem } from '@type/dashboard.types';
 
+export interface ValidationMessages {
+  titleRequired: string;
+  titleMinLength: string;
+  titleMaxLength: string;
+  autoRefreshInterval: string;
+}
+
 export interface IDashboardFormService {
   createDefaultConfig(): DashboardFormConfig;
   createDefaultTimeRange(): TimeRangeConfig;
@@ -24,5 +31,5 @@ export interface IDashboardFormService {
   getEffectiveTimeRange(config: TimeRangeConfig): { from: Date | null; to: Date | null };
   getAutoRefreshMs(config: AutoRefreshConfig): number | null;
 
-  validateConfig(config: DashboardFormConfig): Record<string, string>;
+  validateConfig(config: DashboardFormConfig, messages: ValidationMessages): Record<string, string>;
 }

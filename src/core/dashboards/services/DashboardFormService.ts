@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import type { IDashboardFormService } from '../interfaces';
+import type { IDashboardFormService, ValidationMessages } from '../interfaces';
 import type {
   DashboardFormConfig,
   DashboardFilter,
@@ -78,6 +78,7 @@ class DashboardFormServiceImpl implements IDashboardFormService {
       description: dashboard.description || '',
       visibility: dashboard.visibility,
       layout: dashboard.layout || [],
+      styles: dashboard.styles,
       timeRange: this.createDefaultTimeRange(),
       autoRefresh: this.createDefaultAutoRefresh(),
       globalFilters: [],
@@ -136,6 +137,7 @@ class DashboardFormServiceImpl implements IDashboardFormService {
     const payload: DashboardSaveData = {
       title: config.title.trim(),
       layout: config.layout,
+      styles: config.styles,
       visibility: config.visibility,
     };
 
@@ -194,20 +196,23 @@ class DashboardFormServiceImpl implements IDashboardFormService {
     return config.intervalValue * INTERVAL_MS[config.intervalUnit];
   }
 
-  validateConfig(config: DashboardFormConfig): Record<string, string> {
+  validateConfig(
+    config: DashboardFormConfig,
+    messages: ValidationMessages,
+  ): Record<string, string> {
     const errors: Record<string, string> = {};
 
     if (!config.title.trim()) {
-      errors.title = 'Le titre est requis';
+      errors.title = messages.titleRequired;
     } else if (config.title.length < 2) {
-      errors.title = 'Le titre doit contenir au moins 2 caracteres';
+      errors.title = messages.titleMinLength;
     } else if (config.title.length > 100) {
-      errors.title = 'Le titre ne peut pas depasser 100 caracteres';
+      errors.title = messages.titleMaxLength;
     }
 
     if (config.autoRefresh.enabled) {
       if (!config.autoRefresh.intervalValue || config.autoRefresh.intervalValue < 1) {
-        errors.autoRefreshInterval = "L'intervalle doit etre >= 1";
+        errors.autoRefreshInterval = messages.autoRefreshInterval;
       }
     }
 

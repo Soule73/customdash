@@ -83,6 +83,10 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
             field: m.field,
             agg: m.agg as MetricConfig['agg'],
             label: m.label || '',
+            x: (m as Record<string, unknown>).x as string | undefined,
+            y: (m as Record<string, unknown>).y as string | undefined,
+            r: (m as Record<string, unknown>).r as string | undefined,
+            fields: (m as Record<string, unknown>).fields as string[] | undefined,
           })),
           buckets: widgetConfig.buckets?.map((b, i) => ({
             id: `bucket-${i}`,
@@ -144,6 +148,10 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
           field: m.field,
           agg: m.agg,
           label: m.label,
+          x: m.x,
+          y: m.y,
+          r: m.r,
+          fields: m.fields,
         })),
         buckets: store.config.buckets.map(b => ({
           field: b.field,

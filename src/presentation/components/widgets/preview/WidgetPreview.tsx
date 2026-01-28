@@ -145,7 +145,7 @@ export function WidgetPreview({ isLoading = false }: WidgetPreviewProps) {
   }
 
   return (
-    <Card className="h-full min-h-100 overflow-hidden">
+    <Card className="h-full min-h-100">
       <WidgetRenderer type={type} data={data} config={chartConfig} />
     </Card>
   );

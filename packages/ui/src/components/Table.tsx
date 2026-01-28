@@ -8,10 +8,18 @@ import {
   type HTMLAttributes,
   type ThHTMLAttributes,
   type TdHTMLAttributes,
+  type CSSProperties,
 } from 'react';
 
 type SortDirection = 'asc' | 'desc';
 type TextAlign = 'left' | 'center' | 'right';
+
+interface ThemeColors {
+  textColor?: string;
+  labelColor?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+}
 
 interface TableContextValue {
   compact: boolean;
@@ -19,6 +27,7 @@ interface TableContextValue {
   sortKey: string | null;
   sortDirection: SortDirection;
   onSort: (key: string) => void;
+  themeColors?: ThemeColors;
 }
 
 const TableContext = createContext<TableContextValue | null>(null);
@@ -38,6 +47,7 @@ interface TableProps extends HTMLAttributes<HTMLTableElement> {
   sortKey?: string | null;
   sortDirection?: SortDirection;
   onSort?: (key: string, direction: SortDirection) => void;
+  themeColors?: ThemeColors;
 }
 
 interface TableHeaderProps extends HTMLAttributes<HTMLTableSectionElement> {
@@ -154,6 +164,7 @@ function Table({
   sortKey: externalSortKey,
   sortDirection: externalSortDirection,
   onSort: externalOnSort,
+  themeColors,
   className = '',
   ...props
 }: TableProps) {
@@ -188,13 +199,18 @@ function Table({
       sortKey,
       sortDirection,
       onSort: handleSort,
+      themeColors,
     }),
-    [compact, striped, sortKey, sortDirection, handleSort],
+    [compact, striped, sortKey, sortDirection, handleSort, themeColors],
   );
+
+  const tableStyle: CSSProperties = themeColors?.backgroundColor
+    ? { backgroundColor: themeColors.backgroundColor }
+    : {};
 
   return (
     <TableContext.Provider value={contextValue}>
-      <table className={`w-full ${className}`} {...props}>
+      <table className={`w-full ${className}`} style={tableStyle} {...props}>
         {children}
       </table>
     </TableContext.Provider>
@@ -208,7 +224,7 @@ function TableHeader({ children, sticky = false, className = '', ...props }: Tab
   const stickyClass = sticky ? 'sticky top-0 z-10' : '';
 
   return (
-    <thead className={`bg-gray-50 dark:bg-gray-800 ${stickyClass} ${className}`} {...props}>
+    <thead className={`bg-black/5 dark:bg-white/5 ${stickyClass} ${className}`} {...props}>
       {children}
     </thead>
   );
@@ -218,8 +234,18 @@ function TableHeader({ children, sticky = false, className = '', ...props }: Tab
  * Table body section (tbody)
  */
 function TableBody({ children, className = '', ...props }: TableBodyProps) {
+  const { themeColors } = useTableContext();
+
+  const borderStyle: CSSProperties = themeColors?.borderColor
+    ? { borderColor: themeColors.borderColor }
+    : {};
+
   return (
-    <tbody className={`divide-y divide-gray-200 dark:divide-gray-700 ${className}`} {...props}>
+    <tbody
+      className={`divide-y divide-gray-200 dark:divide-gray-700 ${className}`}
+      style={borderStyle}
+      {...props}
+    >
       {children}
     </tbody>
   );
@@ -229,11 +255,13 @@ function TableBody({ children, className = '', ...props }: TableBodyProps) {
  * Table row component (tr)
  */
 function TableRow({ children, index, className = '', ...props }: TableRowProps) {
-  const { striped } = useTableContext();
+  const { striped, themeColors } = useTableContext();
+
+  const isOddRow = striped && index !== undefined && index % 2 === 1;
 
   const rowClasses = [
-    'hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors',
-    striped && index !== undefined && index % 2 === 1 ? 'bg-gray-50 dark:bg-gray-800/50' : '',
+    'hover:bg-black/5 dark:hover:bg-white/5 transition-colors',
+    isOddRow ? 'bg-black/5 dark:bg-white/5' : '',
     className,
   ]
     .filter(Boolean)
@@ -258,11 +286,11 @@ function TableHead({
   className = '',
   ...props
 }: TableHeadProps) {
-  const { compact, sortKey: activeSortKey, sortDirection, onSort } = useTableContext();
+  const { compact, sortKey: activeSortKey, sortDirection, onSort, themeColors } = useTableContext();
 
   const paddingClass = compact ? 'px-3 py-2' : 'px-4 py-3';
   const sortableClass = sortable
-    ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 select-none'
+    ? 'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 select-none'
     : '';
 
   const handleClick = () => {
@@ -271,11 +299,15 @@ function TableHead({
     }
   };
 
+  const headStyle: CSSProperties = themeColors?.labelColor ? { color: themeColors.labelColor } : {};
+
+  const textColorClass = themeColors?.labelColor ? '' : 'text-gray-500 dark:text-gray-400';
+
   return (
     <th
       onClick={handleClick}
-      className={`${paddingClass} ${sortableClass} ${alignClasses[align]} text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ${className}`}
-      style={{ width }}
+      className={`${paddingClass} ${sortableClass} ${alignClasses[align]} text-xs font-medium ${textColorClass} uppercase tracking-wider ${className}`}
+      style={{ width, ...headStyle }}
       {...props}
     >
       <div className="flex items-center gap-1">
@@ -292,12 +324,17 @@ function TableHead({
  * Table data cell component (td)
  */
 function TableCell({ children, align = 'left', className = '', ...props }: TableCellProps) {
-  const { compact } = useTableContext();
+  const { compact, themeColors } = useTableContext();
   const paddingClass = compact ? 'px-3 py-2' : 'px-4 py-3';
+
+  const cellStyle: CSSProperties = themeColors?.textColor ? { color: themeColors.textColor } : {};
+
+  const textColorClass = themeColors?.textColor ? '' : 'text-gray-900 dark:text-gray-100';
 
   return (
     <td
-      className={`${paddingClass} ${alignClasses[align]} text-sm text-gray-900 dark:text-gray-100 ${className}`}
+      className={`${paddingClass} ${alignClasses[align]} text-sm ${textColorClass} ${className}`}
+      style={cellStyle}
       {...props}
     >
       {children}
@@ -478,4 +515,5 @@ export type {
   TableEmptyProps,
   SortDirection,
   TextAlign,
+  ThemeColors as TableThemeColors,
 };

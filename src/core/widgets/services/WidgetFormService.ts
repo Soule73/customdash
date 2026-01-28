@@ -35,7 +35,7 @@ const BASE_WIDGET_PARAMS: WidgetParams = {
   legend: true,
   legendPosition: 'top',
   showGrid: true,
-  showValues: false,
+  showValues: true,
   labelFontSize: 12,
   labelColor: '#374151',
   format: 'number',

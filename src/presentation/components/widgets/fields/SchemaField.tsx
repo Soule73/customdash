@@ -45,9 +45,9 @@ export function SchemaField({ fieldKey, schema, value, onChange }: SchemaFieldPr
     case 'color':
       return (
         <div className="space-y-1">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             {schema.label}
-          </label>
+          </span>
           <div className="flex items-center gap-2">
             <input
               type="color"
@@ -121,7 +121,7 @@ function ColorArrayField({ label, value, onChange }: ColorArrayFieldProps) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
+      <span className="block text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
       <div className="flex flex-wrap gap-2">
         {value.map((color, index) => (
           <div key={index} className="relative group">

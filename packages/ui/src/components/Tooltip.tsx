@@ -112,7 +112,7 @@ export function Tooltip({
           <div
             role="tooltip"
             style={getTooltipStyle()}
-            className="fixed z-[9999] px-2.5 py-1.5 text-sm text-white bg-gray-900 dark:bg-gray-700 rounded-md shadow-lg whitespace-nowrap pointer-events-none"
+            className="fixed z-9999 px-2.5 py-1.5 text-sm text-white bg-gray-900 dark:bg-gray-700 rounded-md shadow-lg whitespace-nowrap pointer-events-none"
           >
             {content}
             <span className={`absolute w-0 h-0 border-4 ${getArrowStyle()}`} />

@@ -41,6 +41,12 @@ export const datasources = {
     timestampHelp: 'For date filtering',
     leaveEmptyToKeep: 'Leave empty to keep current',
     notModifiable: 'Not modifiable',
+    namePlaceholder: 'Ex: API Products',
+    endpointPlaceholder: 'https://api.example.com/data',
+    filePathPlaceholder: '/uploads/data.csv',
+    clusterUrlPlaceholder: 'https://es.example.com:9200',
+    indexPlaceholder: 'my-index',
+    headerPlaceholder: 'X-API-Key',
   },
   auth: {
     none: 'None',

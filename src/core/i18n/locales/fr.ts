@@ -10,6 +10,8 @@ import {
   columnTypes,
   validation,
   errors,
+  settings,
+  ai,
 } from './fr/index';
 
 const fr = {
@@ -24,6 +26,8 @@ const fr = {
   validation,
   errors,
   columnTypes,
+  settings,
+  ai,
 };
 
 export default fr;

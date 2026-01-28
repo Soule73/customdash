@@ -20,4 +20,6 @@ export const auth = {
   noAccount: "Don't have an account?",
   createAccount: 'Create one',
   genericError: 'An error occurred',
+  emailPlaceholder: 'you@example.com',
+  passwordPlaceholder: '********',
 };

@@ -6,3 +6,5 @@ export { datasources } from './datasources';
 export { widgets } from './widgets';
 export { table, columnTypes } from './table';
 export { validation, errors } from './validation';
+export { settings } from './settings';
+export { ai } from './ai';

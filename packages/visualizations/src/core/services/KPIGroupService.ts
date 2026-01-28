@@ -76,13 +76,17 @@ export class KPIGroupService {
     metrics: Metric[],
     metricStyles: MetricStyle[],
     baseParams: Record<string, unknown>,
+    hasThemeColors: boolean,
   ): Array<Record<string, unknown>> {
     return metrics.map((metric, idx) => {
       const metricStyle = metricStyles[idx];
+      const valueColor = hasThemeColors
+        ? baseParams.valueColor
+        : metricStyle?.color || baseParams.valueColor;
       return {
         ...baseParams,
         title: metric.label || metric.field || `KPI ${idx + 1}`,
-        valueColor: metricStyle?.color || baseParams.valueColor || '#2563eb',
+        valueColor,
       };
     });
   }
@@ -107,8 +111,20 @@ export class KPIGroupService {
     const metrics = this.extractMetrics(config);
     const metricStyles = this.extractMetricStyles(config);
     const filters = config.globalFilters;
-    const baseParams = (config.widgetParams as Record<string, unknown>) || {};
-    const widgetParamsList = this.buildWidgetParamsList(metrics, metricStyles, baseParams);
+    const themeColors = config.themeColors;
+    const hasThemeColors = Boolean(themeColors?.textColor);
+    const configParams = (config.widgetParams as Record<string, unknown>) || {};
+    const baseParams = {
+      ...configParams,
+      ...(themeColors?.textColor ? { valueColor: themeColors.textColor } : {}),
+      ...(themeColors?.labelColor ? { titleColor: themeColors.labelColor } : {}),
+    };
+    const widgetParamsList = this.buildWidgetParamsList(
+      metrics,
+      metricStyles,
+      baseParams,
+      hasThemeColors,
+    );
 
     return {
       columns,

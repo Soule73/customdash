@@ -27,4 +27,5 @@ export interface KPICardColors {
   iconColor: string;
   valueColor: string;
   descriptionColor: string;
+  titleColor: string;
 }

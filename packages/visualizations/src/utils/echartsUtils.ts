@@ -15,6 +15,7 @@ import type {
   MarkAreaConfig,
   LabelPosition,
 } from '../types/echarts.types';
+import type { ExtendedWidgetParams } from '../interfaces';
 
 const DEFAULT_COLORS = [
   '#5470c6',
@@ -129,9 +130,12 @@ export function createDataZoomOptions(
 export function createAdvancedLegendOptions(
   config?: LegendConfig,
   baseParams?: WidgetParams,
+  themeColors?: { textColor?: string; labelColor?: string },
 ): Record<string, unknown> {
+  const textColor = themeColors?.labelColor || themeColors?.textColor;
   const baseLegend = {
     show: baseParams?.legend !== false && baseParams?.showLegend !== false,
+    ...(textColor ? { textStyle: { color: textColor } } : {}),
   };
 
   if (!config) {
@@ -375,10 +379,14 @@ function adjustColorOpacity(color: string, opacity: number): string {
  */
 export function createBaseOptions(params?: ExtendedWidgetParams): EChartsOption {
   const echartsConfig = params?.echarts;
+  const themeColors = params?.themeColors;
+
+  const textStyle = themeColors?.textColor ? { color: themeColors.textColor } : undefined;
 
   const baseOptions: EChartsOption = {
     backgroundColor: 'transparent',
     color: DEFAULT_COLORS,
+    textStyle,
     title: params?.title
       ? {
           text: params.title,
@@ -386,11 +394,12 @@ export function createBaseOptions(params?: ExtendedWidgetParams): EChartsOption 
           textStyle: {
             fontSize: 14,
             fontWeight: 'bold',
+            ...(themeColors?.textColor ? { color: themeColors.textColor } : {}),
           },
         }
       : undefined,
     tooltip: createAdvancedTooltipOptions(echartsConfig?.tooltipConfig, params),
-    legend: createAdvancedLegendOptions(echartsConfig?.legendConfig, params),
+    legend: createAdvancedLegendOptions(echartsConfig?.legendConfig, params, themeColors),
     grid: {
       left: '3%',
       right: '4%',
@@ -460,15 +469,26 @@ export function createAxisConfig(
   horizontal = false,
 ): Pick<EChartsOption, 'xAxis' | 'yAxis'> {
   const axisConfig = params?.echarts?.axisConfig;
+  const themeColors = params?.themeColors;
+
+  const axisLabelStyle = themeColors?.labelColor ? { color: themeColors.labelColor } : {};
+  const axisLineStyle = themeColors?.gridColor
+    ? { lineStyle: { color: themeColors.gridColor } }
+    : {};
+  const splitLineStyle = themeColors?.gridColor
+    ? { lineStyle: { color: themeColors.gridColor, type: axisConfig?.axisLineStyle ?? 'solid' } }
+    : { lineStyle: { type: axisConfig?.axisLineStyle ?? 'solid' } };
 
   const categoryAxis = {
     type: 'category' as const,
     data: labels,
     name: horizontal ? params?.yLabel : params?.xLabel,
-    axisLine: { show: params?.showGrid !== false },
-    axisTick: { show: params?.showTicks !== false },
+    nameTextStyle: themeColors?.labelColor ? { color: themeColors.labelColor } : undefined,
+    axisLine: { show: params?.showGrid !== false, ...axisLineStyle },
+    axisTick: { show: params?.showTicks !== false, ...axisLineStyle },
     axisLabel: {
       rotate: axisConfig?.axisLabelRotate ?? 0,
+      ...axisLabelStyle,
     },
     inverse: horizontal ? (axisConfig?.inverse ?? false) : false,
   };
@@ -476,9 +496,12 @@ export function createAxisConfig(
   const valueAxis = {
     type: 'value' as const,
     name: horizontal ? params?.xLabel : params?.yLabel,
+    nameTextStyle: themeColors?.labelColor ? { color: themeColors.labelColor } : undefined,
+    axisLine: { show: params?.showGrid !== false, ...axisLineStyle },
+    axisLabel: axisLabelStyle,
     splitLine: {
       show: params?.showGrid !== false,
-      lineStyle: { type: axisConfig?.axisLineStyle ?? 'solid' },
+      ...splitLineStyle,
     },
     splitArea: axisConfig?.splitAreaShow ? { show: true } : undefined,
     minInterval: axisConfig?.minInterval,

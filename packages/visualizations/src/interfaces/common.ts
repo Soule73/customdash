@@ -15,6 +15,14 @@ import type {
 } from '../types';
 import type { EChartsWidgetParams } from '../types/echarts.types';
 
+export interface ThemeColors {
+  textColor?: string;
+  labelColor?: string;
+  gridColor?: string;
+  tooltipBackground?: string;
+  tooltipTextColor?: string;
+}
+
 export interface SelectOption<T extends string = string> {
   value: T;
   label: string;
@@ -84,6 +92,7 @@ export interface BaseChartConfig {
   globalFilters?: Filter[];
   metricStyles?: MetricStyle[];
   widgetParams?: WidgetParams;
+  themeColors?: ThemeColors;
 }
 
 export interface ChartConfig extends BaseChartConfig {
@@ -175,6 +184,7 @@ export interface KPIConfig {
   metrics?: Metric[];
   globalFilters?: Filter[];
   widgetParams?: KPIWidgetParams;
+  themeColors?: ThemeColors;
 }
 
 export interface KPIGroupConfig {
@@ -182,6 +192,7 @@ export interface KPIGroupConfig {
   globalFilters?: Filter[];
   metricStyles?: MetricStyle[];
   widgetParams?: KPIGroupWidgetParams;
+  themeColors?: ThemeColors;
 }
 
 export interface CardWidgetParams extends KPIWidgetParams {
@@ -196,6 +207,7 @@ export interface CardConfig {
   metrics: Metric[];
   globalFilters?: Filter[];
   widgetParams?: CardWidgetParams;
+  themeColors?: ThemeColors;
 }
 
 export interface TableColumn {
@@ -221,6 +233,7 @@ export interface TableWidgetConfig {
   buckets?: MultiBucketConfig[];
   globalFilters?: Filter[];
   widgetParams?: TableWidgetParams;
+  themeColors?: ThemeColors;
 }
 
 export interface WidgetConfig {

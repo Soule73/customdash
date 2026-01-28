@@ -52,7 +52,7 @@ export class CardWidgetService {
    */
   static extractWidgetParams(config: CardConfig): ParsedCardWidgetParams {
     const { format, decimals, currency } = getKPIWidgetParams(config);
-    const { iconColor, valueColor, descriptionColor } = getCardColors(config);
+    const { iconColor, valueColor, descriptionColor, titleColor } = getCardColors(config);
 
     const description =
       typeof config.widgetParams?.description === 'string' ? config.widgetParams.description : '';
@@ -71,6 +71,7 @@ export class CardWidgetService {
       iconColor,
       valueColor,
       descriptionColor,
+      titleColor,
       showIcon,
     };
   }

@@ -1,10 +1,11 @@
-import type { Filter, Metric, MultiBucketConfig, TableColumn } from './common';
+import type { Filter, Metric, MultiBucketConfig, TableColumn, ThemeColors } from './common';
 
 export interface TableConfig {
   metrics?: Metric[];
   buckets?: MultiBucketConfig[];
   columns?: TableColumn[];
   globalFilters?: Filter[];
+  themeColors?: ThemeColors;
   widgetParams?: {
     title?: string;
     pageSize?: number;

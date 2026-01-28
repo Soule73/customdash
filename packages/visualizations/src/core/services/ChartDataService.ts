@@ -7,6 +7,7 @@ import type {
   ChartValidationResult,
   BaseChartConfig,
   MultiBucketConfig,
+  ThemeColors,
 } from '../../interfaces';
 import type { EChartsWidgetParams } from '../../types/echarts.types';
 import { applyAllFilters } from '../../utils/filterUtils';
@@ -22,8 +23,8 @@ export class ChartDataService {
    * Merges widget params from multiple sources with proper precedence
    */
   static mergeWidgetParams(
-    config: ChartConfig & { echarts?: EChartsWidgetParams },
-    widgetParams?: WidgetParams & { echarts?: EChartsWidgetParams },
+    config: ChartConfig & { echarts?: EChartsWidgetParams; themeColors?: ThemeColors },
+    widgetParams?: WidgetParams & { echarts?: EChartsWidgetParams; themeColors?: ThemeColors },
   ): ExtendedWidgetParams {
     return {
       ...config.widgetParams,
@@ -32,6 +33,10 @@ export class ChartDataService {
         ...config.widgetParams?.echarts,
         ...(config as { echarts?: EChartsWidgetParams }).echarts,
         ...widgetParams?.echarts,
+      },
+      themeColors: {
+        ...config.themeColors,
+        ...widgetParams?.themeColors,
       },
     };
   }
@@ -72,8 +77,8 @@ export class ChartDataService {
    */
   static createDataContext(
     data: Record<string, unknown>[],
-    config: ChartConfig & { echarts?: EChartsWidgetParams },
-    widgetParams?: WidgetParams & { echarts?: EChartsWidgetParams },
+    config: ChartConfig & { echarts?: EChartsWidgetParams; themeColors?: ThemeColors },
+    widgetParams?: WidgetParams & { echarts?: EChartsWidgetParams; themeColors?: ThemeColors },
   ): ChartDataContext {
     const params = this.mergeWidgetParams(config, widgetParams);
     const { filteredData, processedData } = this.processChartData(data, config);

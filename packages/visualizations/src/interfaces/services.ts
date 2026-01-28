@@ -15,6 +15,7 @@ import type {
   CardConfig,
   TableWidgetConfig,
   Filter,
+  ThemeColors,
 } from './common';
 import type { ParsedKPIWidgetParams } from './kpi';
 import type { EChartsWidgetParams } from '../types/echarts.types';
@@ -32,6 +33,7 @@ export interface ChartValidationResult {
 
 export interface ExtendedWidgetParams extends WidgetParams {
   echarts?: EChartsWidgetParams;
+  themeColors?: ThemeColors;
 }
 
 export interface ExtendedDatasetParams {
@@ -183,6 +185,7 @@ export interface ParsedCardWidgetParams {
   iconColor: string;
   valueColor: string;
   descriptionColor: string;
+  titleColor: string;
   showIcon: boolean;
 }
 
@@ -201,6 +204,7 @@ export interface CardProcessedResult {
   iconColor: string;
   valueColor: string;
   descriptionColor: string;
+  titleColor: string;
   showIcon: boolean;
   iconName: string;
 }

@@ -73,8 +73,11 @@ export class KPIWidgetService {
     const metric = input.config.metrics?.[0];
     const widgetParams = this.extractWidgetParams(input.config);
     const title = getKPITitle(input.config, metric, 'KPI');
-    const valueColor = getKPIValueColor(input.config);
-    const titleColor = input.config.widgetParams?.titleColor || '#2563eb';
+
+    const themeColors = input.config.themeColors;
+    const valueColor = themeColors?.textColor || getKPIValueColor(input.config);
+    const titleColor =
+      themeColors?.labelColor || (input.config.widgetParams?.titleColor as string | undefined);
 
     return {
       filteredData,

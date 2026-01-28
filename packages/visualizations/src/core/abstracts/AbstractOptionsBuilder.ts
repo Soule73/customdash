@@ -133,16 +133,31 @@ export class PieChartOptionsBuilder extends AbstractOptionsBuilder {
  */
 export class ScatterChartOptionsBuilder extends AbstractOptionsBuilder {
   protected buildAxisOptions(): Partial<EChartsOption> {
+    const themeColors = this.params.themeColors;
+    const axisLabelStyle = themeColors?.labelColor ? { color: themeColors.labelColor } : {};
+    const axisLineStyle = themeColors?.gridColor
+      ? { lineStyle: { color: themeColors.gridColor } }
+      : {};
+    const splitLineStyle = themeColors?.gridColor
+      ? { lineStyle: { color: themeColors.gridColor } }
+      : {};
+
     return {
       xAxis: {
         type: 'value',
         name: this.params.xLabel,
-        splitLine: { show: true },
+        nameTextStyle: themeColors?.labelColor ? { color: themeColors.labelColor } : undefined,
+        axisLabel: axisLabelStyle,
+        axisLine: axisLineStyle,
+        splitLine: { show: true, ...splitLineStyle },
       },
       yAxis: {
         type: 'value',
         name: this.params.yLabel,
-        splitLine: { show: true },
+        nameTextStyle: themeColors?.labelColor ? { color: themeColors.labelColor } : undefined,
+        axisLabel: axisLabelStyle,
+        axisLine: axisLineStyle,
+        splitLine: { show: true, ...splitLineStyle },
       },
     };
   }
@@ -174,6 +189,7 @@ export class RadarChartOptionsBuilder extends AbstractOptionsBuilder {
 
   protected buildAxisOptions(): Partial<EChartsOption> {
     const radarConfig = this.echartsConfig?.radar;
+    const themeColors = this.params.themeColors;
 
     return {
       radar: {
@@ -182,7 +198,17 @@ export class RadarChartOptionsBuilder extends AbstractOptionsBuilder {
         splitNumber: radarConfig?.splitNumber ?? 5,
         axisName: {
           show: radarConfig?.axisNameShow !== false,
+          ...(themeColors?.labelColor ? { color: themeColors.labelColor } : {}),
         },
+        splitLine: themeColors?.gridColor
+          ? { lineStyle: { color: themeColors.gridColor } }
+          : undefined,
+        splitArea: themeColors?.gridColor
+          ? { areaStyle: { color: ['transparent', 'transparent'] } }
+          : undefined,
+        axisLine: themeColors?.gridColor
+          ? { lineStyle: { color: themeColors.gridColor } }
+          : undefined,
       },
     };
   }

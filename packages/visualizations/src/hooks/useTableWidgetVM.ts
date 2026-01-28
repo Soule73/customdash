@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback } from 'react';
-import type { TableWidgetConfig, TableColumn, TableDataContext } from '../interfaces';
+import type { TableWidgetConfig, TableColumn, TableDataContext, ThemeColors } from '../interfaces';
 import { TableWidgetService } from '../core/services/TableWidgetService';
 
 export interface TableWidgetVM {
@@ -15,6 +15,7 @@ export interface TableWidgetVM {
   searchTerm: string;
   sortKey: string | null;
   sortDirection: 'asc' | 'desc';
+  themeColors?: ThemeColors;
   setCurrentPage: (page: number) => void;
   setSearchTerm: (term: string) => void;
   handleSort: (key: string) => void;
@@ -98,6 +99,7 @@ export function useTableWidgetVM({ data, config }: TableWidgetInput): TableWidge
     searchTerm,
     sortKey,
     sortDirection,
+    themeColors: config.themeColors,
     setCurrentPage,
     setSearchTerm: handleSearchChange,
     handleSort,

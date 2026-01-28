@@ -9,6 +9,7 @@ export interface CardWidgetVM {
   iconColor: string;
   valueColor: string;
   descriptionColor: string;
+  titleColor: string;
   showIcon: boolean;
   iconName: string;
 }
@@ -42,6 +43,7 @@ export function useCardWidgetVM({ data, config }: CardWidgetInput): CardWidgetVM
     iconColor: context.widgetParams.iconColor,
     valueColor: context.widgetParams.valueColor,
     descriptionColor: context.widgetParams.descriptionColor,
+    titleColor: context.widgetParams.titleColor,
     showIcon: context.widgetParams.showIcon,
     iconName: context.widgetParams.icon,
   };

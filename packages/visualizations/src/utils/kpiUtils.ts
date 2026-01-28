@@ -96,9 +96,9 @@ export function calculateKPIValue(
  * const valueColor = getKPIValueColor(config);
  * // Result: '#ff0000'
  */
-export function getKPIValueColor(config: KPIConfig, defaultColor: string = '#2563eb'): string {
+export function getKPIValueColor(config: KPIConfig): string | undefined {
   const valueColor = config.widgetParams?.valueColor;
-  return (typeof valueColor === 'string' ? valueColor : undefined) || defaultColor;
+  return typeof valueColor === 'string' ? valueColor : undefined;
 }
 
 /**
@@ -121,16 +121,21 @@ export function getKPIValueColor(config: KPIConfig, defaultColor: string = '#256
  */
 export function getCardColors(config: CardConfig): KPICardColors {
   const params = config.widgetParams || {};
+  const themeColors = config.themeColors;
 
   const iconColor =
-    (typeof params.iconColor === 'string' ? params.iconColor : undefined) || '#6366f1';
+    themeColors?.textColor || (typeof params.iconColor === 'string' ? params.iconColor : undefined);
   const valueColor =
-    (typeof params.valueColor === 'string' ? params.valueColor : undefined) || '#2563eb';
+    themeColors?.textColor ||
+    (typeof params.valueColor === 'string' ? params.valueColor : undefined);
   const descriptionColor =
-    (typeof params.descriptionColor === 'string' ? params.descriptionColor : undefined) ||
-    '#6b7280';
+    themeColors?.labelColor ||
+    (typeof params.descriptionColor === 'string' ? params.descriptionColor : undefined);
+  const titleColor =
+    themeColors?.labelColor ||
+    (typeof params.titleColor === 'string' ? params.titleColor : undefined);
 
-  return { iconColor, valueColor, descriptionColor };
+  return { iconColor, valueColor, descriptionColor, titleColor };
 }
 
 /**

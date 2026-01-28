@@ -18,22 +18,13 @@ function PieChartWidgetInternal({
   data,
   config,
   widgetParams,
-  height = 300,
   className = '',
   loading = false,
   editMode = false,
 }: PieChartWidgetProps): JSX.Element {
   const { option } = usePieChartVM({ data, config, widgetParams });
 
-  return (
-    <BaseChart
-      option={option}
-      className={className}
-      style={{ height, minHeight: height }}
-      loading={loading}
-      editMode={editMode}
-    />
-  );
+  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
 }
 
 /**

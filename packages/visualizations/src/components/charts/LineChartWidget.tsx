@@ -18,22 +18,13 @@ function LineChartWidgetInternal({
   data,
   config,
   widgetParams,
-  height = 300,
   className = '',
   loading = false,
   editMode = false,
 }: LineChartWidgetProps): JSX.Element {
   const { option } = useLineChartVM({ data, config, widgetParams });
 
-  return (
-    <BaseChart
-      option={option}
-      className={className}
-      style={{ height, minHeight: height }}
-      loading={loading}
-      editMode={editMode}
-    />
-  );
+  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
 }
 
 /**

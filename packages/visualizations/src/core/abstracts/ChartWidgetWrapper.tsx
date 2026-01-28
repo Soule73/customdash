@@ -2,11 +2,11 @@ import type { JSX, ComponentType, ReactNode } from 'react';
 import type { BaseChartConfig } from '../../interfaces';
 import type { ChartValidationResult } from '../interfaces';
 import { ChartDataService } from '../services/ChartDataService';
+import { VisualizationContainer } from '../../components/common';
 
 export interface ChartWidgetBaseProps<TConfig extends BaseChartConfig = BaseChartConfig> {
   data: Record<string, unknown>[];
   config: TConfig;
-  height?: number;
   className?: string;
   loading?: boolean;
   editMode?: boolean;
@@ -111,7 +111,11 @@ export function withChartWrapper<
       return <EmptyDataPlaceholder className={className} message={emptyDataMessage} />;
     }
 
-    return <WrappedComponent {...props} />;
+    return (
+      <VisualizationContainer className={className}>
+        <WrappedComponent {...props} />
+      </VisualizationContainer>
+    );
   }
 
   ChartWrapper.displayName = `withChartWrapper(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;

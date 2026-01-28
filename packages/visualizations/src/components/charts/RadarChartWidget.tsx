@@ -16,22 +16,13 @@ export type RadarChartWidgetProps = ChartWidgetBaseProps<RadarChartConfig>;
 function RadarChartWidgetInternal({
   data,
   config,
-  height = 350,
   className = '',
   loading = false,
   editMode = false,
 }: RadarChartWidgetProps): JSX.Element {
   const { option } = useRadarChartVM({ data, config });
 
-  return (
-    <BaseChart
-      option={option}
-      className={className}
-      style={{ height, minHeight: height }}
-      loading={loading}
-      editMode={editMode}
-    />
-  );
+  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
 }
 
 /**

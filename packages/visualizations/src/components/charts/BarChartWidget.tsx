@@ -18,22 +18,13 @@ function BarChartWidgetInternal({
   data,
   config,
   widgetParams,
-  height = 300,
   className = '',
   loading = false,
   editMode = false,
 }: BarChartWidgetProps): JSX.Element {
   const { option } = useBarChartVM({ data, config, widgetParams });
 
-  return (
-    <BaseChart
-      option={option}
-      className={className}
-      style={{ height, minHeight: height }}
-      loading={loading}
-      editMode={editMode}
-    />
-  );
+  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
 }
 
 /**

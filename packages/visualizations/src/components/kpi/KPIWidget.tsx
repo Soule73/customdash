@@ -1,5 +1,6 @@
 import type { TrendDirection } from '../../types';
 import { useKPIWidgetVM, type KPIWidgetInput } from '../../hooks/useKPIWidgetVM';
+import { VisualizationContainer } from '../common';
 
 interface TrendIconProps {
   direction: TrendDirection;
@@ -101,30 +102,31 @@ export default function KPIWidget({ data, config }: KPIWidgetInput) {
   }
 
   return (
-    <div
-      // className="p-1 md:p-2"
-      style={{ width: '100%', maxWidth: '100%', height: '100%', minWidth: 0 }}
-      className="flex flex-col items-center justify-center bg-white dark:bg-gray-900  p-4 transition-colors"
-    >
-      <span className="text-xs text-gray-500 dark:text-gray-400 mb-1" style={{ color: titleColor }}>
-        {title}
-      </span>
-      {showValue && (
+    <VisualizationContainer>
+      <div className="flex flex-col items-center justify-center w-full h-full p-4">
         <span
-          className="text-4xl font-bold text-gray-900 dark:text-white"
-          style={{ color: valueColor }}
+          className="text-xs text-gray-500 dark:text-gray-400 mb-1"
+          style={titleColor ? { color: titleColor } : undefined}
         >
-          {value}
+          {title}
         </span>
-      )}
-      {showTrend && trend && (
-        <span className={`flex items-center gap-1 text-xs mt-1 ${trendColor}`}>
-          <TrendIcon direction={trend} type={trendType} />
-          {showPercent
-            ? `${trendPercent > 0 ? '+' : ''}${trendPercent.toFixed(1)}%`
-            : `${trend === 'up' ? '+' : ''}${trendValue}`}
-        </span>
-      )}
-    </div>
+        {showValue && (
+          <span
+            className="text-4xl font-bold text-gray-900 dark:text-white"
+            style={valueColor ? { color: valueColor } : undefined}
+          >
+            {value}
+          </span>
+        )}
+        {showTrend && trend && (
+          <span className={`flex items-center gap-1 text-xs mt-1 ${trendColor}`}>
+            <TrendIcon direction={trend} type={trendType} />
+            {showPercent
+              ? `${trendPercent > 0 ? '+' : ''}${trendPercent.toFixed(1)}%`
+              : `${trend === 'up' ? '+' : ''}${trendValue}`}
+          </span>
+        )}
+      </div>
+    </VisualizationContainer>
   );
 }

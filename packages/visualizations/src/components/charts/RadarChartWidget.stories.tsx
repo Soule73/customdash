@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { RadarChartWidget, type RadarChartWidgetProps } from './RadarChartWidget';
 
+const ChartContainer = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: '100%', height: 400 }}>{children}</div>
+);
+
 const meta: Meta<typeof RadarChartWidget> = {
   title: 'Visualizations/Charts/RadarChartWidget',
   component: RadarChartWidget,
@@ -8,12 +12,13 @@ const meta: Meta<typeof RadarChartWidget> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    height: {
-      control: { type: 'number' },
-      description: 'Height of the chart in pixels',
-    },
-  },
+  decorators: [
+    Story => (
+      <ChartContainer>
+        <Story />
+      </ChartContainer>
+    ),
+  ],
 };
 
 export default meta;
@@ -36,7 +41,6 @@ export const Default: Story = {
         },
       ],
     },
-    height: 400,
   },
 };
 
@@ -57,7 +61,6 @@ export const MultipleDatasets: Story = {
         },
       ],
     },
-    height: 400,
   },
 };
 
@@ -77,7 +80,6 @@ export const WithTitle: Story = {
         showLegend: true,
       },
     },
-    height: 400,
   },
 };
 
@@ -99,7 +101,6 @@ export const CustomColors: Story = {
       ],
       metricStyles: [{ colors: ['#10b981'] }, { colors: ['#f59e0b'] }],
     },
-    height: 400,
   },
 };
 
@@ -119,7 +120,6 @@ export const WithDataLabels: Story = {
         title: 'Radar with Labels',
       },
     },
-    height: 400,
   },
 };
 
@@ -139,7 +139,6 @@ export const NoPoints: Story = {
         title: 'Radar without Points',
       },
     },
-    height: 400,
   },
 };
 
@@ -164,7 +163,6 @@ export const CircleShape: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -194,7 +192,6 @@ export const PolygonWithArea: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -219,7 +216,6 @@ export const CustomSplitNumber: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -264,7 +260,6 @@ export const CircleWithAreaAndToolbox: Story = {
         },
       },
     },
-    height: 450,
   },
 };
 
@@ -288,7 +283,6 @@ export const MinimalRadar: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -305,6 +299,5 @@ export const Loading: Story = {
       ],
     },
     loading: true,
-    height: 400,
   },
 };

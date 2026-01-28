@@ -1,6 +1,7 @@
 import { useKPIGroupVM, type KPIGroupInput } from '../../hooks/useKPIGroupVM';
 import type { Metric } from '../../interfaces';
 import KPIWidget from './KPIWidget';
+import { VisualizationContainer } from '../common';
 
 /**
  * KPI Group widget component displaying multiple KPIs in a responsive grid layout.
@@ -51,23 +52,25 @@ export default function KPIGroupWidget({ data, config }: KPIGroupInput) {
   }
 
   return (
-    <div
-      className="grid gap-4 w-full h-full"
-      style={{
-        gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
-      }}
-    >
-      {metrics.map((metric: Metric, idx: number) => (
-        <KPIWidget
-          key={idx}
-          data={data}
-          config={{
-            metrics: [metric],
-            globalFilters: config.globalFilters,
-            widgetParams: widgetParamsList[idx],
-          }}
-        />
-      ))}
-    </div>
+    <VisualizationContainer>
+      <div
+        className="grid gap-4 w-full h-full"
+        style={{
+          gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
+        }}
+      >
+        {metrics.map((metric: Metric, idx: number) => (
+          <KPIWidget
+            key={idx}
+            data={data}
+            config={{
+              metrics: [metric],
+              globalFilters: config.globalFilters,
+              widgetParams: widgetParamsList[idx],
+            }}
+          />
+        ))}
+      </div>
+    </VisualizationContainer>
   );
 }

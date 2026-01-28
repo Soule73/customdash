@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ScatterChartWidget, type ScatterChartWidgetProps } from './ScatterChartWidget';
 
+const ChartContainer = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: '100%', height: 400 }}>{children}</div>
+);
+
 const meta: Meta<typeof ScatterChartWidget> = {
   title: 'Visualizations/Charts/ScatterChartWidget',
   component: ScatterChartWidget,
@@ -8,12 +12,13 @@ const meta: Meta<typeof ScatterChartWidget> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    height: {
-      control: { type: 'number' },
-      description: 'Height of the chart in pixels',
-    },
-  },
+  decorators: [
+    Story => (
+      <ChartContainer>
+        <Story />
+      </ChartContainer>
+    ),
+  ],
 };
 
 export default meta;
@@ -44,7 +49,6 @@ export const Default: Story = {
         },
       ],
     },
-    height: 400,
   },
 };
 
@@ -71,7 +75,6 @@ export const MultipleDatasets: Story = {
         },
       ],
     },
-    height: 400,
   },
 };
 
@@ -94,7 +97,6 @@ export const WithTitle: Story = {
         yLabel: 'Weight (kg)',
       },
     },
-    height: 400,
   },
 };
 
@@ -113,7 +115,6 @@ export const CustomColors: Story = {
       ],
       metricStyles: [{ colors: ['#ef4444'], pointRadius: 12 }],
     },
-    height: 400,
   },
 };
 
@@ -135,7 +136,6 @@ export const LargePoints: Story = {
         title: 'Scatter with Large Points',
       },
     },
-    height: 400,
   },
 };
 
@@ -157,7 +157,6 @@ export const WithDataLabels: Story = {
         title: 'Scatter with Labels',
       },
     },
-    height: 400,
   },
 };
 
@@ -179,7 +178,6 @@ export const NoGrid: Story = {
         title: 'Scatter without Grid',
       },
     },
-    height: 400,
   },
 };
 
@@ -215,7 +213,6 @@ export const LargeDataset: Story = {
         },
       },
     },
-    height: 450,
   },
 };
 
@@ -244,7 +241,6 @@ export const WithDataZoom: Story = {
         },
       },
     },
-    height: 450,
   },
 };
 
@@ -275,7 +271,6 @@ export const RotatedSymbols: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -307,7 +302,6 @@ export const WithToolbox: Story = {
         },
       },
     },
-    height: 450,
   },
 };
 
@@ -353,7 +347,6 @@ export const MultipleWithDataZoom: Story = {
         },
       },
     },
-    height: 500,
   },
 };
 
@@ -372,6 +365,5 @@ export const Loading: Story = {
       ],
     },
     loading: true,
-    height: 400,
   },
 };

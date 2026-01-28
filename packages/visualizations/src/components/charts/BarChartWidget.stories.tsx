@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BarChartWidget } from './BarChartWidget';
 
+const ChartContainer = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: '100%', height: 400 }}>{children}</div>
+);
+
 const meta: Meta<typeof BarChartWidget> = {
   title: 'Visualizations/Charts/BarChartWidget',
   component: BarChartWidget,
@@ -8,12 +12,13 @@ const meta: Meta<typeof BarChartWidget> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    height: {
-      control: { type: 'number' },
-      description: 'Height of the chart in pixels',
-    },
-  },
+  decorators: [
+    Story => (
+      <ChartContainer>
+        <Story />
+      </ChartContainer>
+    ),
+  ],
 };
 
 export default meta;
@@ -35,7 +40,6 @@ export const Default: Story = {
       metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
       buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
-    height: 300,
   },
 };
 
@@ -49,7 +53,6 @@ export const MultipleMetrics: Story = {
       ],
       buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
-    height: 350,
   },
 };
 
@@ -69,7 +72,6 @@ export const Stacked: Story = {
       legend: true,
       legendPosition: 'top',
     },
-    height: 350,
   },
 };
 
@@ -86,7 +88,6 @@ export const Horizontal: Story = {
       xLabel: 'Sales Amount',
       yLabel: 'Month',
     },
-    height: 350,
   },
 };
 
@@ -101,7 +102,6 @@ export const WithDataLabels: Story = {
       showValues: true,
       title: 'Bar Chart with Data Labels',
     },
-    height: 350,
   },
 };
 
@@ -120,7 +120,6 @@ export const CustomColors: Story = {
       title: 'Custom Colored Bars',
       borderRadius: 4,
     },
-    height: 350,
   },
 };
 
@@ -146,7 +145,6 @@ export const WithToolbox: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -168,7 +166,6 @@ export const WithDataZoom: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -191,7 +188,6 @@ export const WithGradient: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -222,7 +218,6 @@ export const WithMarkLine: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -244,7 +239,6 @@ export const WithAnimations: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -264,7 +258,6 @@ export const AdvancedLabels: Story = {
         labelFormatter: '{c}',
       },
     },
-    height: 350,
   },
 };
 
@@ -292,7 +285,6 @@ export const ScrollableLegend: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -318,7 +310,6 @@ export const BarSpecificOptions: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -330,7 +321,6 @@ export const Loading: Story = {
       buckets: [{ field: 'category', type: 'terms', label: 'Month' }],
     },
     loading: true,
-    height: 300,
   },
 };
 
@@ -346,6 +336,5 @@ export const NoLegend: Story = {
       showLegend: false,
       title: 'Bar Chart without Legend',
     },
-    height: 300,
   },
 };

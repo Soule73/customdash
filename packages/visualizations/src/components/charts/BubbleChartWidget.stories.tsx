@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { BubbleChartWidget, type BubbleChartWidgetProps } from './BubbleChartWidget';
 
+const ChartContainer = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: '100%', height: 400 }}>{children}</div>
+);
+
 const meta: Meta<typeof BubbleChartWidget> = {
   title: 'Visualizations/Charts/BubbleChartWidget',
   component: BubbleChartWidget,
@@ -8,12 +12,13 @@ const meta: Meta<typeof BubbleChartWidget> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    height: {
-      control: { type: 'number' },
-      description: 'Height of the chart in pixels',
-    },
-  },
+  decorators: [
+    Story => (
+      <ChartContainer>
+        <Story />
+      </ChartContainer>
+    ),
+  ],
 };
 
 export default meta;
@@ -43,7 +48,6 @@ export const Default: Story = {
         },
       ],
     },
-    height: 400,
   },
 };
 
@@ -72,7 +76,6 @@ export const MultipleDatasets: Story = {
         },
       ],
     },
-    height: 400,
   },
 };
 
@@ -96,7 +99,6 @@ export const WithTitle: Story = {
         yLabel: 'Profit (M$)',
       },
     },
-    height: 400,
   },
 };
 
@@ -116,7 +118,6 @@ export const CustomColors: Story = {
       ],
       metricStyles: [{ colors: ['#8b5cf6'], opacity: 0.6 }],
     },
-    height: 400,
   },
 };
 
@@ -139,7 +140,6 @@ export const WithDataLabels: Story = {
         title: 'Bubble Chart with Labels',
       },
     },
-    height: 400,
   },
 };
 
@@ -162,7 +162,6 @@ export const NoGrid: Story = {
         title: 'Bubble Chart without Grid',
       },
     },
-    height: 400,
   },
 };
 
@@ -203,7 +202,6 @@ export const GradientBubbles: Story = {
         },
       },
     },
-    height: 450,
   },
 };
 
@@ -233,7 +231,6 @@ export const WithEmphasis: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -273,7 +270,6 @@ export const WithToolboxAndZoom: Story = {
         },
       },
     },
-    height: 450,
   },
 };
 
@@ -315,7 +311,6 @@ export const LargeDataset: Story = {
         },
       },
     },
-    height: 500,
   },
 };
 
@@ -345,7 +340,6 @@ export const AnimatedBubbles: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -365,6 +359,5 @@ export const Loading: Story = {
       ],
     },
     loading: true,
-    height: 400,
   },
 };

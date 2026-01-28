@@ -16,22 +16,13 @@ export type ScatterChartWidgetProps = ChartWidgetBaseProps<ScatterChartConfig>;
 function ScatterChartWidgetInternal({
   data,
   config,
-  height = 350,
   className = '',
   loading = false,
   editMode = false,
 }: ScatterChartWidgetProps): JSX.Element {
   const { option } = useScatterChartVM({ data, config });
 
-  return (
-    <BaseChart
-      option={option}
-      className={className}
-      style={{ height, minHeight: height }}
-      loading={loading}
-      editMode={editMode}
-    />
-  );
+  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
 }
 
 /**

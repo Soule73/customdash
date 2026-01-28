@@ -1,9 +1,10 @@
 import type { JSX } from 'react';
 import { useCardWidgetVM, type CardWidgetInput } from '../../hooks/useCardWidgetVM';
+import { VisualizationContainer } from '../common';
 
 interface IconProps {
   name: string;
-  color: string;
+  color?: string;
 }
 
 function CardIcon({ name, color }: IconProps) {
@@ -24,7 +25,13 @@ function CardIcon({ name, color }: IconProps) {
   const path = iconPaths[name] || iconPaths['chart-bar'];
 
   return (
-    <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke={color}>
+    <svg
+      className="w-8 h-8 text-indigo-500 dark:text-indigo-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke={color || 'currentColor'}
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d={path} />
     </svg>
   );
@@ -60,6 +67,7 @@ export default function CardWidget({ data, config }: CardWidgetInput): JSX.Eleme
     iconColor,
     valueColor,
     descriptionColor,
+    titleColor,
     showIcon,
     iconName,
   } = useCardWidgetVM({ data, config });
@@ -81,24 +89,34 @@ export default function CardWidget({ data, config }: CardWidgetInput): JSX.Eleme
   }
 
   return (
-    <div className="flex flex-col h-full shadow items-center justify-center max-h-full bg-white dark:bg-gray-900 w-full max-w-full rounded-lg p-4 transition-colors">
-      {showIcon && (
-        <span className="mb-2">
-          <CardIcon name={iconName} color={iconColor} />
-        </span>
-      )}
-      <span className="text-2xl font-bold text-gray-900 dark:text-white">{title}</span>
-      <span className="text-3xl font-extrabold mt-1" style={{ color: valueColor }}>
-        {formattedValue}
-      </span>
-      {description && (
+    <VisualizationContainer>
+      <div className="flex flex-col h-full items-center justify-center w-full p-4">
+        {showIcon && (
+          <span className="mb-2">
+            <CardIcon name={iconName} color={iconColor} />
+          </span>
+        )}
         <span
-          className="text-xs mt-1 text-gray-500 dark:text-gray-400"
-          style={{ color: descriptionColor }}
+          className="text-2xl font-bold text-gray-900 dark:text-white"
+          style={titleColor ? { color: titleColor } : undefined}
         >
-          {description}
+          {title}
         </span>
-      )}
-    </div>
+        <span
+          className="text-3xl font-extrabold mt-1 text-blue-600 dark:text-blue-400"
+          style={valueColor ? { color: valueColor } : undefined}
+        >
+          {formattedValue}
+        </span>
+        {description && (
+          <span
+            className="text-xs mt-1 text-gray-500 dark:text-gray-400"
+            style={descriptionColor ? { color: descriptionColor } : undefined}
+          >
+            {description}
+          </span>
+        )}
+      </div>
+    </VisualizationContainer>
   );
 }

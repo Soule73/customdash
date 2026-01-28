@@ -16,22 +16,13 @@ export type BubbleChartWidgetProps = ChartWidgetBaseProps<BubbleChartConfig>;
 function BubbleChartWidgetInternal({
   data,
   config,
-  height = 350,
   className = '',
   loading = false,
   editMode = false,
 }: BubbleChartWidgetProps): JSX.Element {
   const { option } = useBubbleChartVM({ data, config });
 
-  return (
-    <BaseChart
-      option={option}
-      className={className}
-      style={{ height, minHeight: height }}
-      loading={loading}
-      editMode={editMode}
-    />
-  );
+  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
 }
 
 /**

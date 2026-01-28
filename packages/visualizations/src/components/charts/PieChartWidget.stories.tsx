@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PieChartWidget } from './PieChartWidget';
 
+const ChartContainer = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: '100%', height: 400 }}>{children}</div>
+);
+
 const meta: Meta<typeof PieChartWidget> = {
   title: 'Visualizations/Charts/PieChartWidget',
   component: PieChartWidget,
@@ -8,12 +12,13 @@ const meta: Meta<typeof PieChartWidget> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    height: {
-      control: { type: 'number' },
-      description: 'Height of the chart in pixels',
-    },
-  },
+  decorators: [
+    Story => (
+      <ChartContainer>
+        <Story />
+      </ChartContainer>
+    ),
+  ],
 };
 
 export default meta;
@@ -34,7 +39,6 @@ export const Default: Story = {
       metrics: [{ field: 'sales', agg: 'sum', label: 'Sales' }],
       buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
     },
-    height: 350,
   },
 };
 
@@ -49,7 +53,6 @@ export const DonutChart: Story = {
       cutout: '50%',
       title: 'Donut Chart',
     },
-    height: 350,
   },
 };
 
@@ -73,7 +76,6 @@ export const NightingaleRoseChart: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -93,7 +95,6 @@ export const NightingaleAreaChart: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -118,7 +119,6 @@ export const RoundedDonut: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -133,7 +133,6 @@ export const WithTitle: Story = {
       title: 'Sales by Category',
       legendPosition: 'right',
     },
-    height: 350,
   },
 };
 
@@ -154,7 +153,6 @@ export const InsideLabels: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -173,7 +171,6 @@ export const CustomColors: Story = {
     widgetParams: {
       title: 'Custom Colors',
     },
-    height: 350,
   },
 };
 
@@ -200,7 +197,6 @@ export const WithShadow: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -220,7 +216,6 @@ export const CounterClockwise: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -248,7 +243,6 @@ export const ScrollableLegend: Story = {
         },
       },
     },
-    height: 400,
   },
 };
 
@@ -263,7 +257,6 @@ export const NoLabels: Story = {
       showValues: false,
       title: 'Pie Chart without Labels',
     },
-    height: 350,
   },
 };
 
@@ -278,7 +271,6 @@ export const LargeCutout: Story = {
       cutout: '70%',
       title: 'Thin Donut Chart',
     },
-    height: 350,
   },
 };
 
@@ -293,7 +285,6 @@ export const LegendBottom: Story = {
       legendPosition: 'bottom',
       title: 'Legend at Bottom',
     },
-    height: 400,
   },
 };
 
@@ -305,6 +296,5 @@ export const Loading: Story = {
       buckets: [{ field: 'category', type: 'terms', label: 'Category' }],
     },
     loading: true,
-    height: 350,
   },
 };

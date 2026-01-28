@@ -1,6 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { LineChartWidget } from './LineChartWidget';
 
+const ChartContainer = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ width: '100%', height: 400 }}>{children}</div>
+);
+
 const meta: Meta<typeof LineChartWidget> = {
   title: 'Visualizations/Charts/LineChartWidget',
   component: LineChartWidget,
@@ -8,12 +12,13 @@ const meta: Meta<typeof LineChartWidget> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    height: {
-      control: { type: 'number' },
-      description: 'Height of the chart in pixels',
-    },
-  },
+  decorators: [
+    Story => (
+      <ChartContainer>
+        <Story />
+      </ChartContainer>
+    ),
+  ],
 };
 
 export default meta;
@@ -35,7 +40,6 @@ export const Default: Story = {
       metrics: [{ field: 'revenue', agg: 'sum', label: 'Revenue' }],
       buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
     },
-    height: 300,
   },
 };
 
@@ -49,7 +53,6 @@ export const MultipleMetrics: Story = {
       ],
       buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
     },
-    height: 350,
   },
 };
 
@@ -64,7 +67,6 @@ export const AreaChart: Story = {
     widgetParams: {
       title: 'Area Chart',
     },
-    height: 350,
   },
 };
 
@@ -91,7 +93,6 @@ export const GradientAreaChart: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -112,7 +113,6 @@ export const StepLine: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -127,7 +127,6 @@ export const SmoothLine: Story = {
       title: 'Smooth Line Chart',
       tension: 0.5,
     },
-    height: 350,
   },
 };
 
@@ -142,7 +141,6 @@ export const WithDataLabels: Story = {
       showValues: true,
       title: 'Line Chart with Data Labels',
     },
-    height: 350,
   },
 };
 
@@ -173,7 +171,6 @@ export const WithMarkLine: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -204,7 +201,6 @@ export const WithToolboxAndZoom: Story = {
         },
       },
     },
-    height: 450,
   },
 };
 
@@ -228,7 +224,6 @@ export const CustomSymbols: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -246,7 +241,6 @@ export const CustomColors: Story = {
     widgetParams: {
       title: 'Custom Colored Lines',
     },
-    height: 350,
   },
 };
 
@@ -268,7 +262,6 @@ export const AdvancedAnimations: Story = {
         },
       },
     },
-    height: 350,
   },
 };
 
@@ -283,7 +276,6 @@ export const NoPoints: Story = {
       showPoints: false,
       title: 'Line Chart without Points',
     },
-    height: 300,
   },
 };
 
@@ -295,6 +287,5 @@ export const Loading: Story = {
       buckets: [{ field: 'month', type: 'terms', label: 'Month' }],
     },
     loading: true,
-    height: 300,
   },
 };

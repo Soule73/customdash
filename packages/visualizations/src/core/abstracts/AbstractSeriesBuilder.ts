@@ -236,7 +236,8 @@ export class PieSeriesBuilder {
 
     const cutoutValue = params.cutout ? parseInt(params.cutout.replace('%', ''), 10) : 0;
     const innerRadius = cutoutValue > 0 ? `${cutoutValue}%` : 0;
-    const labelPosition = this.echartsConfig?.labelPosition ?? 'outside';
+    const rawLabelPosition = this.echartsConfig?.labelPosition ?? 'outside';
+    const labelPosition = rawLabelPosition === 'top' ? 'outside' : rawLabelPosition;
     const showLabel = params.showValues !== false;
 
     const emphasisConfig = createEmphasisOptions(this.echartsConfig?.emphasis);
@@ -251,9 +252,14 @@ export class PieSeriesBuilder {
 
     const roseTypeValue = pieConfig?.roseType === false ? undefined : pieConfig?.roseType;
 
+    const outerRadius = labelPosition === 'outside' && showLabel ? '55%' : '70%';
+    const radius = innerRadius ? [innerRadius, outerRadius] : outerRadius;
+
+    const labelColor = params.themeColors?.labelColor ?? params.labelColor;
+
     return {
       type: 'pie',
-      radius: innerRadius ? [innerRadius, '70%'] : '70%',
+      radius,
       center: ['50%', '50%'],
       data: seriesData,
       roseType: roseTypeValue,
@@ -267,12 +273,14 @@ export class PieSeriesBuilder {
         position: labelPosition,
         formatter: this.echartsConfig?.labelFormatter ?? '{b}: {c} ({d}%)',
         fontSize: params.labelFontSize ?? 12,
-        color: params.labelColor,
+        color: labelColor,
         rotate: this.echartsConfig?.labelRotate ?? 0,
       },
       labelLine: {
         show: showLabel && labelPosition === 'outside',
         smooth: true,
+        length: 10,
+        length2: 15,
       },
       ...emphasisConfig,
       itemStyle: pieItemStyle,

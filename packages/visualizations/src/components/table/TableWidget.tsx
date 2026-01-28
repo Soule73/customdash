@@ -1,8 +1,9 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, type CSSProperties } from 'react';
 import { Table } from '@customdash/ui';
 import { useTableWidgetVM, type TableWidgetInput } from '../../hooks/useTableWidgetVM';
 import { formatValue } from '../../utils';
-import type { TableColumn } from '../../interfaces';
+import type { TableColumn, ThemeColors } from '../../interfaces';
+import { VisualizationContainer } from '../common';
 
 /**
  * EmptyState component to display when there is no data or invalid configuration
@@ -24,6 +25,7 @@ interface TableContentProps {
   sortKey: string | null;
   sortDirection: 'asc' | 'desc';
   handleSort: (key: string, direction: 'asc' | 'desc') => void;
+  themeColors?: ThemeColors;
 }
 
 /**
@@ -36,6 +38,7 @@ function TableContent({
   sortKey,
   sortDirection,
   handleSort,
+  themeColors,
 }: TableContentProps) {
   return (
     <Table
@@ -44,6 +47,7 @@ function TableContent({
       sortKey={sortKey}
       sortDirection={sortDirection}
       onSort={handleSort}
+      themeColors={themeColors}
     >
       <Table.Header sticky>
         <tr>
@@ -92,6 +96,7 @@ export default function TableWidget({ data, config }: TableWidgetInput) {
     searchTerm,
     sortKey,
     sortDirection,
+    themeColors,
     setSearchTerm,
     handleSort,
     goToFirstPage,
@@ -104,6 +109,10 @@ export default function TableWidget({ data, config }: TableWidgetInput) {
   const showPagination = totalRows > pageSize;
   const isStriped = config.widgetParams?.striped !== false;
   const isCompact = config.widgetParams?.compact === true;
+
+  const titleStyle: CSSProperties = themeColors?.labelColor
+    ? { color: themeColors.labelColor }
+    : {};
 
   const handleSortWithDirection = useCallback(
     (key: string, _direction: 'asc' | 'desc') => {
@@ -122,9 +131,19 @@ export default function TableWidget({ data, config }: TableWidgetInput) {
         sortKey={sortKey}
         sortDirection={sortDirection}
         handleSort={handleSortWithDirection}
+        themeColors={themeColors}
       />
     ),
-    [columns, paginatedData, isCompact, isStriped, sortKey, sortDirection, handleSortWithDirection],
+    [
+      columns,
+      paginatedData,
+      isCompact,
+      isStriped,
+      sortKey,
+      sortDirection,
+      handleSortWithDirection,
+      themeColors,
+    ],
   );
 
   if (!isValid || !data || data.length === 0) {
@@ -132,30 +151,34 @@ export default function TableWidget({ data, config }: TableWidgetInput) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{tableTitle}</h3>
-        {showSearch && (
-          <div className="w-64">
-            <Table.Search value={searchTerm} onChange={setSearchTerm} />
-          </div>
+    <VisualizationContainer>
+      <div className="flex flex-col h-full rounded-lg overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white" style={titleStyle}>
+            {tableTitle}
+          </h3>
+          {showSearch && (
+            <div className="w-64">
+              <Table.Search value={searchTerm} onChange={setSearchTerm} />
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1 overflow-auto">{tableContent}</div>
+
+        {showPagination && (
+          <Table.Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalRows={totalRows}
+            pageSize={pageSize}
+            onFirst={goToFirstPage}
+            onPrev={goToPrevPage}
+            onNext={goToNextPage}
+            onLast={goToLastPage}
+          />
         )}
       </div>
-
-      <div className="flex-1 overflow-auto">{tableContent}</div>
-
-      {showPagination && (
-        <Table.Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalRows={totalRows}
-          pageSize={pageSize}
-          onFirst={goToFirstPage}
-          onPrev={goToPrevPage}
-          onNext={goToNextPage}
-          onLast={goToLastPage}
-        />
-      )}
-    </div>
+    </VisualizationContainer>
   );
 }

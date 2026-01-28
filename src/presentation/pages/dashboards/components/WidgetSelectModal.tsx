@@ -3,6 +3,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Modal, Button, Input, Card, Badge, Spinner } from '@customdash/ui';
 import { useWidgets } from '@hooks/widget.queries';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
+import { useAppTranslation } from '@hooks/useAppTranslation';
 import type { Widget } from '@type/widget.types';
 
 interface WidgetSelectModalProps {
@@ -11,6 +12,7 @@ interface WidgetSelectModalProps {
 }
 
 export function WidgetSelectModal({ open, onClose }: WidgetSelectModalProps) {
+  const { t } = useAppTranslation();
   const [search, setSearch] = useState('');
   const { data: allWidgets, isLoading } = useWidgets();
 
@@ -46,14 +48,19 @@ export function WidgetSelectModal({ open, onClose }: WidgetSelectModalProps) {
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title="Selectionner un widget" size="lg">
+    <Modal
+      isOpen={open}
+      onClose={onClose}
+      title={t('dashboards.widgetSelectModal.title')}
+      size="lg"
+    >
       <div className="space-y-4">
         <div className="relative">
           <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <Input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Rechercher un widget..."
+            placeholder={t('dashboards.widgetSelectModal.searchPlaceholder')}
             className="pl-9"
           />
         </div>
@@ -64,7 +71,9 @@ export function WidgetSelectModal({ open, onClose }: WidgetSelectModalProps) {
           </div>
         ) : availableWidgets.length === 0 ? (
           <div className="py-8 text-center text-gray-500">
-            {search ? 'Aucun widget trouve' : 'Tous les widgets sont deja ajoutes'}
+            {search
+              ? t('dashboards.widgetSelectModal.noResults')
+              : t('dashboards.widgetSelectModal.allAdded')}
           </div>
         ) : (
           <div className="grid gap-3 max-h-96 overflow-y-auto">
@@ -94,7 +103,7 @@ export function WidgetSelectModal({ open, onClose }: WidgetSelectModalProps) {
 
         <div className="flex justify-end pt-2">
           <Button variant="ghost" onClick={onClose}>
-            Fermer
+            {t('dashboards.widgetSelectModal.close')}
           </Button>
         </div>
       </div>

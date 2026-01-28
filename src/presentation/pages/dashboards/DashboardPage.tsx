@@ -8,6 +8,7 @@ import {
   DashboardHeader,
   WidgetSelectModal,
   DashboardSaveModal,
+  StyleEditorPanel,
 } from './components';
 
 export function DashboardPage() {
@@ -66,6 +67,8 @@ export function DashboardPage() {
         onConfirm={handleConfirmSave}
         isSaving={isSaving}
       />
+
+      <StyleEditorPanel />
     </div>
   );
 }

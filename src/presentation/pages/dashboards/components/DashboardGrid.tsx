@@ -4,6 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
 import { useDashboardGrid } from '@hooks/dashboards';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
+import { useAppTranslation } from '@hooks/useAppTranslation';
 import { DashboardGridItem } from './DashboardGridItem';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -12,7 +13,18 @@ interface DashboardGridProps {
   onAddWidget?: () => void;
 }
 
+function parseGapToMargin(gap?: string): [number, number] {
+  if (!gap) return [8, 8];
+  const numericMatch = gap.match(/^(\d+(?:\.\d+)?)/);
+  if (numericMatch) {
+    const value = parseFloat(numericMatch[1]);
+    return [value, value];
+  }
+  return [8, 8];
+}
+
 export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
+  const { t } = useAppTranslation();
   const {
     containerRef,
     containerWidth,
@@ -23,8 +35,11 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
   } = useDashboardGrid();
 
   const layout = useDashboardFormStore(s => s.config.layout);
+  const styles = useDashboardFormStore(s => s.config.styles);
   const widgets = useDashboardFormStore(s => s.widgets);
   const editMode = useDashboardFormStore(s => s.editMode);
+
+  const gridMargin = useMemo(() => parseGapToMargin(styles?.gap), [styles?.gap]);
 
   const gridItems = useMemo(() => {
     return layout.map(item => {
@@ -65,9 +80,7 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
   if (isEmpty && !editMode) {
     return (
       <Card className="py-16 text-center">
-        <p className="text-gray-500 dark:text-gray-400">
-          Ce tableau de bord ne contient aucun widget.
-        </p>
+        <p className="text-gray-500 dark:text-gray-400">{t('dashboards.grid.emptyState')}</p>
       </Card>
     );
   }
@@ -87,7 +100,7 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
         draggableHandle=".drag-handle"
         compactType="vertical"
         preventCollision={false}
-        margin={[8, 8]}
+        margin={gridMargin}
       >
         {gridItems}
       </ReactGridLayout>
@@ -99,7 +112,7 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
             leftIcon={<PlusIcon className="h-4 w-4" />}
             onClick={onAddWidget}
           >
-            Ajouter un widget
+            {t('dashboards.addWidget')}
           </Button>
         </div>
       )}

@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { Skeleton } from '@customdash/ui';
-import type { WidgetType } from '@customdash/visualizations';
+import type { WidgetType, ThemeColors } from '@customdash/visualizations';
 import { WIDGET_COMPONENTS } from '@core/widgets';
 import { useWidgetData } from '@hooks/widgets';
 import type { Widget } from '@type/widget.types';
@@ -7,14 +8,26 @@ import type { Widget } from '@type/widget.types';
 interface WidgetDisplayProps {
   widget: Widget;
   className?: string;
+  themeColors?: ThemeColors;
 }
 
 /**
  * Displays a widget with its data loaded from the data source.
  * Handles loading states, errors, and renders the appropriate widget component.
  */
-export function WidgetDisplay({ widget, className }: WidgetDisplayProps) {
+export function WidgetDisplay({ widget, className, themeColors }: WidgetDisplayProps) {
   const { data, config, isLoading, hasData, error } = useWidgetData({ widget });
+
+  const mergedConfig = useMemo(() => {
+    if (!themeColors) return config;
+    return {
+      ...config,
+      themeColors: {
+        ...themeColors,
+        ...config?.themeColors,
+      },
+    };
+  }, [config, themeColors]);
 
   const WidgetComponent = WIDGET_COMPONENTS[widget.type as WidgetType];
 
@@ -44,7 +57,7 @@ export function WidgetDisplay({ widget, className }: WidgetDisplayProps) {
 
   return (
     <div className={className || 'h-full w-full'}>
-      <WidgetComponent data={data} config={config} />
+      <WidgetComponent data={data} config={mergedConfig} />
     </div>
   );
 }

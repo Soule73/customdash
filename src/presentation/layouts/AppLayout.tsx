@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   Squares2X2Icon,
   ChartBarIcon,
@@ -17,6 +17,8 @@ import { Button, Avatar, Tooltip } from '@customdash/ui';
 import { cn } from '@customdash/utils';
 import { Logo, ThemeToggle, LanguageSelector } from '@components/common';
 import { useAuthStore } from '@stores/authStore';
+import { useAppStore } from '@stores/appStore';
+import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useLogout } from '@hooks/index';
 import { useAppTranslation, type TranslationKey } from '@hooks/useAppTranslation';
 
@@ -43,7 +45,30 @@ export function AppLayout() {
   const { user } = useAuthStore();
   const { mutate: logout } = useLogout();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useAppTranslation();
+
+  const stylePanelOpen = useDashboardFormStore(s => s.stylePanelOpen);
+  const layoutStyles = useAppStore(s => s.layoutStyles);
+  const isDashboardPage = location.pathname.includes('/dashboards/');
+
+  const mainStyle = useMemo((): React.CSSProperties | undefined => {
+    if (!isDashboardPage) return undefined;
+
+    const style: React.CSSProperties = {};
+
+    if (layoutStyles.backgroundGradient) {
+      style.background = layoutStyles.backgroundGradient;
+    } else if (layoutStyles.backgroundColor) {
+      style.backgroundColor = layoutStyles.backgroundColor;
+    }
+
+    if (layoutStyles.padding) {
+      style.padding = layoutStyles.padding;
+    }
+
+    return Object.keys(style).length > 0 ? style : undefined;
+  }, [isDashboardPage, layoutStyles]);
 
   const handleLogout = () => {
     logout();
@@ -64,7 +89,7 @@ export function AppLayout() {
           'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950',
           'lg:static lg:translate-x-0 transition-all duration-300 ease-in-out',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-          collapsed ? 'w-[72px]' : 'w-64',
+          collapsed ? 'w-18' : 'w-64',
         )}
       >
         <div
@@ -272,7 +297,14 @@ export function AppLayout() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto bg-gray-50 p-6 dark:bg-gray-900">
+        <main
+          className={cn(
+            'flex-1 overflow-auto transition-all duration-300',
+            isDashboardPage && stylePanelOpen && 'mr-80',
+            !mainStyle && 'bg-gray-50 p-6 dark:bg-gray-900',
+          )}
+          style={mainStyle}
+        >
           <Outlet />
         </main>
       </div>

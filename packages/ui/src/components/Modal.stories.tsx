@@ -192,12 +192,17 @@ function LegacyApiModal() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Open Legacy Modal</Button>
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Legacy API">
-        <p>This modal uses the legacy title prop for backwards compatibility.</p>
-        <div className="mt-4 flex justify-end gap-2">
+      <Button onClick={() => setIsOpen(true)}>Open Composed Modal</Button>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <Modal.Header>
+          <Modal.Title>Composed Modal</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>This modal uses the composition API with Modal.Header and Modal.Title.</p>
+        </Modal.Body>
+        <Modal.Footer>
           <Button onClick={() => setIsOpen(false)}>Close</Button>
-        </div>
+        </Modal.Footer>
       </Modal>
     </>
   );

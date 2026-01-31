@@ -24,4 +24,8 @@ export const common = {
   none: 'None',
   private: 'Private',
   public: 'Public',
+  close: 'Close',
+  select: 'Select',
+  noResultsFound: 'No results found',
+  selectOption: 'Select an option',
 };

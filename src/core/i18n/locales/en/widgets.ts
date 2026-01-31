@@ -126,6 +126,7 @@ export const widgets = {
     xy: 'Datasets (X, Y)',
     xyr: 'Datasets (X, Y, R)',
     multiAxis: 'Datasets (multi-axis)',
+    radarMetricsDescription: 'Each metric becomes a radar axis (minimum 3)',
   },
   buckets: {
     label: 'Groupings',
@@ -160,6 +161,10 @@ export const widgets = {
     perMetric: 'Styles per metric',
     noStyles: 'No configurable styles for this widget type.',
     addMetricsFirst: 'Add metrics to configure their styles.',
+    width: 'Width',
+    widthPlaceholder: 'Ex: 150px, 20%',
+    align: 'Alignment',
+    format: 'Format',
   },
   echarts: {
     animation: {
@@ -262,9 +267,11 @@ export const widgets = {
     end: 'End',
   },
   formats: {
+    text: 'Text',
     number: 'Number',
     currency: 'Currency',
     percent: 'Percentage',
+    date: 'Date',
   },
   trendTypes: {
     arrow: 'Arrow',
@@ -392,6 +399,12 @@ export const widgets = {
     addFilter: 'Add filter',
     addFirstFilter: 'Add first filter',
     select: 'Select...',
+  },
+  groupBy: {
+    title: 'Group by',
+    description: 'Compare multiple entities on the same axes',
+    placeholder: 'Select a field...',
+    none: 'None (global aggregation)',
   },
   sections: {
     dimensions: 'Dimensions',

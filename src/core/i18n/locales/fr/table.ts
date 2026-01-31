@@ -1,10 +1,18 @@
 export const table = {
   search: 'Rechercher...',
-  noResults: 'Aucun résultat trouvé',
+  noResults: 'Aucun resultat correspondant',
+  noData: 'Aucune donnee disponible',
   showing: 'Affichage de',
   of: 'sur',
-  results: 'résultats',
+  results: 'resultats',
   rowsPerPage: 'Lignes par page',
+  pagination: {
+    firstPage: 'Premiere page',
+    previousPage: 'Page precedente',
+    nextPage: 'Page suivante',
+    lastPage: 'Derniere page',
+    noResults: 'Aucun resultat',
+  },
 };
 
 export const columnTypes = {

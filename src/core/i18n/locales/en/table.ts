@@ -1,10 +1,18 @@
 export const table = {
   search: 'Search...',
   noResults: 'No results found',
+  noData: 'No data available',
   showing: 'Showing',
   of: 'of',
   results: 'results',
   rowsPerPage: 'Rows per page',
+  pagination: {
+    firstPage: 'First page',
+    previousPage: 'Previous page',
+    nextPage: 'Next page',
+    lastPage: 'Last page',
+    noResults: 'No results',
+  },
 };
 
 export const columnTypes = {

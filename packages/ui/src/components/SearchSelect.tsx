@@ -16,6 +16,7 @@ interface SearchSelectProps {
   label?: string;
   placeholder?: string;
   searchPlaceholder?: string;
+  noResultsLabel?: string;
   error?: string;
   helperText?: string;
   disabled?: boolean;
@@ -33,8 +34,9 @@ export function SearchSelect({
   onChange,
   options,
   label,
-  placeholder = 'Selectionnez une option',
-  searchPlaceholder = 'Rechercher...',
+  placeholder,
+  searchPlaceholder,
+  noResultsLabel,
   error,
   helperText,
   disabled = false,
@@ -241,7 +243,7 @@ export function SearchSelect({
             >
               {filteredOptions.length === 0 ? (
                 <li className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-                  Aucun resultat trouve
+                  {noResultsLabel ?? '-'}
                 </li>
               ) : (
                 filteredOptions.map((option, index) => {

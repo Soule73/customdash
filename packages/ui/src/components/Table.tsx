@@ -9,6 +9,7 @@ import {
   type ThHTMLAttributes,
   type TdHTMLAttributes,
   type CSSProperties,
+  useRef,
 } from 'react';
 
 type SortDirection = 'asc' | 'desc';
@@ -28,6 +29,9 @@ interface TableContextValue {
   sortDirection: SortDirection;
   onSort: (key: string) => void;
   themeColors?: ThemeColors;
+  resizable: boolean;
+  columnWidths: Record<string, number>;
+  onColumnResize: (key: string, width: number) => void;
 }
 
 const TableContext = createContext<TableContextValue | null>(null);
@@ -48,6 +52,7 @@ interface TableProps extends HTMLAttributes<HTMLTableElement> {
   sortDirection?: SortDirection;
   onSort?: (key: string, direction: SortDirection) => void;
   themeColors?: ThemeColors;
+  resizable?: boolean;
 }
 
 interface TableHeaderProps extends HTMLAttributes<HTMLTableSectionElement> {
@@ -70,6 +75,7 @@ interface TableHeadProps extends ThHTMLAttributes<HTMLTableCellElement> {
   sortKey?: string;
   align?: TextAlign;
   width?: string;
+  resizable?: boolean;
 }
 
 interface TableCellProps extends TdHTMLAttributes<HTMLTableCellElement> {
@@ -86,12 +92,22 @@ interface TablePaginationProps {
   onPrev: () => void;
   onNext: () => void;
   onLast: () => void;
+  labels?: {
+    showing?: string;
+    of?: string;
+    noResults?: string;
+    firstPage?: string;
+    previousPage?: string;
+    nextPage?: string;
+    lastPage?: string;
+  };
 }
 
 interface TableSearchProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  themeColors?: ThemeColors;
 }
 
 interface TableEmptyProps {
@@ -165,11 +181,13 @@ function Table({
   sortDirection: externalSortDirection,
   onSort: externalOnSort,
   themeColors,
+  resizable = true,
   className = '',
   ...props
 }: TableProps) {
   const [internalSortKey, setInternalSortKey] = useState<string | null>(null);
   const [internalSortDirection, setInternalSortDirection] = useState<SortDirection>('asc');
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
 
   const isControlled = externalSortKey !== undefined;
   const sortKey = isControlled ? externalSortKey : internalSortKey;
@@ -192,6 +210,10 @@ function Table({
     [sortKey, sortDirection, externalOnSort, isControlled],
   );
 
+  const handleColumnResize = useCallback((key: string, width: number) => {
+    setColumnWidths(prev => ({ ...prev, [key]: width }));
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       compact,
@@ -200,8 +222,21 @@ function Table({
       sortDirection,
       onSort: handleSort,
       themeColors,
+      resizable,
+      columnWidths,
+      onColumnResize: handleColumnResize,
     }),
-    [compact, striped, sortKey, sortDirection, handleSort, themeColors],
+    [
+      compact,
+      striped,
+      sortKey,
+      sortDirection,
+      handleSort,
+      themeColors,
+      resizable,
+      columnWidths,
+      handleColumnResize,
+    ],
   );
 
   const tableStyle: CSSProperties = themeColors?.backgroundColor
@@ -255,7 +290,7 @@ function TableBody({ children, className = '', ...props }: TableBodyProps) {
  * Table row component (tr)
  */
 function TableRow({ children, index, className = '', ...props }: TableRowProps) {
-  const { striped, themeColors } = useTableContext();
+  const { striped } = useTableContext();
 
   const isOddRow = striped && index !== undefined && index % 2 === 1;
 
@@ -286,7 +321,19 @@ function TableHead({
   className = '',
   ...props
 }: TableHeadProps) {
-  const { compact, sortKey: activeSortKey, sortDirection, onSort, themeColors } = useTableContext();
+  const {
+    compact,
+    sortKey: activeSortKey,
+    sortDirection,
+    onSort,
+    themeColors,
+    resizable,
+    columnWidths,
+    onColumnResize,
+  } = useTableContext();
+  const [, setIsResizing] = useState(false);
+  const thRef = useRef<HTMLTableCellElement>(null);
+  const isResizingRef = useRef(false);
 
   const paddingClass = compact ? 'px-3 py-2' : 'px-4 py-3';
   const sortableClass = sortable
@@ -294,28 +341,77 @@ function TableHead({
     : '';
 
   const handleClick = () => {
-    if (sortable && sortKey) {
+    if (sortable && sortKey && !isResizingRef.current) {
       onSort(sortKey);
     }
   };
 
-  const headStyle: CSSProperties = themeColors?.labelColor ? { color: themeColors.labelColor } : {};
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (!resizable || !sortKey) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setIsResizing(true);
+      isResizingRef.current = true;
+
+      const startX = e.clientX;
+      const startWidth = thRef.current?.offsetWidth || 0;
+
+      const handleMouseMove = (e: MouseEvent) => {
+        const diff = e.clientX - startX;
+        const newWidth = Math.max(50, startWidth + diff);
+        onColumnResize(sortKey, newWidth);
+      };
+
+      const handleMouseUp = () => {
+        setIsResizing(false);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+
+        setTimeout(() => {
+          isResizingRef.current = false;
+        }, 100);
+      };
+
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    },
+    [resizable, sortKey, onColumnResize],
+  );
+
+  const finalWidth = sortKey && columnWidths[sortKey] ? `${columnWidths[sortKey]}px` : width;
+  const headStyle: CSSProperties = {
+    width: finalWidth,
+    ...(themeColors?.labelColor && { color: themeColors.labelColor }),
+  };
 
   const textColorClass = themeColors?.labelColor ? '' : 'text-gray-500 dark:text-gray-400';
+  const justifyClass =
+    align === 'right' ? 'justify-end' : align === 'center' ? 'justify-center' : 'justify-start';
 
   return (
     <th
+      ref={thRef}
       onClick={handleClick}
-      className={`${paddingClass} ${sortableClass} ${alignClasses[align]} text-xs font-medium ${textColorClass} uppercase tracking-wider ${className}`}
-      style={{ width, ...headStyle }}
+      className={`relative ${paddingClass} ${sortableClass} ${alignClasses[align]} text-xs font-medium ${textColorClass} uppercase tracking-wider ${className}`}
+      style={headStyle}
       {...props}
     >
-      <div className="flex items-center gap-1">
+      <div className={`flex items-center gap-1 ${justifyClass}`}>
         <span>{children}</span>
         {sortable && sortKey && (
           <SortIcon active={activeSortKey === sortKey} direction={sortDirection} />
         )}
       </div>
+      {resizable && sortKey && (
+        <div
+          onMouseDown={handleMouseDown}
+          className="absolute top-0 right-0 h-full w-1 cursor-col-resize hover:bg-indigo-500 group"
+          style={{ userSelect: 'none' }}
+        >
+          <div className="absolute top-0 right-0 h-full w-3 -translate-x-1" />
+        </div>
+      )}
     </th>
   );
 }
@@ -354,6 +450,7 @@ function TablePagination({
   onPrev,
   onNext,
   onLast,
+  labels = {},
 }: TablePaginationProps) {
   const start = currentPage * pageSize + 1;
   const end = Math.min((currentPage + 1) * pageSize, totalRows);
@@ -361,17 +458,18 @@ function TablePagination({
   const buttonClass =
     'px-2 py-1 text-sm rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-gray-600 dark:text-gray-400';
 
+  const showingText =
+    totalRows > 0 ? `${start}-${end} ${labels.of ?? '/'} ${totalRows}` : (labels.noResults ?? '-');
+
   return (
     <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        {totalRows > 0 ? `${start}-${end} sur ${totalRows}` : 'Aucun resultat'}
-      </div>
+      <div className="text-sm text-gray-600 dark:text-gray-400">{showingText}</div>
       <div className="flex gap-1">
         <button
           onClick={onFirst}
           disabled={currentPage === 0}
           className={buttonClass}
-          aria-label="Premiere page"
+          aria-label={labels.firstPage}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
@@ -386,7 +484,7 @@ function TablePagination({
           onClick={onPrev}
           disabled={currentPage === 0}
           className={buttonClass}
-          aria-label="Page precedente"
+          aria-label={labels.previousPage}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
@@ -404,7 +502,7 @@ function TablePagination({
           onClick={onNext}
           disabled={currentPage >= totalPages - 1}
           className={buttonClass}
-          aria-label="Page suivante"
+          aria-label={labels.nextPage}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -414,7 +512,7 @@ function TablePagination({
           onClick={onLast}
           disabled={currentPage >= totalPages - 1}
           className={buttonClass}
-          aria-label="Derniere page"
+          aria-label={labels.lastPage}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
@@ -433,11 +531,22 @@ function TablePagination({
 /**
  * Table search input component
  */
-function TableSearch({ value, onChange, placeholder = 'Rechercher...' }: TableSearchProps) {
+function TableSearch({ value, onChange, placeholder, themeColors }: TableSearchProps) {
+  const inputStyle: CSSProperties = {
+    color: themeColors?.textColor,
+    backgroundColor: themeColors?.backgroundColor,
+    borderColor: themeColors?.borderColor,
+  };
+
+  const iconStyle: CSSProperties = {
+    color: themeColors?.labelColor,
+  };
+
   return (
     <div className="relative">
       <svg
         className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+        style={iconStyle}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -454,7 +563,8 @@ function TableSearch({ value, onChange, placeholder = 'Rechercher...' }: TableSe
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+        className="w-full pl-10 pr-4 py-2 text-sm border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+        style={inputStyle}
       />
     </div>
   );
@@ -463,11 +573,7 @@ function TableSearch({ value, onChange, placeholder = 'Rechercher...' }: TableSe
 /**
  * Table empty state component
  */
-function TableEmpty({
-  title = 'No results found',
-  description = 'No data available',
-  icon,
-}: TableEmptyProps) {
+function TableEmpty({ title, description, icon }: TableEmptyProps) {
   return (
     <div className="flex items-center justify-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg">
       <div className="text-center">

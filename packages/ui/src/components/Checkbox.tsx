@@ -5,6 +5,7 @@ interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'typ
   label?: string;
   description?: string;
   error?: string;
+  rounded?: 'sm' | 'md' | 'lg' | 'full';
 }
 
 /**
@@ -12,13 +13,30 @@ interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'typ
  */
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   (
-    { label, description, error, className = '', id, disabled, checked, onChange, ...props },
+    {
+      label,
+      description,
+      error,
+      className = '',
+      rounded = 'md',
+      id,
+      disabled,
+      checked,
+      onChange,
+      ...props
+    },
     ref,
   ) => {
     const generatedId = useId();
     const checkboxId = id || props.name || generatedId;
     const hasError = !!error;
     const isChecked = Boolean(checked);
+    const borderRadiusClass = {
+      sm: 'rounded-sm',
+      md: 'rounded-md',
+      lg: 'rounded-lg',
+      full: 'rounded-full',
+    }[rounded];
 
     return (
       <div className={`relative flex items-start ${className}`}>
@@ -32,14 +50,14 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               id={checkboxId}
               type="checkbox"
               disabled={disabled}
-              checked={checked}
+              checked={isChecked}
               onChange={onChange}
               className="absolute h-5 w-5 cursor-pointer opacity-0"
               {...props}
             />
             <div
               className={`
-                flex h-5 w-5 items-center justify-center rounded border-2 transition-all duration-150
+                flex h-5 w-5 items-center justify-center ${borderRadiusClass} border-2 transition-all duration-150
                 ${disabled ? 'opacity-50' : ''}
                 ${
                   hasError

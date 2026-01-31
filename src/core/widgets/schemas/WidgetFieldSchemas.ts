@@ -69,6 +69,9 @@ export const WIDGET_FIELD_SCHEMAS = {
     get label() {
       return t('widgets.params.showValues');
     },
+    get group() {
+      return t('widgets.groups.labels');
+    },
   }),
 
   showPoints: (): FieldSchema => ({

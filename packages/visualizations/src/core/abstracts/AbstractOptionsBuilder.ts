@@ -100,10 +100,12 @@ export class AxisChartOptionsBuilder extends AbstractOptionsBuilder {
   }
 
   protected buildTooltipOptions(): Partial<EChartsOption> {
+    const trigger = this.echartsConfig?.tooltipConfig?.trigger ?? 'axis';
     return {
       tooltip: {
-        trigger: 'axis',
+        trigger,
         axisPointer: { type: this.echartsConfig?.axisConfig?.axisPointer ?? this.axisPointerType },
+        confine: this.echartsConfig?.tooltipConfig?.confine ?? true,
       },
     };
   }

@@ -57,7 +57,7 @@ export type EmphasisFocus = 'none' | 'self' | 'series';
 export type EmphasisBlurScope = 'coordinateSystem' | 'series' | 'global';
 
 export type PieRoseType = false | 'radius' | 'area';
-export type LineStep = false | 'start' | 'middle' | 'end';
+export type LineStep = false | 'none' | 'start' | 'middle' | 'end';
 export type SymbolType =
   | 'circle'
   | 'rect'

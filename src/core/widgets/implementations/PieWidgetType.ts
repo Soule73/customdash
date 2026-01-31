@@ -11,7 +11,7 @@ import type {
 import { AbstractChartWidgetType } from '../abstracts';
 import {
   ECHARTS_PIE_PARAMS,
-  ECHARTS_COMMON_PARAMS,
+  ECHARTS_NON_AXIS_COMMON_PARAMS,
   DEFAULT_CHART_COLORS,
   WIDGET_FIELD_SCHEMAS as F,
   METRIC_CONFIG_LABELS as L,
@@ -53,7 +53,7 @@ export class PieWidgetType extends AbstractChartWidgetType {
       legendPosition: F.legendPosition('right'),
       cutout: F.cutout(),
       showValues: F.showValues(),
-      ...ECHARTS_COMMON_PARAMS,
+      ...ECHARTS_NON_AXIS_COMMON_PARAMS,
       ...ECHARTS_PIE_PARAMS,
     };
   }

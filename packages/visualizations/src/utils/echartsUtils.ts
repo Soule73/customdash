@@ -216,20 +216,25 @@ export function createAxisOptions(config?: AxisConfig): Record<string, unknown> 
  * Creates emphasis configuration for series
  */
 export function createEmphasisOptions(config?: EmphasisConfig): Record<string, unknown> {
-  if (!config) {
-    return {
-      emphasis: {
-        focus: 'series',
-      },
-    };
-  }
+  const focus = config?.focus ?? 'series';
+  const scale = config?.scale ?? false;
+  const scaleSize = config?.scaleSize ?? 10;
 
   return {
     emphasis: {
-      focus: config.focus ?? 'series',
-      blurScope: config.blurScope ?? 'coordinateSystem',
-      scale: config.scale ?? true,
-      scaleSize: config.scaleSize ?? 10,
+      focus,
+      blurScope: config?.blurScope ?? 'coordinateSystem',
+      scale,
+      scaleSize,
+      itemStyle: {
+        shadowBlur: scale ? 10 : 0,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+      },
+    },
+    blur: {
+      itemStyle: {
+        opacity: focus !== 'none' ? 0.3 : 1,
+      },
     },
   };
 }
@@ -403,7 +408,8 @@ export function createBaseOptions(params?: ExtendedWidgetParams): EChartsOption 
     grid: {
       left: '3%',
       right: '4%',
-      bottom: echartsConfig?.dataZoom?.enabled ? '15%' : '3%',
+      bottom: echartsConfig?.dataZoom?.enabled ? '15%' : '10%',
+      top: '15%',
       containLabel: true,
     },
     ...createAnimationOptions(echartsConfig?.animation),
@@ -428,8 +434,10 @@ export function createBaseOptions(params?: ExtendedWidgetParams): EChartsOption 
 function mapTitleAlign(align?: string): 'left' | 'center' | 'right' {
   switch (align) {
     case 'left':
+    case 'start':
       return 'left';
     case 'right':
+    case 'end':
       return 'right';
     default:
       return 'center';
@@ -479,16 +487,23 @@ export function createAxisConfig(
     ? { lineStyle: { color: themeColors.gridColor, type: axisConfig?.axisLineStyle ?? 'solid' } }
     : { lineStyle: { type: axisConfig?.axisLineStyle ?? 'solid' } };
 
+  const labelRotate = axisConfig?.axisLabelRotate ?? 0;
   const categoryAxis = {
     type: 'category' as const,
     data: labels,
     name: horizontal ? params?.yLabel : params?.xLabel,
-    nameTextStyle: themeColors?.labelColor ? { color: themeColors.labelColor } : undefined,
+    nameLocation: 'center' as const,
+    nameGap: 30,
+    nameTextStyle: {
+      fontSize: 12,
+      ...(themeColors?.labelColor ? { color: themeColors.labelColor } : {}),
+    },
     axisLine: { show: params?.showGrid !== false, ...axisLineStyle },
     axisTick: { show: params?.showTicks !== false, ...axisLineStyle },
     axisLabel: {
-      rotate: axisConfig?.axisLabelRotate ?? 0,
       ...axisLabelStyle,
+      rotate: labelRotate,
+      hideOverlap: true,
     },
     inverse: horizontal ? (axisConfig?.inverse ?? false) : false,
   };
@@ -496,7 +511,12 @@ export function createAxisConfig(
   const valueAxis = {
     type: 'value' as const,
     name: horizontal ? params?.xLabel : params?.yLabel,
-    nameTextStyle: themeColors?.labelColor ? { color: themeColors.labelColor } : undefined,
+    nameLocation: 'center' as const,
+    nameGap: 40,
+    nameTextStyle: {
+      fontSize: 12,
+      ...(themeColors?.labelColor ? { color: themeColors.labelColor } : {}),
+    },
     axisLine: { show: params?.showGrid !== false, ...axisLineStyle },
     axisLabel: axisLabelStyle,
     splitLine: {

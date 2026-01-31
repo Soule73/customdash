@@ -142,7 +142,11 @@ export class LineSeriesBuilder extends AbstractSeriesBuilder<LineSeriesOption> {
     const params = this.context.params;
 
     const baseColor = style.colors?.[0] || getDatasetColor('line', index, style);
-    const smoothValue = lineConfig?.smooth ?? (style.tension ?? params.tension ?? 0.4) > 0;
+    const rawStep = lineConfig?.step;
+    const stepValue =
+      rawStep === 'none' || rawStep === undefined || rawStep === false ? false : rawStep;
+    const smoothValue =
+      stepValue === false && (lineConfig?.smooth ?? (style.tension ?? params.tension ?? 0.4) > 0);
     const hasAreaStyle = lineConfig?.areaStyle ?? style.fill;
 
     let areaStyleConfig: Record<string, unknown> | undefined;
@@ -162,7 +166,7 @@ export class LineSeriesBuilder extends AbstractSeriesBuilder<LineSeriesOption> {
       data: values,
       smooth: smoothValue,
       smoothMonotone: lineConfig?.smoothMonotone,
-      step: lineConfig?.step,
+      step: stepValue,
       connectNulls: lineConfig?.connectNulls ?? true,
       lineStyle: {
         color: baseColor,
@@ -200,7 +204,11 @@ export class PieSeriesBuilder {
     return [this.buildPieSeries(seriesData)];
   }
 
-  private buildSeriesData(): Array<{ name: string; value: number; itemStyle: { color: string } }> {
+  private buildSeriesData(): Array<{
+    name: string;
+    value: number;
+    itemStyle: { color: string | Record<string, unknown> };
+  }> {
     const { metrics, metricStyles, processedData, labels, filteredData, bucketField } =
       this.context;
     const metric = metrics[0] || { agg: 'sum', field: '', label: '' };
@@ -219,16 +227,28 @@ export class PieSeriesBuilder {
     }
 
     const colors = style.colors || generateColorsForLabels(labels);
+    const gradientConfig = this.echartsConfig?.gradient;
 
-    return labels.map((label, idx) => ({
-      name: label,
-      value: values[idx],
-      itemStyle: { color: colors[idx % colors.length] },
-    }));
+    return labels.map((label, idx) => {
+      const baseColor = colors[idx % colors.length];
+      const finalColor = gradientConfig?.enabled
+        ? createGradientColor(baseColor, { ...gradientConfig, direction: 'radial' })
+        : baseColor;
+
+      return {
+        name: label,
+        value: values[idx],
+        itemStyle: { color: finalColor },
+      };
+    });
   }
 
   private buildPieSeries(
-    seriesData: Array<{ name: string; value: number; itemStyle: { color: string } }>,
+    seriesData: Array<{
+      name: string;
+      value: number;
+      itemStyle: { color: string | Record<string, unknown> };
+    }>,
   ): PieSeriesOption {
     const params = this.context.params;
     const pieConfig = this.echartsConfig?.pie;
@@ -244,7 +264,7 @@ export class PieSeriesBuilder {
     const shadowConfig = createShadowOptions(this.echartsConfig?.shadow);
 
     const pieItemStyle: Record<string, unknown> = {
-      borderColor: pieConfig?.itemStyle?.borderColor ?? '#fff',
+      borderColor: pieConfig?.itemStyle?.borderColor ?? metricStyles?.[0]?.borderColor ?? '#fff',
       borderWidth: pieConfig?.itemStyle?.borderWidth ?? metricStyles?.[0]?.borderWidth ?? 2,
       borderRadius: pieConfig?.itemStyle?.borderRadius ?? 0,
       ...shadowConfig,

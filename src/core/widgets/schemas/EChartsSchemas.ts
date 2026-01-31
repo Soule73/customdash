@@ -453,6 +453,23 @@ export const ECHARTS_COMMON_PARAMS: Record<string, FieldSchema> = {
   },
 };
 
+export const ECHARTS_NON_AXIS_COMMON_PARAMS: Record<string, FieldSchema> = {
+  'echarts.animation.enabled': ECHARTS_COMMON_PARAMS['echarts.animation.enabled'],
+  'echarts.animation.duration': ECHARTS_COMMON_PARAMS['echarts.animation.duration'],
+  'echarts.animation.easing': ECHARTS_COMMON_PARAMS['echarts.animation.easing'],
+  'echarts.toolbox.show': ECHARTS_COMMON_PARAMS['echarts.toolbox.show'],
+  'echarts.toolbox.saveAsImage': ECHARTS_COMMON_PARAMS['echarts.toolbox.saveAsImage'],
+  'echarts.toolbox.dataView': ECHARTS_COMMON_PARAMS['echarts.toolbox.dataView'],
+  'echarts.toolbox.restore': ECHARTS_COMMON_PARAMS['echarts.toolbox.restore'],
+  'echarts.emphasis.focus': ECHARTS_COMMON_PARAMS['echarts.emphasis.focus'],
+  'echarts.emphasis.scale': ECHARTS_COMMON_PARAMS['echarts.emphasis.scale'],
+  'echarts.tooltipConfig.trigger': ECHARTS_COMMON_PARAMS['echarts.tooltipConfig.trigger'],
+  'echarts.labelPosition': ECHARTS_COMMON_PARAMS['echarts.labelPosition'],
+  'echarts.labelRotate': ECHARTS_COMMON_PARAMS['echarts.labelRotate'],
+  'echarts.gradient.enabled': ECHARTS_COMMON_PARAMS['echarts.gradient.enabled'],
+  'echarts.gradient.direction': ECHARTS_COMMON_PARAMS['echarts.gradient.direction'],
+};
+
 export const ECHARTS_BAR_PARAMS: Record<string, FieldSchema> = {
   'echarts.bar.barWidth': {
     default: undefined,

@@ -301,15 +301,23 @@ export const useWidgetFormStore = create<WidgetFormState & WidgetFormActions>()(
       partialize: state => ({
         type: state.type,
         sourceId: state.sourceId,
+        columns: state.columns,
+        columnTypes: state.columnTypes,
+        dataPreview: state.dataPreview,
         config: state.config,
         widgetTitle: state.widgetTitle,
         widgetDescription: state.widgetDescription,
         visibility: state.visibility,
         activeTab: state.activeTab,
       }),
+      skipHydration: false,
     },
   ),
 );
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}
 
 export const useWidgetFormType = () => useWidgetFormStore(s => s.type);
 export const useWidgetFormSourceId = () => useWidgetFormStore(s => s.sourceId);

@@ -129,7 +129,15 @@ export class WidgetFormService implements IWidgetFormService {
     if (existingConfig) {
       if (existingConfig.metrics?.length) {
         config.metrics = existingConfig.metrics;
-        config.metricStyles = existingConfig.metrics.map(() => this.createMetricStyle());
+        config.metricStyles = existingConfig.metrics.map(metric => {
+          const baseStyle = this.createMetricStyle();
+          return {
+            ...baseStyle,
+            width: metric.width,
+            align: metric.align,
+            format: metric.format,
+          };
+        });
       }
       if (existingConfig.buckets?.length) {
         config.buckets = existingConfig.buckets;
@@ -234,7 +242,7 @@ export class WidgetFormService implements IWidgetFormService {
 
   buildChartConfig(widget: Widget): ChartConfig {
     const { config, type } = widget;
-    const isDatasetChart = type === 'scatter' || type === 'bubble' || type === 'radar';
+    const isDatasetChart = type === 'scatter' || type === 'bubble';
 
     interface RawMetricConfig {
       field?: string;
@@ -253,7 +261,6 @@ export class WidgetFormService implements IWidgetFormService {
         if (isDatasetChart) {
           if (type === 'scatter') return Boolean(m.x && m.y);
           if (type === 'bubble') return Boolean(m.x && m.y && m.r);
-          if (type === 'radar') return Boolean(m.fields && m.fields.length > 0);
         }
         return Boolean(m.field);
       })
@@ -293,6 +300,7 @@ export class WidgetFormService implements IWidgetFormService {
       globalFilters,
       metricStyles,
       widgetParams: (config.widgetParams || {}) as WidgetParams,
+      groupBy: config.groupBy as string | undefined,
     };
   }
 

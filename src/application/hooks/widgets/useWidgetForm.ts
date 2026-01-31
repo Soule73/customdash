@@ -117,10 +117,11 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
   );
 
   useEffect(() => {
+    store.resetForm();
+
     if (widgetId) {
       loadWidget(widgetId);
     } else {
-      store.resetForm();
       if (initialType) {
         store.setType(initialType);
       }
@@ -144,15 +145,21 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
     setIsSaving(true);
     try {
       const config = {
-        metrics: store.config.metrics.map(m => ({
-          field: m.field,
-          agg: m.agg,
-          label: m.label,
-          x: m.x,
-          y: m.y,
-          r: m.r,
-          fields: m.fields,
-        })),
+        metrics: store.config.metrics.map((m, index) => {
+          const metricStyle = store.config.metricStyles[index] || {};
+          return {
+            field: m.field,
+            agg: m.agg,
+            label: m.label,
+            x: m.x,
+            y: m.y,
+            r: m.r,
+            fields: m.fields,
+            width: metricStyle.width || m.width,
+            align: metricStyle.align || m.align,
+            format: metricStyle.format || m.format,
+          };
+        }),
         buckets: store.config.buckets.map(b => ({
           field: b.field,
           type: b.type,

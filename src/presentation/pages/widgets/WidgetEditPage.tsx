@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Spinner } from '@customdash/ui';
 import { WidgetFormLayout } from '@components/widgets/layout';
 import { useWidgetForm } from '@hooks/widgets/useWidgetForm';
-import { useWidgetFormTitle, useWidgetFormIsLoading } from '@stores/widgetFormStore';
+import { useWidgetFormTitle, useWidgetFormIsLoading } from '@stores';
 
 /**
  * WidgetEditPage component for editing an existing widget

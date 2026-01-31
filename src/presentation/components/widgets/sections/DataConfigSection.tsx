@@ -12,7 +12,7 @@ import {
   useWidgetFormBuckets,
   useWidgetFormActions,
   useWidgetFormConfig,
-} from '@stores/widgetFormStore';
+} from '@stores';
 import type { SelectOption } from '@customdash/visualizations';
 
 /**

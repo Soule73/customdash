@@ -42,6 +42,9 @@
       "@pages/*": [
         "./src/presentation/pages/*"
       ],
+      "@stores": [
+        "./src/application/stores"
+      ],
       "@stores/*": [
         "./src/application/stores/*"
       ],

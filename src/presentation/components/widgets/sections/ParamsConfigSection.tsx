@@ -4,11 +4,7 @@ import { Card, Accordion, AccordionItem, AccordionTrigger, AccordionContent } fr
 import { SchemaField } from '../fields/SchemaField';
 import { ParamGroup } from '../fields/ParamField';
 import { widgetRegistry } from '@core/widgets';
-import {
-  useWidgetFormType,
-  useWidgetFormParams,
-  useWidgetFormActions,
-} from '@stores/widgetFormStore';
+import { useWidgetFormType, useWidgetFormParams, useWidgetFormActions } from '@stores';
 import { getNestedValue } from '@customdash/utils';
 import type { FieldSchema } from '@type/widget-form.types';
 

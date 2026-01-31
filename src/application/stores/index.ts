@@ -1,3 +1,5 @@
 export { useAppStore } from './appStore';
 export { useAuthStore } from './authStore';
-export * from './widgetFormStore';
+
+// Widget Form Store - Refactored with slices
+export * from './widget-form';

@@ -7,7 +7,7 @@ import {
   useWidgetFormMetrics,
   useWidgetFormMetricStyles,
   useWidgetFormActions,
-} from '@stores/widgetFormStore';
+} from '@stores';
 
 /**
  * StyleConfigSection component for configuring metric styles per metric

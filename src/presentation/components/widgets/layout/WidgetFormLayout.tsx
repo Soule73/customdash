@@ -15,7 +15,7 @@ import {
   useWidgetFormActiveTab,
   useWidgetFormIsLoading,
   useWidgetFormActions,
-} from '@stores/widgetFormStore';
+} from '@stores';
 import type { WidgetFormTab } from '@type/widget-form.types';
 import { DataConfigSection } from '../sections/DataConfigSection';
 import { StyleConfigSection } from '../sections/StyleConfigSection';

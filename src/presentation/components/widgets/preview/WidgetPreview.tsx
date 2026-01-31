@@ -26,6 +26,7 @@ interface PreviewChartConfig {
   globalFilters: Filter[];
   metricStyles: Record<string, unknown>[];
   widgetParams: WidgetParams;
+  groupBy?: string;
 }
 
 function useChartConfig(): PreviewChartConfig {
@@ -33,14 +34,13 @@ function useChartConfig(): PreviewChartConfig {
   const type = useWidgetFormType();
 
   return useMemo(() => {
-    const isDatasetChart = type === 'scatter' || type === 'bubble' || type === 'radar';
+    const isDatasetChart = type === 'scatter' || type === 'bubble';
 
     const metrics: Metric[] = config.metrics
       .filter(m => {
         if (isDatasetChart) {
           if (type === 'scatter') return m.x && m.y;
           if (type === 'bubble') return m.x && m.y && m.r;
-          if (type === 'radar') return m.fields && m.fields.length > 0;
         }
         return m.field;
       })
@@ -80,6 +80,7 @@ function useChartConfig(): PreviewChartConfig {
       globalFilters,
       metricStyles,
       widgetParams: config.widgetParams || {},
+      groupBy: config.groupBy,
     };
   }, [config, type]);
 }
@@ -97,14 +98,17 @@ export function WidgetPreview({ isLoading = false }: WidgetPreviewProps) {
   const hasRequiredConfig = useMemo(() => {
     if (metrics.length === 0) return false;
 
-    const isDatasetChart = type === 'scatter' || type === 'bubble' || type === 'radar';
+    const isDatasetChart = type === 'scatter' || type === 'bubble';
     if (isDatasetChart) {
       return metrics.some(m => {
         if (type === 'scatter') return m.x && m.y;
         if (type === 'bubble') return m.x && m.y && m.r;
-        if (type === 'radar') return m.fields && m.fields.length > 0;
         return false;
       });
+    }
+
+    if (type === 'radar') {
+      return metrics.filter(m => m.field).length >= 3;
     }
 
     return metrics.some(m => m.field);

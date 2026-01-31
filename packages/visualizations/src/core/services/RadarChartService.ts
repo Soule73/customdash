@@ -1,150 +1,277 @@
 import type { EChartsOption, RadarSeriesOption } from 'echarts';
 import type {
-  RadarMetricConfig,
+  Metric,
+  MetricStyle,
+  RadarChartConfig,
   ExtendedWidgetParams,
-  RadarIndicator,
-  RadarDataItem,
-  RadarDataContext,
-  RadarChartInput,
   ChartValidationResult,
+  ThemeColors,
 } from '../../interfaces';
-import { prepareMetricStyles } from '../../utils/metricStyleUtils';
-import { mergeWidgetParams } from '../../utils/widgetParamsUtils';
-import {
-  getRadarLabels,
-  processRadarMetrics,
-  validateRadarConfiguration,
-  generateRadarMetricLabel,
-} from '../../utils/radarChartUtils';
+import type { EChartsWidgetParams, RadarSpecificConfig } from '../../types/echarts.types';
+import { applyAllFilters } from '../../utils/filterUtils';
+import { aggregate } from '../../utils/chartUtils';
 import {
   createBaseOptions,
   createEmphasisOptions,
+  createAdvancedLegendOptions,
   mergeOptions,
   getDefaultColor,
+  createGradientColor,
 } from '../../utils/echartsUtils';
+
+export interface RadarIndicator {
+  name: string;
+  max: number;
+}
+
+export interface RadarSeriesData {
+  name: string;
+  value: number[];
+  color: string;
+}
+
+export interface RadarDataResult {
+  indicators: RadarIndicator[];
+  seriesData: RadarSeriesData[];
+}
+
+export interface RadarChartInput {
+  data: Record<string, unknown>[];
+  config: RadarChartConfig & { echarts?: EChartsWidgetParams; themeColors?: ThemeColors };
+}
+
+export interface RadarDataContext {
+  filteredData: Record<string, unknown>[];
+  metrics: Metric[];
+  metricStyles: MetricStyle[];
+  groupBy?: string;
+  params: ExtendedWidgetParams;
+  validation: ChartValidationResult;
+}
 
 /**
  * Service for processing Radar chart data and configuration
- * Handles multi-dimensional data visualization on a radial grid
+ * Supports two modes:
+ * - Global aggregation (default): One polygon with aggregated metrics
+ * - GroupBy mode: Multiple polygons, one per group value
  */
 export class RadarChartService {
   /**
-   * Merge widget params with echarts configuration
-   */
-  static mergeWidgetParams(config: RadarChartInput['config']): ExtendedWidgetParams {
-    return {
-      ...mergeWidgetParams(config.widgetParams),
-      echarts: config.echarts,
-    };
-  }
-
-  /**
    * Validate radar chart configuration
    */
-  static validateConfig(metrics: RadarMetricConfig[]): ChartValidationResult {
-    const result = validateRadarConfiguration(metrics);
+  static validateConfig(metrics: Metric[]): ChartValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (!metrics || metrics.length === 0) {
+      errors.push('Au moins une metrique doit etre configuree');
+    } else {
+      metrics.forEach((m, idx) => {
+        if (!m.field) {
+          errors.push(`Metrique ${idx + 1}: le champ est requis`);
+        }
+      });
+
+      if (metrics.length < 3) {
+        warnings.push('Un radar fonctionne mieux avec au moins 3 axes');
+      }
+    }
+
     return {
-      isValid: result.isValid,
-      errors: result.errors,
-      warnings: result.warnings,
+      isValid: errors.length === 0,
+      errors,
+      warnings,
     };
   }
 
   /**
-   * Calculate radar indicators with max values
+   * Create the data context for radar chart processing
    */
-  static calculateIndicators(
+  static createDataContext(
+    input: RadarChartInput,
+    widgetParams?: ExtendedWidgetParams,
+  ): RadarDataContext {
+    const filteredData = applyAllFilters(input.data, input.config.globalFilters);
+    const metrics = input.config.metrics || [];
+    const metricStyles = input.config.metricStyles || [];
+    const groupBy = input.config.groupBy;
+
+    const params: ExtendedWidgetParams = {
+      ...input.config.widgetParams,
+      ...widgetParams,
+      echarts: {
+        ...input.config.widgetParams?.echarts,
+        ...input.config.echarts,
+        ...widgetParams?.echarts,
+      },
+      themeColors: {
+        ...input.config.themeColors,
+        ...widgetParams?.themeColors,
+      },
+    };
+
+    const validation = this.validateConfig(metrics);
+
+    return {
+      filteredData,
+      metrics,
+      metricStyles,
+      groupBy,
+      params,
+      validation,
+    };
+  }
+
+  /**
+   * Compute radar data - handles both global aggregation and groupBy modes
+   */
+  static computeRadarData(context: RadarDataContext): RadarDataResult {
+    const { metrics, filteredData, groupBy, metricStyles } = context;
+
+    if (!metrics || metrics.length === 0) {
+      return this.getDefaultRadarData();
+    }
+
+    const validMetrics = metrics.filter(m => m.field);
+    if (validMetrics.length === 0) {
+      return this.getDefaultRadarData();
+    }
+
+    const labels = validMetrics.map(m => m.label || `${m.agg}(${m.field})`);
+
+    if (groupBy && groupBy.trim() !== '') {
+      return this.computeGroupedRadarData(
+        filteredData,
+        validMetrics,
+        groupBy,
+        labels,
+        metricStyles,
+      );
+    }
+
+    return this.computeGlobalRadarData(filteredData, validMetrics, labels, metricStyles);
+  }
+
+  /**
+   * Compute global aggregation mode - one polygon
+   */
+  private static computeGlobalRadarData(
+    data: Record<string, unknown>[],
+    metrics: Metric[],
     labels: string[],
-    processedMetrics: ReturnType<typeof processRadarMetrics>,
-    scaleFactor = 1.2,
-  ): RadarIndicator[] {
-    const maxValues = labels.map((_, labelIdx) => {
-      let max = 0;
-      processedMetrics.forEach(({ values }) => {
-        if (values[labelIdx] > max) max = values[labelIdx];
-      });
-      return max * scaleFactor;
+    metricStyles: MetricStyle[],
+  ): RadarDataResult {
+    const values = metrics.map(m => aggregate(data, m.agg, m.field));
+    const indicators = labels.map((name, idx) => ({
+      name,
+      max: (values[idx] || 1) * 1.2,
+    }));
+
+    const style = metricStyles[0] || {};
+    const color = style.colors?.[0] || getDefaultColor(0);
+
+    return {
+      indicators,
+      seriesData: [{ name: 'Total', value: values, color }],
+    };
+  }
+
+  /**
+   * Compute groupBy mode - one polygon per group
+   */
+  private static computeGroupedRadarData(
+    data: Record<string, unknown>[],
+    metrics: Metric[],
+    groupBy: string,
+    labels: string[],
+    metricStyles: MetricStyle[],
+  ): RadarDataResult {
+    const groups = new Map<string, Record<string, unknown>[]>();
+
+    data.forEach(row => {
+      const groupValue = String(row[groupBy] ?? 'N/A');
+      if (!groups.has(groupValue)) {
+        groups.set(groupValue, []);
+      }
+      groups.get(groupValue)!.push(row);
     });
 
-    return labels.map((label, idx) => ({
-      name: label,
-      max: maxValues[idx] || 100,
-    }));
+    const seriesData: RadarSeriesData[] = [];
+    const allValues: number[][] = [];
+
+    let colorIndex = 0;
+    groups.forEach((groupData, groupName) => {
+      const values = metrics.map(m => aggregate(groupData, m.agg, m.field));
+      allValues.push(values);
+
+      const style = metricStyles[colorIndex] || {};
+      const color = style.colors?.[0] || getDefaultColor(colorIndex);
+
+      seriesData.push({ name: groupName, value: values, color });
+      colorIndex++;
+    });
+
+    const indicators = labels.map((name, idx) => {
+      const maxForAxis = Math.max(...allValues.map(vals => vals[idx] || 0), 1);
+      return { name, max: maxForAxis * 1.2 };
+    });
+
+    return { indicators, seriesData };
   }
 
   /**
-   * Create the complete data context for radar chart processing
+   * Default data when no metrics are configured
    */
-  static createDataContext(input: RadarChartInput): RadarDataContext {
-    const widgetParams = this.mergeWidgetParams(input.config);
-    const echartsConfig = widgetParams.echarts;
-    const radarConfig = echartsConfig?.radar;
-    const validMetrics = (input.config.metrics || []) as RadarMetricConfig[];
-    const metricStyles = prepareMetricStyles(input.config.metricStyles);
-    const validation = this.validateConfig(validMetrics);
-    const labels = getRadarLabels(validMetrics);
-    const processedMetrics = processRadarMetrics(
-      input.data,
-      validMetrics,
-      input.config.globalFilters,
-    );
-    const radarIndicators = this.calculateIndicators(labels, processedMetrics);
-
+  private static getDefaultRadarData(): RadarDataResult {
     return {
-      widgetParams,
-      echartsConfig,
-      radarConfig,
-      validMetrics,
-      metricStyles,
-      validation,
-      labels,
-      processedMetrics,
-      radarIndicators,
+      indicators: [
+        { name: 'Axis 1', max: 100 },
+        { name: 'Axis 2', max: 100 },
+        { name: 'Axis 3', max: 100 },
+      ],
+      seriesData: [{ name: 'Data', value: [0, 0, 0], color: getDefaultColor(0) }],
     };
   }
 
   /**
-   * Build radar data items for series
+   * Build ECharts series configuration
    */
-  static buildRadarData(context: RadarDataContext): RadarDataItem[] {
-    const { processedMetrics, metricStyles, echartsConfig, radarConfig } = context;
+  static buildSeries(context: RadarDataContext, radarData: RadarDataResult): RadarSeriesOption[] {
+    const { params } = context;
+    const echartsConfig = params.echarts;
+    const radarConfig = echartsConfig?.radar as RadarSpecificConfig | undefined;
     const emphasisConfig = createEmphasisOptions(echartsConfig?.emphasis);
 
-    return processedMetrics.map(({ metric, values, index }) => {
-      const style = metricStyles[index] || {};
-      const color = style.colors?.[0] || getDefaultColor(index);
-      const hasAreaStyle = radarConfig?.areaStyle !== false;
-      const areaOpacity = radarConfig?.areaOpacity ?? 0.2;
+    const hasAreaStyle = radarConfig?.areaStyle !== false;
+    const areaOpacity = radarConfig?.areaOpacity ?? 0.25;
+
+    const dataItems = radarData.seriesData.map(item => {
+      const baseColor = item.color;
+      const color = echartsConfig?.gradient?.enabled
+        ? createGradientColor(baseColor, { ...echartsConfig.gradient, direction: 'radial' })
+        : baseColor;
 
       return {
-        name: metric.label || generateRadarMetricLabel(metric),
-        value: values,
-        itemStyle: { color },
-        lineStyle: { color, width: 2 },
-        areaStyle: hasAreaStyle ? { color, opacity: areaOpacity } : undefined,
+        name: item.name,
+        value: item.value,
+        itemStyle: { color: baseColor },
+        lineStyle: { color: baseColor, width: 2 },
+        areaStyle: hasAreaStyle ? { color: color as string, opacity: areaOpacity } : undefined,
         ...emphasisConfig,
       };
     });
-  }
-
-  /**
-   * Build series configuration for radar chart
-   */
-  static buildSeries(context: RadarDataContext): RadarSeriesOption[] {
-    const { widgetParams, echartsConfig } = context;
-    const radarData = this.buildRadarData(context);
 
     return [
       {
-        type: 'radar',
-        data: radarData,
-        symbol: widgetParams.showPoints !== false ? 'circle' : 'none',
-        symbolSize: widgetParams.pointRadius ?? 4,
+        type: 'radar' as const,
+        data: dataItems,
+        symbol: params.showPoints !== false ? 'circle' : 'none',
+        symbolSize: params.pointRadius ?? 6,
         label: {
-          show: widgetParams.showValues ?? false,
-          formatter: echartsConfig?.labelFormatter,
-          fontSize: widgetParams.labelFontSize ?? 11,
-          color: widgetParams.labelColor,
+          show: params.showValues ?? false,
+          formatter: echartsConfig?.labelFormatter ?? '{c}',
+          fontSize: params.labelFontSize ?? 11,
+          color: params.labelColor,
         },
       },
     ];
@@ -153,10 +280,17 @@ export class RadarChartService {
   /**
    * Build complete ECharts options for radar chart
    */
-  static buildOptions(context: RadarDataContext, series: RadarSeriesOption[]): EChartsOption {
-    const { widgetParams, echartsConfig, radarConfig, radarIndicators } = context;
-    const baseOptions = createBaseOptions(widgetParams);
+  static buildOptions(
+    context: RadarDataContext,
+    radarData: RadarDataResult,
+    series: RadarSeriesOption[],
+  ): EChartsOption {
+    const { params } = context;
+    const echartsConfig = params.echarts;
+    const radarConfig = echartsConfig?.radar as RadarSpecificConfig | undefined;
+    const themeColors = params.themeColors;
 
+    const baseOptions = createBaseOptions(params);
     const radarShape = radarConfig?.shape ?? 'polygon';
     const splitNumber = radarConfig?.splitNumber ?? 5;
     const showAxisName = radarConfig?.axisNameShow !== false;
@@ -166,25 +300,30 @@ export class RadarChartService {
         trigger: 'item',
         confine: echartsConfig?.tooltipConfig?.confine ?? true,
       },
+      legend: createAdvancedLegendOptions(echartsConfig?.legendConfig, params, themeColors),
       radar: {
-        indicator: radarIndicators,
+        indicator: radarData.indicators,
         shape: radarShape,
         splitNumber,
+        center: ['50%', '55%'],
+        radius: '65%',
         axisName: showAxisName
           ? {
-              color: '#666',
+              color: themeColors?.labelColor ?? '#666',
               fontSize: 12,
             }
           : { show: false },
         splitLine: {
-          lineStyle: { color: 'rgba(0, 0, 0, 0.1)' },
+          lineStyle: { color: themeColors?.gridColor ?? 'rgba(0, 0, 0, 0.1)' },
         },
         splitArea: {
           show: true,
-          areaStyle: { color: ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.3)'] },
+          areaStyle: {
+            color: ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.3)'],
+          },
         },
         axisLine: {
-          lineStyle: { color: 'rgba(0, 0, 0, 0.1)' },
+          lineStyle: { color: themeColors?.gridColor ?? 'rgba(0, 0, 0, 0.1)' },
         },
       },
       series,

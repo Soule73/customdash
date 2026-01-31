@@ -42,9 +42,11 @@ export interface IWidgetConfigSchema {
  */
 export interface IMetricsConfig {
   readonly allowMultiple: boolean;
+  readonly minRequired?: number;
   readonly defaultAgg: AggregationType;
   readonly allowedAggs: SelectOption<AggregationType>[];
   readonly label: string;
+  readonly description?: string;
 }
 
 /**
@@ -68,6 +70,7 @@ export interface IWidgetDataConfig {
   readonly useDatasetSection?: boolean;
   readonly useGlobalFilters?: boolean;
   readonly useBuckets?: boolean;
+  readonly useGroupBy?: boolean;
   readonly allowMultipleMetrics?: boolean;
   readonly allowMultipleDatasets?: boolean;
   readonly datasetSectionTitle?: string;

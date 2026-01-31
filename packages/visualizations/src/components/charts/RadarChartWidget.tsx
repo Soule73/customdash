@@ -1,14 +1,15 @@
 import type { JSX } from 'react';
-import type { RadarChartConfig } from '../../interfaces';
+import type { RadarChartConfig, WidgetParams } from '../../interfaces';
 import { useRadarChartVM } from '../../hooks/useRadarChartVM';
 import {
   withChartWrapper,
   type ChartWidgetBaseProps,
 } from '../../core/abstracts/ChartWidgetWrapper';
-import { DatasetChartService } from '../../core/services/DatasetChartService';
 import { BaseChart } from './BaseChart';
 
-export type RadarChartWidgetProps = ChartWidgetBaseProps<RadarChartConfig>;
+export interface RadarChartWidgetProps extends ChartWidgetBaseProps<RadarChartConfig> {
+  widgetParams?: WidgetParams;
+}
 
 /**
  * Internal Radar Chart component - wrapped by HOC for validation
@@ -16,26 +17,25 @@ export type RadarChartWidgetProps = ChartWidgetBaseProps<RadarChartConfig>;
 function RadarChartWidgetInternal({
   data,
   config,
+  widgetParams,
   className = '',
   loading = false,
   editMode = false,
 }: RadarChartWidgetProps): JSX.Element {
-  const { option } = useRadarChartVM({ data, config });
+  const { option } = useRadarChartVM({ data, config, widgetParams });
 
   return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
 }
 
 /**
  * RadarChartWidget component rendering a radar chart using Apache ECharts
- * Uses HOC pattern for data validation
+ * Each metric becomes an axis on the radar with its aggregated value
+ * Supports groupBy for comparing multiple entities on the same axes
  */
 export const RadarChartWidget = withChartWrapper<RadarChartConfig, RadarChartWidgetProps>(
   RadarChartWidgetInternal,
   {
     requiresBuckets: false,
-    validateConfig: config => {
-      return DatasetChartService.validateRadarMetrics(config.metrics || []);
-    },
   },
 );
 

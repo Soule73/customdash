@@ -6,10 +6,8 @@ import type {
   TableColumn,
   ScatterMetricConfig,
   BubbleMetricConfig,
-  RadarMetricConfig,
   ScatterChartConfig,
   BubbleChartConfig,
-  RadarChartConfig,
   KPIConfig,
   KPIGroupConfig,
   CardConfig,
@@ -22,7 +20,6 @@ import type { EChartsWidgetParams } from '../types/echarts.types';
 import type { FormatType, TrendDirection } from '../types';
 import type { processBubbleMetrics, calculateBubbleScales } from '../utils/bubbleChartUtils';
 import type { processScatterMetrics, calculateScatterScales } from '../utils/scatterChartUtils';
-import type { processRadarMetrics } from '../utils/radarChartUtils';
 import type { detectTableConfigType } from '../utils/tableUtils';
 
 export interface ChartValidationResult {
@@ -102,36 +99,6 @@ export interface BubbleDataContext {
 export interface BubbleChartInput {
   data: Record<string, unknown>[];
   config: BubbleChartConfig & { echarts?: EChartsWidgetParams };
-}
-
-export interface RadarIndicator {
-  name: string;
-  max: number;
-}
-
-export interface RadarDataItem {
-  name: string;
-  value: number[];
-  itemStyle: { color: string };
-  lineStyle: { color: string; width: number };
-  areaStyle?: { color: string; opacity: number };
-}
-
-export interface RadarDataContext {
-  widgetParams: ExtendedWidgetParams;
-  echartsConfig: EChartsWidgetParams | undefined;
-  radarConfig: EChartsWidgetParams['radar'] | undefined;
-  validMetrics: RadarMetricConfig[];
-  metricStyles: MetricStyle[];
-  validation: ChartValidationResult;
-  labels: string[];
-  processedMetrics: ReturnType<typeof processRadarMetrics>;
-  radarIndicators: RadarIndicator[];
-}
-
-export interface RadarChartInput {
-  data: Record<string, unknown>[];
-  config: RadarChartConfig & { echarts?: EChartsWidgetParams };
 }
 
 export interface KPIDataContext {

@@ -11,7 +11,8 @@ import type {
 import { AbstractChartWidgetType } from '../abstracts';
 import {
   ECHARTS_RADAR_PARAMS,
-  ECHARTS_COMMON_PARAMS,
+  ECHARTS_NON_AXIS_COMMON_PARAMS,
+  DEFAULT_CHART_COLORS,
   WIDGET_FIELD_SCHEMAS as F,
   METRIC_CONFIG_LABELS as L,
 } from '../schemas';
@@ -19,6 +20,7 @@ import { t } from '../utils/i18nHelper';
 
 /**
  * Radar chart widget type implementation
+ * Each metric becomes an axis on the radar with its aggregated value
  */
 export class RadarWidgetType extends AbstractChartWidgetType {
   protected readonly widgetType = 'radar' as const;
@@ -34,7 +36,7 @@ export class RadarWidgetType extends AbstractChartWidgetType {
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      fill: F.fill(),
+      colors: F.colors(DEFAULT_CHART_COLORS),
       opacity: F.opacity(0.25),
     };
   }
@@ -42,10 +44,12 @@ export class RadarWidgetType extends AbstractChartWidgetType {
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
       title: F.title(),
+      titleAlign: F.titleAlign(),
       legend: F.legend(),
       legendPosition: F.legendPosition(),
+      showPoints: F.showPoints(),
       showValues: F.showValues(),
-      ...ECHARTS_COMMON_PARAMS,
+      ...ECHARTS_NON_AXIS_COMMON_PARAMS,
       ...ECHARTS_RADAR_PARAMS,
     };
   }
@@ -57,28 +61,27 @@ export class RadarWidgetType extends AbstractChartWidgetType {
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
     return {
       allowMultiple: true,
+      minRequired: 3,
       get label() {
         return L.metrics;
+      },
+      get description() {
+        return t('widgets.datasets.radarMetricsDescription');
       },
     };
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> | null {
-    return {
-      allow: false,
-    };
+    return null;
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {
     return {
-      datasetType: 'multiAxis',
-      useDatasetSection: true,
+      useMetricSection: true,
       useGlobalFilters: true,
       useBuckets: false,
-      allowMultipleDatasets: true,
-      get datasetSectionTitle() {
-        return t('widgets.datasets.multiAxis');
-      },
+      useGroupBy: true,
+      allowMultipleMetrics: true,
     };
   }
 }

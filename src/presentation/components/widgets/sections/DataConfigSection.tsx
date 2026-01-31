@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { Button, Card } from '@customdash/ui';
+import { Button, Card, Select } from '@customdash/ui';
 import { SortableList, SortableItem } from '../../common';
 import { MetricField } from '../fields/MetricField';
 import { BucketField } from '../fields/BucketField';
@@ -11,6 +11,7 @@ import {
   useWidgetFormMetrics,
   useWidgetFormBuckets,
   useWidgetFormActions,
+  useWidgetFormConfig,
 } from '@stores/widgetFormStore';
 import type { SelectOption } from '@customdash/visualizations';
 
@@ -23,6 +24,7 @@ export function DataConfigSection() {
   const columns = useWidgetFormColumns();
   const metrics = useWidgetFormMetrics();
   const buckets = useWidgetFormBuckets();
+  const config = useWidgetFormConfig();
   const {
     addMetric,
     updateMetric,
@@ -32,13 +34,19 @@ export function DataConfigSection() {
     updateBucket,
     removeBucket,
     moveBucket,
+    updateConfig,
   } = useWidgetFormActions();
 
   const dataConfig = getWidgetDataConfig(type);
   const columnOptions: SelectOption[] = columns.map(col => ({ value: col, label: col }));
+  const groupByOptions: SelectOption[] = [
+    { value: '', label: t('widgets.groupBy.none') },
+    ...columnOptions,
+  ];
 
   const showMetrics = dataConfig?.useMetricSection;
   const showBuckets = dataConfig?.useBuckets && dataConfig?.buckets?.allow;
+  const showGroupBy = dataConfig?.useGroupBy;
   const allowMultipleMetrics = dataConfig?.allowMultipleMetrics;
   const allowMultipleBuckets = dataConfig?.buckets?.allowMultiple;
 
@@ -128,6 +136,25 @@ export function DataConfigSection() {
               ))}
             </div>
           </SortableList>
+        </Card>
+      )}
+
+      {showGroupBy && (
+        <Card>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+              {t('widgets.groupBy.title')}
+            </h3>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              {t('widgets.groupBy.description')}
+            </p>
+          </div>
+          <Select
+            value={config.groupBy || ''}
+            options={groupByOptions}
+            onChange={e => updateConfig('groupBy', e.target.value || undefined)}
+            placeholder={t('widgets.groupBy.placeholder')}
+          />
         </Card>
       )}
     </div>

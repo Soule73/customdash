@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { Skeleton } from '@customdash/ui';
 import type { WidgetType, ThemeColors } from '@customdash/visualizations';
-import { WIDGET_COMPONENTS } from '@core/widgets';
 import { useWidgetData } from '@hooks/widgets';
 import type { Widget } from '@type/widget.types';
+import { widgetRegistry } from '@/core/widgets';
 
 interface WidgetDisplayProps {
   widget: Widget;
@@ -29,7 +29,7 @@ export function WidgetDisplay({ widget, className, themeColors }: WidgetDisplayP
     };
   }, [config, themeColors]);
 
-  const WidgetComponent = WIDGET_COMPONENTS[widget.type as WidgetType];
+  const WidgetComponent = widgetRegistry.getAllComponents()[widget.type as WidgetType];
 
   if (!WidgetComponent) {
     return (

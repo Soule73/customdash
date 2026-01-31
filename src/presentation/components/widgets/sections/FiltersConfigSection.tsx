@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { PlusIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
 import { FilterField } from '../fields/FilterField';
-import { getWidgetDataConfig } from '@core/widgets';
+import { widgetRegistry } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormColumns,
@@ -21,7 +21,7 @@ export function FiltersConfigSection() {
   const globalFilters = useWidgetFormFilters();
   const { addGlobalFilter, updateGlobalFilter, removeGlobalFilter } = useWidgetFormActions();
 
-  const dataConfig = getWidgetDataConfig(type);
+  const dataConfig = widgetRegistry.getDataConfig(type);
   const columnOptions: SelectOption[] = columns.map(col => ({ value: col, label: col }));
 
   const showFilters = dataConfig?.useGlobalFilters;

@@ -8,13 +8,14 @@ import type {
   Filter,
   WidgetParams,
 } from '@customdash/visualizations';
-import { WIDGET_COMPONENTS } from '@core/widgets';
+// import { WIDGET_COMPONENTS } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormData,
   useWidgetFormConfig,
   useWidgetFormMetrics,
 } from '@stores/widgetFormStore';
+import { widgetRegistry } from '@/core/widgets';
 
 interface WidgetPreviewProps {
   isLoading?: boolean;
@@ -163,7 +164,7 @@ interface WidgetRendererProps {
 
 function WidgetRenderer({ type, data, config }: WidgetRendererProps) {
   const { t } = useTranslation();
-  const WidgetComponent = WIDGET_COMPONENTS[type];
+  const WidgetComponent = widgetRegistry.getAllComponents()[type];
 
   if (!WidgetComponent) {
     return (

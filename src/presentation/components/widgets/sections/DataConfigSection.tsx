@@ -4,7 +4,7 @@ import { Button, Card, Select } from '@customdash/ui';
 import { SortableList, SortableItem } from '../../common';
 import { MetricField } from '../fields/MetricField';
 import { BucketField } from '../fields/BucketField';
-import { getWidgetDataConfig } from '@core/widgets';
+import { widgetRegistry } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormColumns,
@@ -37,7 +37,7 @@ export function DataConfigSection() {
     updateConfig,
   } = useWidgetFormActions();
 
-  const dataConfig = getWidgetDataConfig(type);
+  const dataConfig = widgetRegistry.getDataConfig(type);
   const columnOptions: SelectOption[] = columns.map(col => ({ value: col, label: col }));
   const groupByOptions: SelectOption[] = [
     { value: '', label: t('widgets.groupBy.none') },

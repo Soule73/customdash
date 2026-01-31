@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Card } from '@customdash/ui';
 import { MetricStyleFields } from '../fields/SchemaField';
-import { getWidgetConfigSchema } from '@core/widgets';
+import { widgetRegistry } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormMetrics,
@@ -19,7 +19,7 @@ export function StyleConfigSection() {
   const metricStyles = useWidgetFormMetricStyles();
   const { updateMetricStyle } = useWidgetFormActions();
 
-  const configSchema = getWidgetConfigSchema(type);
+  const configSchema = widgetRegistry.getConfigSchema(type);
   const metricStylesSchema = configSchema?.metricStyles || {};
   const hasStyleOptions = Object.keys(metricStylesSchema).length > 0;
 

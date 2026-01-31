@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Card, Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@customdash/ui';
 import { SchemaField } from '../fields/SchemaField';
 import { ParamGroup } from '../fields/ParamField';
-import { getWidgetConfigSchema } from '@core/widgets';
+import { widgetRegistry } from '@core/widgets';
 import {
   useWidgetFormType,
   useWidgetFormParams,
@@ -31,7 +31,7 @@ export function ParamsConfigSection() {
     updateWidgetParam(key, value);
   };
 
-  const configSchema = getWidgetConfigSchema(type);
+  const configSchema = widgetRegistry.getConfigSchema(type);
   const widgetParamsSchema = configSchema?.widgetParams || {};
   const schemaEntries = Object.entries(widgetParamsSchema);
 

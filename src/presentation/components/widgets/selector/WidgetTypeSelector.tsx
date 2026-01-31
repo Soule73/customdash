@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/widgets';
+import { widgetRegistry, type IWidgetTypeDefinition } from '@core/widgets';
 import type { WidgetType } from '@customdash/visualizations';
 
 interface WidgetTypeSelectorProps {
@@ -13,7 +13,7 @@ interface WidgetTypeSelectorProps {
 export function WidgetTypeSelector({ selectedType, onSelectType }: WidgetTypeSelectorProps) {
   const { t } = useTranslation();
 
-  const groupedTypes = WIDGET_TYPES.reduce(
+  const groupedTypes = widgetRegistry.getAllDefinitions().reduce(
     (acc, definition) => {
       const category = definition.category;
       if (!acc[category]) {
@@ -22,7 +22,7 @@ export function WidgetTypeSelector({ selectedType, onSelectType }: WidgetTypeSel
       acc[category].push(definition);
       return acc;
     },
-    {} as Record<string, WidgetTypeDefinition[]>,
+    {} as Record<string, IWidgetTypeDefinition[]>,
   );
 
   const getCategoryLabel = (category: string): string => {

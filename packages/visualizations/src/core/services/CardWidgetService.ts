@@ -125,6 +125,7 @@ export class CardWidgetService {
       iconColor: context.widgetParams.iconColor,
       valueColor: context.widgetParams.valueColor,
       descriptionColor: context.widgetParams.descriptionColor,
+      titleColor: context.widgetParams.titleColor,
       showIcon: context.widgetParams.showIcon,
       iconName: context.widgetParams.icon,
     };

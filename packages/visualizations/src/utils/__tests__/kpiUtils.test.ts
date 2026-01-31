@@ -87,9 +87,9 @@ describe('kpiUtils', () => {
       expect(result).toBe('#ff0000');
     });
 
-    it('should return custom default color', () => {
-      const result = getKPIValueColor({}, '#00ff00');
-      expect(result).toBe('#00ff00');
+    it('should return undefined when not configured', () => {
+      const result = getKPIValueColor({});
+      expect(result).toBeUndefined();
     });
   });
 

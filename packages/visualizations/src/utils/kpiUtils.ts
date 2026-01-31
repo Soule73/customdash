@@ -135,7 +135,12 @@ export function getCardColors(config: CardConfig): KPICardColors {
     themeColors?.labelColor ||
     (typeof params.titleColor === 'string' ? params.titleColor : undefined);
 
-  return { iconColor, valueColor, descriptionColor, titleColor };
+  return {
+    iconColor: iconColor ?? '',
+    valueColor: valueColor ?? '',
+    descriptionColor: descriptionColor ?? '',
+    titleColor: titleColor ?? '',
+  };
 }
 
 /**

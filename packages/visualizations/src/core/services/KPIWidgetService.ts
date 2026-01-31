@@ -84,8 +84,8 @@ export class KPIWidgetService {
       metric,
       widgetParams,
       title,
-      valueColor,
-      titleColor,
+      valueColor: valueColor ?? '',
+      titleColor: titleColor ?? '',
     };
   }
 

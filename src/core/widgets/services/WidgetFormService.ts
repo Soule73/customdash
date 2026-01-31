@@ -26,7 +26,7 @@ import type {
   InitFormConfigParams,
   LoadSourceDataParams,
   LoadSourceDataResult,
-} from './IWidgetFormService';
+} from '../interfaces';
 import { widgetRegistry } from '../registry';
 
 const BASE_WIDGET_PARAMS: WidgetParams = {

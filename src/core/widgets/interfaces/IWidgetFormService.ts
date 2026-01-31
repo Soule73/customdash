@@ -12,7 +12,7 @@ import type {
   FieldSchema,
 } from '@type/widget-form.types';
 import type { Widget } from '@type/widget.types';
-import type { IWidgetConfigSchema, IWidgetDataConfig } from '../interfaces';
+import type { IWidgetConfigSchema, IWidgetDataConfig } from '.';
 
 /**
  * Parameters for creating a new metric configuration

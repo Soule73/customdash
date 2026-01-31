@@ -8,7 +8,6 @@ export * from './multiBucketProcessor';
 export * from './widgetParamsUtils';
 export * from './bubbleChartUtils';
 export * from './scatterChartUtils';
-export * from './radarChartUtils';
 export * from './kpiUtils';
 export * from './tableUtils';
 export * from './valueFormatter';

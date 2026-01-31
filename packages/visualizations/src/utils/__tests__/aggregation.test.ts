@@ -157,32 +157,6 @@ describe('aggregation', () => {
         expect(result.errors.some(e => e.includes('R field'))).toBe(true);
       });
     });
-
-    describe('radar validation', () => {
-      it('should validate radar metrics with fields and agg', () => {
-        const result = validateChartMetrics({
-          metrics: [{ fields: ['field1', 'field2'], agg: 'sum' }],
-          chartType: 'radar',
-        });
-        expect(result.isValid).toBe(true);
-      });
-
-      it('should return invalid when fields is empty', () => {
-        const result = validateChartMetrics({
-          metrics: [{ fields: [], agg: 'sum' }],
-          chartType: 'radar',
-        });
-        expect(result.isValid).toBe(false);
-      });
-
-      it('should return invalid when agg is missing', () => {
-        const result = validateChartMetrics({
-          metrics: [{ fields: ['field1'], agg: '' }],
-          chartType: 'radar',
-        });
-        expect(result.isValid).toBe(false);
-      });
-    });
   });
 
   describe('calculateXYScales', () => {

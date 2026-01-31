@@ -9,11 +9,7 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import {
-  ECHARTS_SCATTER_PARAMS,
-  WIDGET_FIELD_SCHEMAS as F,
-  METRIC_CONFIG_LABELS as L,
-} from '../schemas';
+import { WidgetFieldBuilder, MetricConfigFactory, EChartsParamsFactory } from '../factories';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -33,30 +29,29 @@ export class BubbleWidgetType extends AbstractChartWidgetType {
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      pointRadius: F.pointRadius(5),
-      opacity: F.opacity(),
+      pointRadius: {
+        default: 5,
+        inputType: 'number',
+        get label() {
+          return t('widgets.styles.pointRadius');
+        },
+      },
+      opacity: WidgetFieldBuilder.opacity(),
     };
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {
     return {
-      ...ECHARTS_SCATTER_PARAMS,
+      ...EChartsParamsFactory.scatterParams(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: true,
-      get label() {
-        return L.metrics;
-      },
-    };
+    return MetricConfigFactory.createMultipleMetricsConfig();
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> | null {
-    return {
-      allow: false,
-    };
+    return MetricConfigFactory.createDisabledBucketsConfig();
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

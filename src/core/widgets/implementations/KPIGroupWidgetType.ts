@@ -9,7 +9,7 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
-import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import { WidgetFieldBuilder, MetricConfigFactory } from '../factories';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -29,34 +29,33 @@ export class KPIGroupWidgetType extends AbstractWidgetType {
 
   protected buildMetricStyles(): Record<string, FieldSchema> {
     return {
-      valueColor: F.valueColor(),
+      valueColor: WidgetFieldBuilder.valueColor(),
     };
   }
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: F.title(),
-      columns: F.columns(),
-      showTrend: F.showTrend(),
-      format: F.format(),
-      decimals: F.decimals(),
-      currency: F.currency(),
+      title: WidgetFieldBuilder.title(),
+      columns: {
+        default: 2,
+        inputType: 'number',
+        get label() {
+          return t('widgets.params.columns');
+        },
+      },
+      showTrend: WidgetFieldBuilder.showTrend(),
+      format: WidgetFieldBuilder.format(),
+      decimals: WidgetFieldBuilder.decimals(),
+      currency: WidgetFieldBuilder.currency(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: true,
-      get label() {
-        return L.kpis;
-      },
-    };
+    return MetricConfigFactory.createKPIGroupConfig();
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> | null {
-    return {
-      allow: false,
-    };
+    return MetricConfigFactory.createDisabledBucketsConfig();
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

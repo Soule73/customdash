@@ -10,11 +10,17 @@ import type {
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
 import {
-  ECHARTS_SCATTER_PARAMS,
-  WIDGET_FIELD_SCHEMAS as F,
-  METRIC_CONFIG_LABELS as L,
-} from '../schemas';
+  WidgetFieldBuilder,
+  MetricConfigFactory,
+  EChartsParamsFactory,
+  SelectOptionFactory,
+} from '../factories';
 import { t } from '../utils/i18nHelper';
+
+const POINT_STYLE_OPTIONS = SelectOptionFactory.createFromI18nKeys(
+  ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'],
+  'widgets.options.symbolTypes',
+);
 
 /**
  * Scatter chart widget type implementation
@@ -33,32 +39,38 @@ export class ScatterWidgetType extends AbstractChartWidgetType {
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      pointRadius: F.pointRadius(),
-      pointStyle: F.pointStyle(),
-      opacity: F.opacity(),
+      pointRadius: {
+        default: 4,
+        inputType: 'number',
+        get label() {
+          return t('widgets.styles.pointRadius');
+        },
+      },
+      pointStyle: {
+        default: 'circle',
+        inputType: 'select',
+        get label() {
+          return t('widgets.styles.pointStyle');
+        },
+        options: POINT_STYLE_OPTIONS,
+      },
+      opacity: WidgetFieldBuilder.opacity(),
     };
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {
     return {
-      showPoints: F.showPoints(),
-      ...ECHARTS_SCATTER_PARAMS,
+      showPoints: WidgetFieldBuilder.showPoints(),
+      ...EChartsParamsFactory.scatterParams(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: true,
-      get label() {
-        return L.metrics;
-      },
-    };
+    return MetricConfigFactory.createMultipleMetricsConfig();
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> | null {
-    return {
-      allow: false,
-    };
+    return MetricConfigFactory.createDisabledBucketsConfig();
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

@@ -9,7 +9,7 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
-import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import { WidgetFieldBuilder, MetricConfigFactory } from '../factories';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -33,30 +33,23 @@ export class CardWidgetType extends AbstractWidgetType {
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: F.title(),
-      description: F.description(),
-      showIcon: F.showIcon(),
-      iconColor: F.iconColor(),
-      valueColor: F.valueColor('#111827'),
-      format: F.format(),
-      decimals: F.decimals(),
-      currency: F.currency(),
+      title: WidgetFieldBuilder.title(),
+      description: WidgetFieldBuilder.description(),
+      showIcon: WidgetFieldBuilder.showIcon(),
+      iconColor: WidgetFieldBuilder.iconColor(),
+      valueColor: WidgetFieldBuilder.valueColor('#111827'),
+      format: WidgetFieldBuilder.format(),
+      decimals: WidgetFieldBuilder.decimals(),
+      currency: WidgetFieldBuilder.currency(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: false,
-      get label() {
-        return L.metric;
-      },
-    };
+    return MetricConfigFactory.createSingleMetricConfig();
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> | null {
-    return {
-      allow: false,
-    };
+    return MetricConfigFactory.createDisabledBucketsConfig();
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

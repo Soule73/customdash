@@ -9,11 +9,7 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import {
-  ECHARTS_BAR_PARAMS,
-  WIDGET_FIELD_SCHEMAS as F,
-  METRIC_CONFIG_LABELS as L,
-} from '../schemas';
+import { MetricConfigFactory, EChartsParamsFactory } from '../factories';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -33,36 +29,49 @@ export class BarWidgetType extends AbstractChartWidgetType {
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      barThickness: F.barThickness(),
-      borderRadius: F.borderRadius(),
+      barThickness: {
+        default: undefined,
+        inputType: 'number',
+        get label() {
+          return t('widgets.styles.barThickness');
+        },
+      },
+      borderRadius: {
+        default: 0,
+        inputType: 'number',
+        get label() {
+          return t('widgets.styles.borderRadius');
+        },
+      },
     };
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {
     return {
-      stacked: F.stacked('bar'),
-      horizontal: F.horizontal(),
-      ...ECHARTS_BAR_PARAMS,
+      stacked: {
+        default: false,
+        inputType: 'checkbox',
+        get label() {
+          return t('widgets.bar.stacked');
+        },
+      },
+      horizontal: {
+        default: false,
+        inputType: 'checkbox',
+        get label() {
+          return t('widgets.bar.horizontal');
+        },
+      },
+      ...EChartsParamsFactory.barParams(),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: true,
-      get label() {
-        return L.metrics;
-      },
-    };
+    return MetricConfigFactory.createMultipleMetricsConfig();
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> {
-    return {
-      allow: true,
-      allowMultiple: true,
-      get label() {
-        return L.buckets;
-      },
-    };
+    return MetricConfigFactory.createMultipleBucketsConfig();
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

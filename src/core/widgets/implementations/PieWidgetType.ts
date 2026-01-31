@@ -10,12 +10,12 @@ import type {
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
 import {
-  ECHARTS_PIE_PARAMS,
-  ECHARTS_NON_AXIS_COMMON_PARAMS,
-  DEFAULT_CHART_COLORS,
-  WIDGET_FIELD_SCHEMAS as F,
-  METRIC_CONFIG_LABELS as L,
-} from '../schemas';
+  WidgetFieldBuilder,
+  MetricConfigFactory,
+  EChartsParamsFactory,
+  SelectOptionFactory,
+} from '../factories';
+import { DEFAULT_CHART_COLORS } from '../constants';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -35,9 +35,9 @@ export class PieWidgetType extends AbstractChartWidgetType {
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      colors: F.colors(DEFAULT_CHART_COLORS),
-      borderColor: F.borderColor(),
-      borderWidth: F.borderWidth(),
+      colors: WidgetFieldBuilder.colors(DEFAULT_CHART_COLORS),
+      borderColor: WidgetFieldBuilder.borderColor(),
+      borderWidth: WidgetFieldBuilder.borderWidth(),
     };
   }
 
@@ -47,14 +47,50 @@ export class PieWidgetType extends AbstractChartWidgetType {
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: F.title(),
-      titleAlign: F.titleAlign(),
-      legend: F.legend(),
-      legendPosition: F.legendPosition('right'),
-      cutout: F.cutout(),
-      showValues: F.showValues(),
-      ...ECHARTS_NON_AXIS_COMMON_PARAMS,
-      ...ECHARTS_PIE_PARAMS,
+      title: WidgetFieldBuilder.title(),
+      titleAlign: WidgetFieldBuilder.titleAlign(),
+      legend: WidgetFieldBuilder.legend(),
+      legendPosition: WidgetFieldBuilder.legendPosition('right'),
+      cutout: WidgetFieldBuilder.cutout(),
+      showValues: WidgetFieldBuilder.showValues(),
+      ...EChartsParamsFactory.nonAxisCommonParams({
+        animationEasingOptions: SelectOptionFactory.createFromI18nKeys(
+          ['linear', 'cubicIn', 'cubicOut', 'cubicInOut', 'elasticOut', 'bounceOut'],
+          'widgets.options.animationEasing',
+        ),
+        emphasisFocusOptions: SelectOptionFactory.createFromI18nKeys(
+          ['none', 'self', 'series'],
+          'widgets.options.emphasisFocus',
+        ),
+        tooltipTriggerOptions: SelectOptionFactory.createFromI18nKeys(
+          ['item', 'axis', 'none'],
+          'widgets.options.tooltipTrigger',
+        ),
+        labelPositionOptions: SelectOptionFactory.createFromI18nKeys(
+          [
+            'top',
+            'bottom',
+            'left',
+            'right',
+            'inside',
+            'insideTop',
+            'insideBottom',
+            'insideLeft',
+            'insideRight',
+          ],
+          'widgets.options.labelPositions',
+        ),
+        gradientDirectionOptions: SelectOptionFactory.createFromI18nKeys(
+          ['vertical', 'horizontal'],
+          'widgets.options.gradientDirections',
+        ),
+      }),
+      ...EChartsParamsFactory.pieParams(
+        SelectOptionFactory.createFromI18nKeys(
+          ['none', 'radius', 'area'],
+          'widgets.options.roseTypes',
+        ),
+      ),
     };
   }
 
@@ -63,36 +99,16 @@ export class PieWidgetType extends AbstractChartWidgetType {
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: false,
-      get label() {
-        return L.metric;
-      },
-    };
+    return MetricConfigFactory.createSingleMetricConfig();
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> {
-    return {
-      allow: true,
-      allowMultiple: false,
-      get label() {
-        return L.bucket;
-      },
+    return MetricConfigFactory.createSingleBucketConfig({
       allowedTypes: [
-        {
-          value: 'terms',
-          get label() {
-            return t('widgets.options.bucketTypes.terms');
-          },
-        },
-        {
-          value: 'range',
-          get label() {
-            return t('widgets.options.bucketTypes.range');
-          },
-        },
+        { value: 'terms', label: 'widgets.options.bucketTypes.terms' },
+        { value: 'range', label: 'widgets.options.bucketTypes.range' },
       ],
-    };
+    });
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

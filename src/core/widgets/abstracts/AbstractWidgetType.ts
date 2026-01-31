@@ -16,7 +16,8 @@ import type {
   WidgetComponent,
   WidgetCategory,
 } from '../interfaces';
-import { AGGREGATION_OPTIONS, BUCKET_TYPE_OPTIONS } from '../schemas';
+import { SelectOptionFactory } from '../factories';
+import { AGGREGATION_TYPES, BUCKET_TYPES } from '../constants';
 
 /**
  * Abstract base class for all widget types implementing the Template Method pattern.
@@ -70,11 +71,14 @@ export abstract class AbstractWidgetType implements IWidgetType {
   }
 
   protected getDefaultAggregationOptions(): SelectOption<AggregationType>[] {
-    return AGGREGATION_OPTIONS;
+    return SelectOptionFactory.createFromI18nKeys(
+      AGGREGATION_TYPES,
+      'widgets.options.aggregations',
+    );
   }
 
   protected getDefaultBucketTypeOptions(): SelectOption<BucketType>[] {
-    return BUCKET_TYPE_OPTIONS;
+    return SelectOptionFactory.createFromI18nKeys(BUCKET_TYPES, 'widgets.options.bucketTypes');
   }
 
   private createMetricsConfig(partial: Partial<IMetricsConfig>): IMetricsConfig {

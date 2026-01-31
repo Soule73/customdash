@@ -9,7 +9,7 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
-import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import { WidgetFieldBuilder, MetricConfigFactory, SelectOptionFactory } from '../factories';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -33,31 +33,31 @@ export class KPIWidgetType extends AbstractWidgetType {
 
   protected buildWidgetParams(): Record<string, FieldSchema> {
     return {
-      title: F.title(),
-      valueColor: F.valueColor(),
-      titleColor: F.titleColor(),
-      showTrend: F.showTrend(),
-      showValue: F.showValue(),
-      format: F.format(),
-      decimals: F.decimals(),
-      currency: F.currency(),
-      trendType: F.trendType(),
-    };
-  }
-
-  protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: false,
-      get label() {
-        return L.metric;
+      title: WidgetFieldBuilder.title(),
+      valueColor: WidgetFieldBuilder.valueColor(),
+      titleColor: WidgetFieldBuilder.titleColor(),
+      showTrend: WidgetFieldBuilder.showTrend(),
+      showValue: WidgetFieldBuilder.showValue(),
+      format: WidgetFieldBuilder.format(),
+      decimals: WidgetFieldBuilder.decimals(),
+      currency: WidgetFieldBuilder.currency(),
+      trendType: {
+        default: 'arrow',
+        inputType: 'select',
+        get label() {
+          return t('widgets.params.trendType');
+        },
+        options: SelectOptionFactory.createTrendTypeOptions(),
       },
     };
   }
 
+  protected buildMetricsConfig(): Partial<IMetricsConfig> {
+    return MetricConfigFactory.createSingleMetricConfig();
+  }
+
   protected buildBucketsConfig(): Partial<IBucketsConfig> | null {
-    return {
-      allow: false,
-    };
+    return MetricConfigFactory.createDisabledBucketsConfig();
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

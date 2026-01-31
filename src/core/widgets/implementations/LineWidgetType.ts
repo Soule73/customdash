@@ -10,11 +10,17 @@ import type {
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
 import {
-  ECHARTS_LINE_PARAMS,
-  WIDGET_FIELD_SCHEMAS as F,
-  METRIC_CONFIG_LABELS as L,
-} from '../schemas';
+  WidgetFieldBuilder,
+  MetricConfigFactory,
+  EChartsParamsFactory,
+  SelectOptionFactory,
+} from '../factories';
 import { t } from '../utils/i18nHelper';
+
+const POINT_STYLE_OPTIONS = SelectOptionFactory.createFromI18nKeys(
+  ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'],
+  'widgets.options.symbolTypes',
+);
 
 /**
  * Line chart widget type implementation
@@ -33,38 +39,64 @@ export class LineWidgetType extends AbstractChartWidgetType {
 
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
     return {
-      fill: F.fill(),
-      tension: F.tension(),
-      pointStyle: F.pointStyle(),
-      stepped: F.stepped(),
+      fill: {
+        default: false,
+        inputType: 'checkbox',
+        get label() {
+          return t('widgets.styles.fill');
+        },
+      },
+      tension: {
+        default: 0,
+        inputType: 'number',
+        get label() {
+          return t('widgets.styles.tension');
+        },
+      },
+      pointStyle: {
+        default: 'circle',
+        inputType: 'select',
+        get label() {
+          return t('widgets.styles.pointStyle');
+        },
+        options: POINT_STYLE_OPTIONS,
+      },
+      stepped: {
+        default: false,
+        inputType: 'checkbox',
+        get label() {
+          return t('widgets.styles.stepped');
+        },
+      },
     };
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {
     return {
-      showPoints: F.showPoints(),
-      stacked: F.stacked('line'),
-      ...ECHARTS_LINE_PARAMS,
+      showPoints: WidgetFieldBuilder.showPoints(),
+      stacked: {
+        default: false,
+        inputType: 'checkbox',
+        get label() {
+          return t('widgets.line.stacked');
+        },
+      },
+      ...EChartsParamsFactory.lineParams({
+        stepOptions: SelectOptionFactory.createFromI18nKeys(
+          ['none', 'start', 'middle', 'end'],
+          'widgets.options.lineSteps',
+        ),
+        symbolOptions: POINT_STYLE_OPTIONS,
+      }),
     };
   }
 
   protected buildMetricsConfig(): Partial<IMetricsConfig> {
-    return {
-      allowMultiple: true,
-      get label() {
-        return L.metrics;
-      },
-    };
+    return MetricConfigFactory.createMultipleMetricsConfig();
   }
 
   protected buildBucketsConfig(): Partial<IBucketsConfig> {
-    return {
-      allow: true,
-      allowMultiple: true,
-      get label() {
-        return L.buckets;
-      },
-    };
+    return MetricConfigFactory.createMultipleBucketsConfig();
   }
 
   protected buildDataConfigOptions(): Partial<IWidgetDataConfig> {

@@ -1,5 +1,5 @@
 export * from './interfaces';
-export * from './schemas';
+export * from './constants';
 export * from './abstracts';
 export * from './implementations';
 export * from './registry';

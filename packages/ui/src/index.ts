@@ -34,3 +34,10 @@ export type {
   SortDirection,
   TextAlign as TableTextAlign,
 } from './components/Table';
+export type {
+  ModalProps,
+  ModalHeaderProps,
+  ModalBodyProps,
+  ModalFooterProps,
+  ModalTitleProps,
+} from './components/Modal';

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { AuthLayout, AppLayout } from '@/presentation/layouts';
 import { RequireAuth, GuestOnly } from '@components/common';
 import { useAppStore } from '@stores/appStore';
@@ -40,43 +41,56 @@ function useInitializeApp() {
 
 function App() {
   useInitializeApp();
+  const theme = useAppStore(s => s.theme);
 
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/dashboards" replace />} />
+    <>
+      <Toaster
+        position="top-right"
+        richColors
+        closeButton
+        theme={theme === 'system' ? 'system' : theme}
+        toastOptions={{
+          duration: 4000,
+          className: 'font-sans',
+        }}
+      />
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboards" replace />} />
 
-      <Route
-        element={
-          <GuestOnly>
-            <AuthLayout />
-          </GuestOnly>
-        }
-      >
-        <Route path="/login" element={<LoginPage />} />
-      </Route>
+        <Route
+          element={
+            <GuestOnly>
+              <AuthLayout />
+            </GuestOnly>
+          }
+        >
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
 
-      <Route
-        element={
-          <RequireAuth>
-            <AppLayout />
-          </RequireAuth>
-        }
-      >
-        <Route path="/dashboards" element={<DashboardsPage />} />
-        <Route path="/dashboards/new" element={<DashboardPage />} />
-        <Route path="/dashboards/:id" element={<DashboardPage />} />
-        <Route path="/widgets" element={<WidgetsPage />} />
-        <Route path="/widgets/new" element={<WidgetCreatePage />} />
-        <Route path="/widgets/:id/edit" element={<WidgetEditPage />} />
-        <Route path="/datasources" element={<DataSourcesPage />} />
-        <Route path="/datasources/new" element={<DataSourceCreatePage />} />
-        <Route path="/datasources/:id/edit" element={<DataSourceEditPage />} />
-        <Route path="/ai" element={<AIPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-      </Route>
+        <Route
+          element={
+            <RequireAuth>
+              <AppLayout />
+            </RequireAuth>
+          }
+        >
+          <Route path="/dashboards" element={<DashboardsPage />} />
+          <Route path="/dashboards/new" element={<DashboardPage />} />
+          <Route path="/dashboards/:id" element={<DashboardPage />} />
+          <Route path="/widgets" element={<WidgetsPage />} />
+          <Route path="/widgets/new" element={<WidgetCreatePage />} />
+          <Route path="/widgets/:id/edit" element={<WidgetEditPage />} />
+          <Route path="/datasources" element={<DataSourcesPage />} />
+          <Route path="/datasources/new" element={<DataSourceCreatePage />} />
+          <Route path="/datasources/:id/edit" element={<DataSourceEditPage />} />
+          <Route path="/ai" element={<AIPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </>
   );
 }
 

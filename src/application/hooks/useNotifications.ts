@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { toast } from 'sonner';
 
 interface UseNotificationsReturn {
   showSuccess: (message: string) => void;
@@ -8,24 +9,23 @@ interface UseNotificationsReturn {
 }
 
 /**
- * Custom hook for displaying notifications
- * TODO: Install sonner package and use toast notifications
+ * Custom hook for displaying toast notifications using Sonner
  */
 export function useNotifications(): UseNotificationsReturn {
   const showSuccess = useCallback((message: string) => {
-    console.log('[SUCCESS]', message);
+    toast.success(message);
   }, []);
 
   const showError = useCallback((message: string) => {
-    console.error('[ERROR]', message);
+    toast.error(message);
   }, []);
 
   const showWarning = useCallback((message: string) => {
-    console.warn('[WARNING]', message);
+    toast.warning(message);
   }, []);
 
   const showInfo = useCallback((message: string) => {
-    console.info('[INFO]', message);
+    toast.info(message);
   }, []);
 
   return {

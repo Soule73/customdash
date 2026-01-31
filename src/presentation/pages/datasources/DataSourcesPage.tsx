@@ -148,7 +148,7 @@ export function DataSourcesPage() {
                 value={typeFilter}
                 onChange={e => {
                   setTypeFilter(e.target.value);
-                  setCurrentPage(1);
+                  goToFirstPage();
                 }}
                 className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-1.5 text-sm text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               >
@@ -253,7 +253,9 @@ export function DataSourcesPage() {
             </Table.Body>
           </Table>
 
-          {paginatedSources.length === 0 && <Table.Empty title={t('table.noResults')} />}
+          {paginatedSources.length === 0 && (
+            <Table.Empty title={t('table.noResults')} description={t('table.noData')} />
+          )}
 
           {totalPages > 1 && (
             <div className="mt-4">
@@ -266,6 +268,14 @@ export function DataSourcesPage() {
                 onPrev={goToPrevPage}
                 onNext={goToNextPage}
                 onLast={goToLastPage}
+                labels={{
+                  of: t('table.of'),
+                  noResults: t('table.pagination.noResults'),
+                  firstPage: t('table.pagination.firstPage'),
+                  previousPage: t('table.pagination.previousPage'),
+                  nextPage: t('table.pagination.nextPage'),
+                  lastPage: t('table.pagination.lastPage'),
+                }}
               />
             </div>
           )}
@@ -298,28 +308,30 @@ export function DataSourcesPage() {
         </Card>
       )}
 
-      <Modal
-        isOpen={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        title={t('datasources.delete')}
-        size="sm"
-      >
-        <div className="space-y-4">
-          <TrashIcon className="mx-auto h-16 w-16 text-red-400 border-2 border-red-400 rounded-full p-4" />
-          <p className="text-gray-600 dark:text-gray-400">
-            {t('datasources.confirmDelete')}{' '}
-            <strong className="text-gray-900 dark:text-white">{selectedSource?.name}</strong>.
-          </p>
-          <p>{t('datasources.deleteWarning')}</p>
-          <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
-              {t('common.cancel')}
-            </Button>
-            <Button variant="danger" onClick={confirmDelete} isLoading={deleteDataSource.isPending}>
-              {t('common.delete')}
-            </Button>
+      <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} size="sm">
+        <Modal.Header closeLabel={t('common.close')}>
+          <Modal.Title>{t('datasources.delete')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="space-y-4">
+            <TrashIcon className="mx-auto h-16 w-16 text-red-400 border-2 border-red-400 rounded-full p-4" />
+            <p className="text-gray-600 dark:text-gray-400">
+              {t('datasources.confirmDelete')}{' '}
+              <strong className="text-gray-900 dark:text-white">{selectedSource?.name}</strong>.
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t('datasources.deleteWarning')}
+            </p>
           </div>
-        </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+            {t('common.cancel')}
+          </Button>
+          <Button variant="danger" onClick={confirmDelete} isLoading={deleteDataSource.isPending}>
+            {t('common.delete')}
+          </Button>
+        </Modal.Footer>
       </Modal>
 
       <CsvUploadModal isOpen={csvModalOpen} onClose={() => setCsvModalOpen(false)} />

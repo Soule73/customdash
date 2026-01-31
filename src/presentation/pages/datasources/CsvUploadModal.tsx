@@ -117,13 +117,17 @@ export function CsvUploadModal({ isOpen, onClose, onSuccess }: CsvUploadModalPro
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={t('datasources.upload.title')} size="lg">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className={`
+    <Modal isOpen={isOpen} onClose={handleClose} size="lg">
+      <Modal.Header closeLabel={t('common.close')}>
+        <Modal.Title>{t('datasources.upload.title')}</Modal.Title>
+      </Modal.Header>
+      <form onSubmit={handleSubmit}>
+        <Modal.Body className="space-y-6">
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`
             relative border-2 border-dashed rounded-lg p-8 text-center transition-colors
             ${
               isDragging
@@ -131,72 +135,72 @@ export function CsvUploadModal({ isOpen, onClose, onSuccess }: CsvUploadModalPro
                 : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
             }
           `}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv,text/csv,application/vnd.ms-excel"
-            onChange={handleInputChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          />
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,text/csv,application/vnd.ms-excel"
+              onChange={handleInputChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
 
-          {!file ? (
-            <div className="space-y-3">
-              <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
-              <div>
-                <p className="text-base font-medium text-gray-700 dark:text-gray-300">
-                  {t('datasources.upload.dropHere')}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {t('datasources.upload.orClickToBrowse')}
-                </p>
-              </div>
-              <p className="text-xs text-gray-400 dark:text-gray-500">
-                {t('datasources.upload.csvOnly')}
-              </p>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-4">
-              <div className="flex items-center gap-3 px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                <DocumentIcon className="h-8 w-8 text-green-500" />
-                <div className="text-left">
-                  <p className="font-medium text-gray-900 dark:text-white truncate max-w-xs">
-                    {file.name}
+            {!file ? (
+              <div className="space-y-3">
+                <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+                <div>
+                  <p className="text-base font-medium text-gray-700 dark:text-gray-300">
+                    {t('datasources.upload.dropHere')}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {formatFileSize(file.size)}
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    {t('datasources.upload.orClickToBrowse')}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleRemoveFile();
-                  }}
-                  className="p-1 text-gray-400 hover:text-red-500 rounded transition-colors"
-                >
-                  <XMarkIcon className="h-5 w-5" />
-                </button>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                  {t('datasources.upload.csvOnly')}
+                </p>
               </div>
+            ) : (
+              <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center gap-3 px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                  <DocumentIcon className="h-8 w-8 text-green-500" />
+                  <div className="text-left">
+                    <p className="font-medium text-gray-900 dark:text-white truncate max-w-xs">
+                      {file.name}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {formatFileSize(file.size)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleRemoveFile();
+                    }}
+                    className="p-1 text-gray-400 hover:text-red-500 rounded transition-colors"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {error && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
             </div>
           )}
-        </div>
 
-        {error && (
-          <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
-          </div>
-        )}
-
-        <Input
-          label={t('datasources.upload.sourceName')}
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder={t('datasources.upload.sourceNamePlaceholder')}
-          helperText={t('datasources.upload.sourceNameHelp')}
-        />
-
-        <div className="flex justify-end gap-3 pt-2">
+          <Input
+            label={t('datasources.upload.sourceName')}
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder={t('datasources.upload.sourceNamePlaceholder')}
+            helperText={t('datasources.upload.sourceNameHelp')}
+          />
+        </Modal.Body>
+        <Modal.Footer>
           <Button type="button" variant="outline" onClick={handleClose}>
             {t('common.cancel')}
           </Button>
@@ -207,7 +211,7 @@ export function CsvUploadModal({ isOpen, onClose, onSuccess }: CsvUploadModalPro
           >
             {t('datasources.upload.import')}
           </Button>
-        </div>
+        </Modal.Footer>
       </form>
     </Modal>
   );

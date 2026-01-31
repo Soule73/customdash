@@ -190,25 +190,23 @@ export function DashboardsPage() {
         </Card>
       )}
 
-      <Modal
-        isOpen={!!deleteModal}
-        onClose={() => setDeleteModal(null)}
-        title={t('dashboards.confirmDelete')}
-        size="sm"
-      >
-        <div className="space-y-4">
+      <Modal isOpen={!!deleteModal} onClose={() => setDeleteModal(null)} size="sm">
+        <Modal.Header closeLabel={t('common.close')}>
+          <Modal.Title>{t('dashboards.confirmDelete')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <p className="text-gray-600 dark:text-gray-400">
             {t('dashboards.deleteWarning', { name: deleteModal?.title })}
           </p>
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setDeleteModal(null)}>
-              {t('common.cancel')}
-            </Button>
-            <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
-              {deleteMutation.isPending ? t('common.loading') : t('common.delete')}
-            </Button>
-          </div>
-        </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="ghost" onClick={() => setDeleteModal(null)}>
+            {t('common.cancel')}
+          </Button>
+          <Button variant="danger" onClick={handleDelete} disabled={deleteMutation.isPending}>
+            {deleteMutation.isPending ? t('common.loading') : t('common.delete')}
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );

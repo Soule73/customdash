@@ -244,7 +244,9 @@ export function WidgetsPage() {
             </Table.Body>
           </Table>
 
-          {paginatedWidgets.length === 0 && <Table.Empty title={t('table.noResults')} />}
+          {paginatedWidgets.length === 0 && (
+            <Table.Empty title={t('table.noResults')} description={t('table.noData')} />
+          )}
 
           {totalPages > 1 && (
             <div className="mt-4">
@@ -257,6 +259,14 @@ export function WidgetsPage() {
                 onPrev={goToPrevPage}
                 onNext={goToNextPage}
                 onLast={goToLastPage}
+                labels={{
+                  of: t('table.of'),
+                  noResults: t('table.pagination.noResults'),
+                  firstPage: t('table.pagination.firstPage'),
+                  previousPage: t('table.pagination.previousPage'),
+                  nextPage: t('table.pagination.nextPage'),
+                  lastPage: t('table.pagination.lastPage'),
+                }}
               />
             </div>
           )}
@@ -281,30 +291,30 @@ export function WidgetsPage() {
         </Card>
       )}
 
-      <Modal
-        isOpen={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        title={t('widgets.delete')}
-        size="sm"
-      >
-        <div className="space-y-4">
-          <TrashIcon className="mx-auto h-16 w-16 text-red-400 border-2 border-red-400 rounded-full p-4" />
-          <p className="text-gray-600 dark:text-gray-400 text-center">
-            {t('widgets.confirmDelete')}{' '}
-            <strong className="text-gray-900 dark:text-white">{selectedWidget?.title}</strong>?
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-            {t('widgets.deleteWarning')}
-          </p>
-          <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
-              {t('common.cancel')}
-            </Button>
-            <Button variant="danger" onClick={confirmDelete} isLoading={deleteWidget.isPending}>
-              {t('common.delete')}
-            </Button>
+      <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} size="sm">
+        <Modal.Header closeLabel={t('common.close')}>
+          <Modal.Title>{t('widgets.delete')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="space-y-4">
+            <TrashIcon className="mx-auto h-16 w-16 text-red-400 border-2 border-red-400 rounded-full p-4" />
+            <p className="text-gray-600 dark:text-gray-400 text-center">
+              {t('widgets.confirmDelete')}{' '}
+              <strong className="text-gray-900 dark:text-white">{selectedWidget?.title}</strong>?
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+              {t('widgets.deleteWarning')}
+            </p>
           </div>
-        </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+            {t('common.cancel')}
+          </Button>
+          <Button variant="danger" onClick={confirmDelete} isLoading={deleteWidget.isPending}>
+            {t('common.delete')}
+          </Button>
+        </Modal.Footer>
       </Modal>
 
       <NewWidgetModal isOpen={isModalOpen} onClose={handleCloseModal} />

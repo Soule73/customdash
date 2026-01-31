@@ -29,9 +29,12 @@ export function DashboardSaveModal({
   };
 
   return (
-    <Modal isOpen={open} onClose={onClose} title={t('dashboards.saveModal.title')} size="md">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
+    <Modal isOpen={open} onClose={onClose} size="md">
+      <Modal.Header closeLabel={t('common.close')}>
+        <Modal.Title>{t('dashboards.saveModal.title')}</Modal.Title>
+      </Modal.Header>
+      <form onSubmit={handleSubmit}>
+        <Modal.Body className="space-y-4">
           <Input
             label={`${t('dashboards.saveModal.titleLabel')} *`}
             id="dashboard-title"
@@ -40,9 +43,6 @@ export function DashboardSaveModal({
             placeholder={t('dashboards.saveModal.titlePlaceholder')}
             required
           />
-        </div>
-
-        <div>
           <Input
             label={t('dashboards.saveModal.descriptionLabel')}
             id="dashboard-description"
@@ -50,16 +50,15 @@ export function DashboardSaveModal({
             onChange={e => setDescription(e.target.value)}
             placeholder={t('dashboards.saveModal.descriptionPlaceholder')}
           />
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4">
+        </Modal.Body>
+        <Modal.Footer>
           <Button type="button" variant="ghost" onClick={onClose}>
             {t('dashboards.saveModal.cancel')}
           </Button>
           <Button type="submit" variant="primary" disabled={!title.trim() || isSaving}>
             {isSaving ? t('dashboards.saveModal.saving') : t('dashboards.saveModal.save')}
           </Button>
-        </div>
+        </Modal.Footer>
       </form>
     </Modal>
   );

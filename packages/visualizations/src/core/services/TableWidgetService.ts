@@ -18,6 +18,8 @@ import {
   sortTableData,
   searchTableData,
   paginateTableData,
+  createBucketColumns,
+  createMetricColumns,
 } from '../../utils/tableUtils';
 
 /**
@@ -71,11 +73,55 @@ export class TableWidgetService {
   /**
    * Process raw data to extract columns and display data
    */
-  static processData(data: Record<string, unknown>[]): {
+  static processData(
+    data: Record<string, unknown>[],
+    config: TableWidgetConfig,
+  ): {
     columns: TableColumn[];
     displayData: Record<string, unknown>[];
   } {
     const safeData = Array.isArray(data) ? data : [];
+    const configType = this.detectConfigType(config);
+
+    if (configType.hasMetrics) {
+      const bucketColumns = configType.hasMultiBuckets ? createBucketColumns(config.buckets!) : [];
+
+      // Merge metricStyles with metrics before creating columns
+      const metricsWithStyles = config.metrics!.map((metric, index) => {
+        const style = config.metricStyles?.[index] || {};
+        return {
+          ...metric,
+          width: style.width ?? metric.width,
+          align: style.align ?? metric.align,
+          format: style.format ?? metric.format,
+        };
+      });
+
+      const metricColumns = createMetricColumns(metricsWithStyles);
+
+      // Merge columns and deduplicate by key
+      const allColumns = [...bucketColumns, ...metricColumns];
+      const seenKeys = new Set<string>();
+      const columns = allColumns.filter(col => {
+        if (seenKeys.has(col.key)) {
+          return false;
+        }
+        seenKeys.add(col.key);
+        return true;
+      });
+
+      // Filter data to only include configured columns
+      const filteredData = safeData.map(row => {
+        const filteredRow: Record<string, unknown> = {};
+        columns.forEach(col => {
+          filteredRow[col.key] = row[col.key];
+        });
+        return filteredRow;
+      });
+
+      return { columns, displayData: filteredData };
+    }
+
     return processRawData(safeData);
   }
 
@@ -99,7 +145,7 @@ export class TableWidgetService {
   static createDataContext(input: TableWidgetInput): TableDataContext {
     const filteredData = this.applyFilters(input.data, input.config.globalFilters);
     const configType = this.detectConfigType(input.config);
-    const { columns, displayData } = this.processData(filteredData);
+    const { columns, displayData } = this.processData(filteredData, input.config);
     const tableTitle = this.generateTitle(input.config, configType);
     const isValid = validateTableConfig(input.config, input.data);
     const pageSize = this.extractPageSize(input.config);

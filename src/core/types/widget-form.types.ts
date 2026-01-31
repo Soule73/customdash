@@ -9,6 +9,8 @@ import type {
   MetricStyle,
   WidgetParams,
   SelectOption,
+  TextAlign,
+  FormatType,
 } from '@customdash/visualizations';
 
 export type GlobalFilter = Filter;
@@ -23,6 +25,9 @@ export interface MetricConfig {
   y?: string;
   r?: string;
   fields?: string[];
+  width?: string;
+  align?: TextAlign;
+  format?: FormatType;
 }
 
 export interface BucketConfig {
@@ -44,6 +49,7 @@ export interface WidgetFormConfig {
   globalFilters: GlobalFilter[];
   metricStyles: MetricStyle[];
   widgetParams: WidgetParams;
+  groupBy?: string;
 }
 
 export type WidgetFormTab = 'data' | 'style' | 'params' | 'filters';
@@ -108,6 +114,7 @@ export interface FieldSchema {
   default: unknown;
   inputType: 'text' | 'number' | 'color' | 'checkbox' | 'select' | 'color-array';
   label: string;
+  placeholder?: string;
   group?: string;
   key?: string;
   options?: SelectOption[];

@@ -153,13 +153,13 @@ export default function TableWidget({ data, config }: TableWidgetInput) {
   return (
     <VisualizationContainer>
       <div className="flex flex-col h-full rounded-lg overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white" style={titleStyle}>
+        <div className="flex items-center justify-between px-4 py-3 border-b">
+          <h3 className="text-lg font-semibold" style={titleStyle}>
             {tableTitle}
           </h3>
           {showSearch && (
             <div className="w-64">
-              <Table.Search value={searchTerm} onChange={setSearchTerm} />
+              <Table.Search value={searchTerm} onChange={setSearchTerm} themeColors={themeColors} />
             </div>
           )}
         </div>

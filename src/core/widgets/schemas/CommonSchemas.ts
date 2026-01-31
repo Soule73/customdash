@@ -1,4 +1,9 @@
-import type { SelectOption, AggregationType, BucketType } from '@customdash/visualizations';
+import type {
+  SelectOption,
+  AggregationType,
+  BucketType,
+  TextAlign,
+} from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 import { t, WIDGET_I18N_KEYS as K } from '../utils/i18nHelper';
 
@@ -95,6 +100,27 @@ export const BUCKET_TYPE_OPTIONS: SelectOption<BucketType>[] = [
     value: 'split_chart',
     get label() {
       return t('widgets.options.bucketTypes.split_chart');
+    },
+  },
+];
+
+export const ALIGN_OPTIONS: SelectOption<TextAlign>[] = [
+  {
+    value: 'left',
+    get label() {
+      return t('widgets.positions.left');
+    },
+  },
+  {
+    value: 'center',
+    get label() {
+      return t('widgets.positions.center');
+    },
+  },
+  {
+    value: 'right',
+    get label() {
+      return t('widgets.positions.right');
     },
   },
 ];
@@ -356,6 +382,9 @@ export const COMMON_WIDGET_PARAMS: Record<string, FieldSchema> = {
     inputType: 'checkbox',
     get label() {
       return t(K.params.showValues);
+    },
+    get group() {
+      return t(K.groups.labels);
     },
   },
 };

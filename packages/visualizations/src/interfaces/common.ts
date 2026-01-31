@@ -40,6 +40,9 @@ export interface Metric {
   agg: AggregationType;
   label?: string;
   filters?: Filter[];
+  width?: string;
+  align?: TextAlign;
+  format?: FormatType;
 }
 
 export interface RangeConfig {
@@ -86,6 +89,9 @@ export interface ChartStyles {
 export interface MetricStyle extends ChartStyles {
   color?: string;
   colors?: string[];
+  width?: string;
+  align?: TextAlign;
+  format?: FormatType;
 }
 
 export interface BaseChartConfig {
@@ -99,6 +105,7 @@ export interface ChartConfig extends BaseChartConfig {
   metrics: Metric[];
   buckets?: MultiBucketConfig[];
   styles?: ChartStyles;
+  groupBy?: string;
 }
 
 export interface WidgetParams {
@@ -142,14 +149,6 @@ export interface BubbleMetricConfig extends ScatterMetricConfig {
   r: string;
 }
 
-export interface RadarMetricConfig {
-  agg: AggregationType;
-  fields: string[];
-  label?: string;
-  filters?: Filter[];
-  datasetFilters?: Filter[];
-}
-
 export interface BubbleChartConfig extends BaseChartConfig {
   metrics: BubbleMetricConfig[];
 }
@@ -159,8 +158,8 @@ export interface ScatterChartConfig extends BaseChartConfig {
 }
 
 export interface RadarChartConfig extends BaseChartConfig {
-  metrics: RadarMetricConfig[];
-  buckets?: MultiBucketConfig[];
+  metrics: Metric[];
+  groupBy?: string;
 }
 
 export interface KPIWidgetParams extends WidgetParams {
@@ -232,6 +231,7 @@ export interface TableWidgetConfig {
   metrics?: Metric[];
   buckets?: MultiBucketConfig[];
   globalFilters?: Filter[];
+  metricStyles?: MetricStyle[];
   widgetParams?: TableWidgetParams;
   themeColors?: ThemeColors;
 }

@@ -9,7 +9,12 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractWidgetType } from '../abstracts';
-import { WIDGET_FIELD_SCHEMAS as F, METRIC_CONFIG_LABELS as L } from '../schemas';
+import {
+  WIDGET_FIELD_SCHEMAS as F,
+  METRIC_CONFIG_LABELS as L,
+  ALIGN_OPTIONS,
+  FORMAT_OPTIONS,
+} from '../schemas';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -28,7 +33,34 @@ export class TableWidgetType extends AbstractWidgetType {
   protected readonly widgetComponent = TableWidget as unknown as WidgetComponent;
 
   protected buildMetricStyles(): Record<string, FieldSchema> {
-    return {};
+    return {
+      width: {
+        default: undefined,
+        inputType: 'text',
+        get label() {
+          return t('widgets.styles.width');
+        },
+        get placeholder() {
+          return t('widgets.styles.widthPlaceholder');
+        },
+      },
+      align: {
+        default: 'right',
+        inputType: 'select',
+        get label() {
+          return t('widgets.styles.align');
+        },
+        options: ALIGN_OPTIONS,
+      },
+      format: {
+        default: 'number',
+        inputType: 'select',
+        get label() {
+          return t('widgets.styles.format');
+        },
+        options: FORMAT_OPTIONS,
+      },
+    };
   }
 
   protected buildWidgetParams(): Record<string, FieldSchema> {

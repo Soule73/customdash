@@ -54,13 +54,13 @@ export function createBucketColumns(buckets: MultiBucketConfig[]): TableColumn[]
  *
  * @example
  * const metrics: Metric[] = [
- *   { field: 'sales', label: 'Total Sales' },
- *   { field: 'profit' },
+ *   { field: 'sales', label: 'Total Sales', align: 'center', width: '150px' },
+ *   { field: 'profit', format: 'currency' },
  * ];
  * const columns = createMetricColumns(metrics);
  * // Result: [
- * //   { key: 'sales', label: 'Total Sales', sortable: true, align: 'right', format: 'number' },
- * //   { key: 'profit', label: 'Profit', sortable: true, align: 'right', format: 'number' },
+ * //   { key: 'sales', label: 'Total Sales', sortable: true, align: 'center', format: 'number', width: '150px' },
+ * //   { key: 'profit', label: 'Profit', sortable: true, align: 'right', format: 'currency' },
  * // ]
  */
 export function createMetricColumns(metrics: Metric[]): TableColumn[] {
@@ -68,8 +68,9 @@ export function createMetricColumns(metrics: Metric[]): TableColumn[] {
     key: metric.field,
     label: metric.label || capitalizeFirst(metric.field),
     sortable: true,
-    align: 'right' as const,
-    format: 'number' as const,
+    align: metric.align ?? ('right' as const),
+    format: metric.format ?? ('number' as const),
+    width: metric.width,
   }));
 }
 

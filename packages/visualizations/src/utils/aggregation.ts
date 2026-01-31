@@ -104,15 +104,6 @@ export function validateChartMetrics(config: ChartValidationConfig): ChartValida
         if (!metric.x?.trim()) metricErrors.push('X field must be specified');
         if (!metric.y?.trim()) metricErrors.push('Y field must be specified');
         break;
-
-      case 'radar':
-        if (!metric.fields || metric.fields.length === 0) {
-          metricErrors.push('At least one field must be selected for axes');
-        }
-        if (!metric.agg) {
-          metricErrors.push('An aggregation must be specified');
-        }
-        break;
     }
 
     if (metricErrors.length > 0) {

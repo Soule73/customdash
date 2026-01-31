@@ -2,25 +2,18 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { Button, Input, Alert, Checkbox } from '@customdash/ui';
 import { useLogin } from '@hooks/index';
 import { Logo } from '@components/common';
 import { useAppTranslation } from '@hooks/useAppTranslation';
+import { loginSchema, type LoginFormData } from '@validation';
 
 export function LoginPage() {
   const { t } = useAppTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { mutate: login, isPending, error } = useLogin();
-
-  const loginSchema = z.object({
-    email: z.string().min(1, t('auth.emailRequired')).email(t('auth.emailInvalid')),
-    password: z.string().min(1, t('auth.passwordRequired')).min(6, t('auth.passwordMinLength')),
-  });
-
-  type LoginFormData = z.infer<typeof loginSchema>;
 
   const {
     register,

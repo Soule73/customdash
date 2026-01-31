@@ -184,12 +184,13 @@ export function WidgetFormLayout({
           </div>
         </div>
 
-        <Modal
-          isOpen={showSaveModal}
-          onClose={() => setShowSaveModal(false)}
-          title={isEditMode ? t('widgets.modal.updateWidget') : t('widgets.modal.saveWidget')}
-        >
-          <div className="space-y-4">
+        <Modal isOpen={showSaveModal} onClose={() => setShowSaveModal(false)}>
+          <Modal.Header closeLabel={t('common.close')}>
+            <Modal.Title>
+              {isEditMode ? t('widgets.modal.updateWidget') : t('widgets.modal.saveWidget')}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="space-y-4">
             <Input
               label={t('widgets.form.widgetName')}
               value={name}
@@ -203,15 +204,15 @@ export function WidgetFormLayout({
               onChange={e => setWidgetDescription(e.target.value)}
               placeholder={t('widgets.form.descriptionPlaceholder')}
             />
-            <div className="flex justify-end gap-3 pt-4">
-              <Button variant="outline" onClick={() => setShowSaveModal(false)}>
-                {t('widgets.actions.cancel')}
-              </Button>
-              <Button onClick={handleConfirmSave} disabled={!name}>
-                {isEditMode ? t('widgets.actions.update') : t('widgets.actions.save')}
-              </Button>
-            </div>
-          </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="outline" onClick={() => setShowSaveModal(false)}>
+              {t('widgets.actions.cancel')}
+            </Button>
+            <Button onClick={handleConfirmSave} disabled={!name}>
+              {isEditMode ? t('widgets.actions.update') : t('widgets.actions.save')}
+            </Button>
+          </Modal.Footer>
         </Modal>
       </div>
     </div>

@@ -60,6 +60,8 @@ export function FilterField({ filter, index, columns, onUpdate, onRemove }: Filt
           onChange={handleFieldChange}
           options={columns}
           placeholder={t('widgets.actions.select')}
+          searchPlaceholder={t('table.search')}
+          noResultsLabel={t('common.noResultsFound')}
         />
         <Select
           label={t('widgets.filters.operator')}

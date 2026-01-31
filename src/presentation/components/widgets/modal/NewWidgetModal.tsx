@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Modal, Button, SearchSelect } from '@customdash/ui';
+import { Modal, Button, SearchSelect, Checkbox } from '@customdash/ui';
 import { WIDGET_TYPES, type WidgetTypeDefinition } from '@core/widgets';
 import { useDataSources } from '@hooks/datasource.queries';
 import type { WidgetType, SelectOption } from '@customdash/visualizations';
@@ -81,8 +81,11 @@ export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalP
   const isValid = selectedSourceId && selectedType;
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={t('widgets.modal.newWidget')} size="2xl">
-      <div className="space-y-5">
+    <Modal isOpen={isOpen} onClose={handleClose} size="3xl" height="full">
+      <Modal.Header closeLabel={t('common.close')}>
+        <Modal.Title>{t('widgets.modal.newWidget')}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body className="space-y-5">
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
             {t('widgets.form.dataSource')}
@@ -92,6 +95,8 @@ export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalP
             value={selectedSourceId}
             onChange={handleSourceChange}
             placeholder={isLoadingSources ? t('widgets.loading') : t('widgets.form.selectSource')}
+            searchPlaceholder={t('table.search')}
+            noResultsLabel={t('common.noResultsFound')}
             disabled={isLoadingSources}
           />
           {sourceOptions.length === 0 && !isLoadingSources && (
@@ -105,68 +110,73 @@ export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalP
           <label className="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
             {t('widgets.form.widgetType')}
           </label>
-          <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+          <div className="space-y-4">
             {Object.entries(groupedTypes).map(([category, types]) => (
               <div key={category}>
                 <h4 className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
                   {getCategoryLabel(category)}
                 </h4>
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
-                  {types.map(({ type, label, icon: Icon }) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => handleTypeSelect(type)}
-                      className={`
-                        group flex flex-col items-center rounded-lg border-2 p-3 transition-all
-                        ${
-                          selectedType === type
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                            : 'border-gray-200 bg-white hover:border-primary-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-600 dark:hover:bg-gray-750'
-                        }
-                      `}
-                    >
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                  {types.map(({ type, label, icon: Icon }) => {
+                    const isSelected = selectedType === type;
+                    return (
                       <div
+                        key={type}
+                        role="button"
+                        onClick={() => handleTypeSelect(type)}
                         className={`
-                          mb-1.5 flex h-8 w-8 items-center justify-center rounded-lg
+                          group relative flex flex-col items-center rounded-lg border-2 p-3 transition-all h-28 justify-around cursor-pointer
                           ${
-                            selectedType === type
-                              ? 'bg-primary-500 text-white'
-                              : 'bg-gray-100 text-gray-500 group-hover:bg-primary-100 group-hover:text-primary-600 dark:bg-gray-700 dark:text-gray-400'
+                            isSelected
+                              ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                              : 'border-gray-200 bg-white hover:border-primary-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-600 dark:hover:bg-gray-750'
                           }
                         `}
                       >
-                        <Icon className="h-4 w-4" />
+                        <div className="absolute right-1.5 top-1.5 pointer-events-none">
+                          <Checkbox checked={isSelected} readOnly rounded="full" />
+                        </div>
+                        <div
+                          className={`
+                            mb-1.5 flex h-10 w-10 items-center justify-center rounded-xl transition-all
+                            ${
+                              isSelected
+                                ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/40 dark:text-primary-400'
+                                : 'bg-gray-100 text-gray-500 group-hover:bg-primary-50 group-hover:text-primary-500 dark:bg-gray-700 dark:text-gray-400 dark:group-hover:bg-primary-900/30 dark:group-hover:text-primary-400'
+                            }
+                          `}
+                        >
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <span
+                          className={`
+                            text-xs font-medium text-center leading-tight
+                            ${
+                              isSelected
+                                ? 'text-primary-700 dark:text-primary-300'
+                                : 'text-gray-700 dark:text-gray-300'
+                            }
+                          `}
+                        >
+                          {label}
+                        </span>
                       </div>
-                      <span
-                        className={`
-                          text-xs font-medium text-center
-                          ${
-                            selectedType === type
-                              ? 'text-primary-700 dark:text-primary-300'
-                              : 'text-gray-700 dark:text-gray-300'
-                          }
-                        `}
-                      >
-                        {label}
-                      </span>
-                    </button>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="flex justify-end gap-3 pt-4">
-          <Button variant="ghost" onClick={handleClose}>
-            {t('widgets.actions.cancel')}
-          </Button>
-          <Button variant="primary" onClick={handleConfirm} disabled={!isValid}>
-            {t('widgets.modal.continue')}
-          </Button>
-        </div>
-      </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="ghost" onClick={handleClose}>
+          {t('widgets.actions.cancel')}
+        </Button>
+        <Button variant="primary" onClick={handleConfirm} disabled={!isValid}>
+          {t('widgets.modal.continue')}
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 }

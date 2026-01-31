@@ -70,6 +70,8 @@ export function BucketField({
             onChange={handleFieldChange}
             options={columns}
             placeholder={t('widgets.actions.select')}
+            searchPlaceholder={t('table.search')}
+            noResultsLabel={t('common.noResultsFound')}
           />
         </div>
 

@@ -74,6 +74,8 @@ export function MetricField({
               onChange={handleFieldChange}
               options={columns}
               placeholder={t('widgets.actions.select')}
+              searchPlaceholder={t('table.search')}
+              noResultsLabel={t('common.noResultsFound')}
             />
           </div>
         )}
@@ -86,6 +88,8 @@ export function MetricField({
               onChange={handleXChange}
               options={columns}
               placeholder={t('widgets.actions.select')}
+              searchPlaceholder={t('table.search')}
+              noResultsLabel={t('common.noResultsFound')}
             />
             <SearchSelect
               label={t('widgets.metrics.yField')}
@@ -93,6 +97,8 @@ export function MetricField({
               onChange={handleYChange}
               options={columns}
               placeholder={t('widgets.actions.select')}
+              searchPlaceholder={t('table.search')}
+              noResultsLabel={t('common.noResultsFound')}
             />
           </div>
         )}
@@ -104,6 +110,8 @@ export function MetricField({
             onChange={handleRChange}
             options={columns}
             placeholder={t('widgets.actions.select')}
+            searchPlaceholder={t('table.search')}
+            noResultsLabel={t('common.noResultsFound')}
           />
         )}
 

@@ -18,7 +18,6 @@ export interface DataSourceSummary {
 }
 
 export interface AIConversation {
-  _id: string;
   id: string;
   userId: string;
   dataSourceId: string;

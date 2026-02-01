@@ -11,11 +11,10 @@ import {
   ChatBubbleLeftRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  GlobeAltIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Avatar, Tooltip } from '@customdash/ui';
 import { cn } from '@customdash/utils';
-import { Logo, ThemeToggle, LanguageSelector } from '@components/common';
+import { Logo, ThemeToggle } from '@components/common';
 import { useAuthStore } from '@stores/authStore';
 import { useAppStore } from '@stores/appStore';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
@@ -190,28 +189,6 @@ export function AppLayout() {
                 </NavLink>
               </Tooltip>
             ))}
-
-            <div
-              className={cn(
-                'flex items-center gap-2',
-                collapsed ? 'flex-col' : 'justify-between px-1',
-              )}
-            >
-              <Tooltip content={t('layout.theme')} position="right" disabled={!collapsed}>
-                <ThemeToggle />
-              </Tooltip>
-              {!collapsed && <LanguageSelector className="w-28" />}
-              {collapsed && (
-                <Tooltip content={t('layout.language')} position="right">
-                  <button
-                    type="button"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-                  >
-                    <GlobeAltIcon className="h-5 w-5" />
-                  </button>
-                </Tooltip>
-              )}
-            </div>
 
             <Tooltip
               content={collapsed ? t('layout.expand') : t('layout.collapse')}

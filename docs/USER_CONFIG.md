@@ -67,7 +67,7 @@ import { useFormattedValue } from '@hooks';
 
 function MyComponent({ data }) {
   const { formatNumber, formatCurrency, formatDate } = useFormattedValue();
-  
+
   return (
     <div>
       <p>Montant: {formatCurrency(data.amount)}</p>
@@ -85,21 +85,15 @@ import { useFormatConfig } from '@hooks';
 
 function SettingsPage() {
   const { config, setLocale, setCurrency } = useFormatConfig();
-  
+
   return (
     <form>
-      <select 
-        value={config.locale} 
-        onChange={e => setLocale(e.target.value)}
-      >
+      <select value={config.locale} onChange={e => setLocale(e.target.value)}>
         <option value="fr-FR">Français</option>
         <option value="en-US">English (US)</option>
       </select>
-      
-      <select 
-        value={config.currency} 
-        onChange={e => setCurrency(e.target.value)}
-      >
+
+      <select value={config.currency} onChange={e => setCurrency(e.target.value)}>
         <option value="EUR">Euro (€)</option>
         <option value="USD">Dollar ($)</option>
       </select>
@@ -123,20 +117,20 @@ const config = formatConfigProvider.getConfig();
 // Les fonctions de formatage utilisent automatiquement la config
 import { formatNumber, formatCurrency } from '@customdash/utils';
 
-formatNumber(1234.56);  // Utilise locale de la config
-formatCurrency(100);     // Utilise locale et currency de la config
+formatNumber(1234.56); // Utilise locale de la config
+formatCurrency(100); // Utilise locale et currency de la config
 ```
 
 ## Configuration par défaut
 
 ```typescript
 const DEFAULT_FORMAT_CONFIG = {
-  locale: 'fr-FR',      // Locale française
-  currency: 'EUR',      // Euro
-  decimals: 2,          // 2 décimales
-  dateFormat: 'short',  // Format court
-  nullValue: '-',       // Tiret pour null
-  includeTime: false,   // Sans l'heure
+  locale: 'fr-FR', // Locale française
+  currency: 'EUR', // Euro
+  decimals: 2, // 2 décimales
+  dateFormat: 'short', // Format court
+  nullValue: '-', // Tiret pour null
+  includeTime: false, // Sans l'heure
 };
 ```
 
@@ -144,34 +138,34 @@ const DEFAULT_FORMAT_CONFIG = {
 
 ### Locales
 
-| Code    | Label              |
-|---------|-------------------|
-| fr-FR   | Français (France) |
-| en-US   | English (US)      |
-| en-GB   | English (UK)      |
-| de-DE   | Deutsch           |
-| es-ES   | Español           |
-| it-IT   | Italiano          |
+| Code  | Label             |
+| ----- | ----------------- |
+| fr-FR | Français (France) |
+| en-US | English (US)      |
+| en-GB | English (UK)      |
+| de-DE | Deutsch           |
+| es-ES | Español           |
+| it-IT | Italiano          |
 
 ### Devises
 
-| Code | Label           | Symbole |
-|------|-----------------|---------|
-| EUR  | Euro            | €       |
-| USD  | US Dollar       | $       |
-| GBP  | British Pound   | £       |
-| JPY  | Japanese Yen    | ¥       |
-| CHF  | Swiss Franc     | CHF     |
-| CAD  | Canadian Dollar | C$      |
-| AUD  | Australian Dollar | A$    |
+| Code | Label             | Symbole |
+| ---- | ----------------- | ------- |
+| EUR  | Euro              | €       |
+| USD  | US Dollar         | $       |
+| GBP  | British Pound     | £       |
+| JPY  | Japanese Yen      | ¥       |
+| CHF  | Swiss Franc       | CHF     |
+| CAD  | Canadian Dollar   | C$      |
+| AUD  | Australian Dollar | A$      |
 
 ### Formats de date
 
-| Format | Exemple (fr-FR)      |
-|--------|---------------------|
-| short  | 15/01/2026          |
-| medium | 15 janv. 2026       |
-| long   | 15 janvier 2026     |
+| Format | Exemple (fr-FR)       |
+| ------ | --------------------- |
+| short  | 15/01/2026            |
+| medium | 15 janv. 2026         |
+| long   | 15 janvier 2026       |
 | full   | jeudi 15 janvier 2026 |
 
 ## Persistence
@@ -212,23 +206,28 @@ afterEach(() => {
 ## Fichiers concernés
 
 ### Types
+
 - `src/core/types/format-config.types.ts`
 - `src/core/types/index.ts`
 
 ### Store & Hooks
+
 - `src/application/stores/userConfigStore.ts`
 - `src/application/hooks/common/useFormatConfig.ts`
 
 ### Packages
+
 - `packages/utils/src/formatConfigProvider.ts`
 - `packages/utils/src/formatters.ts`
 - `packages/visualizations/src/utils/valueFormatter.ts`
 - `packages/visualizations/src/utils/config.ts`
 
 ### Widgets
+
 - `src/core/widgets/factories/WidgetFieldBuilder.ts`
 - `src/core/widgets/services/WidgetFormService.ts`
 
 ### Initialisation
+
 - `src/App.tsx`
 - `src/core/constants/index.ts` (STORAGE_KEYS.USER_CONFIG)

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { Button, Input, Alert, Checkbox } from '@customdash/ui';
-import { useLogin } from '@hooks/index';
+import { useLogin } from '@hooks';
 import { Logo } from '@components/common';
 import { useAppTranslation } from '@hooks';
 import { loginSchema, type LoginFormData } from '@validation';

@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Skeleton } from '@customdash/ui';
-import { useDataSource, useUpdateDataSource } from '@hooks/index';
+import { useDataSource, useUpdateDataSource } from '@hooks';
 import { useAppTranslation } from '@hooks';
 import { DataSourceForm } from './DataSourceForm';
 import { type DataSourceFormState } from './datasource-form.constants';

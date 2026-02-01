@@ -10,7 +10,7 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Card, Table, Skeleton, Badge, Modal } from '@customdash/ui';
-import { useDataSources, useDeleteDataSource } from '@hooks/index';
+import { useDataSources, useDeleteDataSource } from '@hooks';
 import { useAppTranslation } from '@hooks';
 import { formatDate } from '@customdash/utils';
 import { usePaginatedSearch } from '@hooks';

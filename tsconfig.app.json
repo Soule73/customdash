@@ -54,6 +54,9 @@
       "@assets/*": [
         "./src/core/assets/*"
       ],
+      "@hooks": [
+        "./src/application/hooks"
+      ],
       "@hooks/*": [
         "./src/application/hooks/*"
       ],

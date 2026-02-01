@@ -10,7 +10,7 @@ import {
   SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Card, Table, Skeleton, Badge, Modal } from '@customdash/ui';
-import { useWidgets, useDeleteWidget, usePaginatedSearch } from '@hooks/index';
+import { useWidgets, useDeleteWidget, usePaginatedSearch } from '@hooks';
 import { useAppTranslation } from '@hooks';
 import { formatDate } from '@customdash/utils';
 import { NewWidgetModal } from '@components/widgets/modal';

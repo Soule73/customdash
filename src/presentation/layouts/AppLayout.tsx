@@ -19,7 +19,7 @@ import { Logo, ThemeToggle, LanguageSelector } from '@components/common';
 import { useAuthStore } from '@stores/authStore';
 import { useAppStore } from '@stores/appStore';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
-import { useLogout } from '@hooks/index';
+import { useLogout } from '@hooks';
 import { useAppTranslation, type TranslationKey } from '@hooks';
 
 interface NavItem {

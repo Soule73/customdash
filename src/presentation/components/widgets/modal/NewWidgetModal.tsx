@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, SearchSelect, Checkbox } from '@customdash/ui';
 import { widgetRegistry, type IWidgetTypeDefinition } from '@core/widgets';
-import { useDataSources } from '@hooks/datasource.queries';
+import { useDataSources } from '@hooks';
 import type { WidgetType, SelectOption } from '@customdash/visualizations';
 
 interface NewWidgetModalProps {

@@ -1,14 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { dashboardService } from '@services/index';
+import { dashboardKeys } from './keys';
 import type { CreateDashboardData, UpdateDashboardData, LayoutItem } from '@type/dashboard.types';
 
-export const dashboardKeys = {
-  all: ['dashboards'] as const,
-  lists: () => [...dashboardKeys.all, 'list'] as const,
-  list: (filters?: Record<string, unknown>) => [...dashboardKeys.lists(), filters] as const,
-  details: () => [...dashboardKeys.all, 'detail'] as const,
-  detail: (id: string) => [...dashboardKeys.details(), id] as const,
-};
+// Re-export for backwards compatibility
+export { dashboardKeys };
 
 export function useDashboards() {
   return useQuery({

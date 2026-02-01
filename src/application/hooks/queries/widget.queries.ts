@@ -1,14 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { widgetService } from '@services/index';
+import { widgetKeys } from './keys';
 import type { CreateWidgetData, UpdateWidgetData } from '@type/widget.types';
 
-export const widgetKeys = {
-  all: ['widgets'] as const,
-  lists: () => [...widgetKeys.all, 'list'] as const,
-  list: (filters?: { dataSourceId?: string }) => [...widgetKeys.lists(), filters] as const,
-  details: () => [...widgetKeys.all, 'detail'] as const,
-  detail: (id: string) => [...widgetKeys.details(), id] as const,
-};
+// Re-export for backwards compatibility
+export { widgetKeys };
 
 export function useWidgets(dataSourceId?: string) {
   return useQuery({

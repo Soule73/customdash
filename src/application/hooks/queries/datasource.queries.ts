@@ -1,14 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { dataSourceService } from '@services/index';
+import { dataSourceKeys } from './keys';
 import type { CreateDataSourceData, UpdateDataSourceData } from '@type/datasource.types';
 
-export const dataSourceKeys = {
-  all: ['datasources'] as const,
-  lists: () => [...dataSourceKeys.all, 'list'] as const,
-  list: (filters?: Record<string, unknown>) => [...dataSourceKeys.lists(), filters] as const,
-  details: () => [...dataSourceKeys.all, 'detail'] as const,
-  detail: (id: string) => [...dataSourceKeys.details(), id] as const,
-};
+// Re-export for backwards compatibility
+export { dataSourceKeys };
 
 export function useDataSources() {
   return useQuery({

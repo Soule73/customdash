@@ -1,6 +1,6 @@
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { Button, Tooltip } from '@customdash/ui';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import { useAppStore } from '@stores/appStore';
 
 export function ThemeToggle() {

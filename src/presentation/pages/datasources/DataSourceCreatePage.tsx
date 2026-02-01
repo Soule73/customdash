@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCreateDataSource } from '@hooks/index';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import { DataSourceForm } from './DataSourceForm';
 import { INITIAL_FORM_STATE, type DataSourceFormState } from './datasource-form.constants';
 import type { DataSourceType, CreateDataSourceData } from '@type/datasource.types';

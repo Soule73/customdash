@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { toast } from 'sonner';
-import { useNotifications } from './useNotifications';
+import { useNotifications } from '../useNotifications';
 
 vi.mock('sonner', () => ({
   toast: {

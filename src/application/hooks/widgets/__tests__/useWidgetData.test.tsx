@@ -1,12 +1,12 @@
 /**
  * useWidgetData Hook Tests
- * @module application/hooks/widgets/useWidgetData.test
+ * @module application/hooks/widgets/__tests__/useWidgetData.test
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { useWidgetData } from './useWidgetData';
+import { useWidgetData } from '../useWidgetData';
 import { dataSourceService } from '@services/data-source.service';
 import { widgetFormService } from '@core/widgets';
 import type { Widget } from '@type/widget.types';

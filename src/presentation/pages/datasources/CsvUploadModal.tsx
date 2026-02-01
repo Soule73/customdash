@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { CloudArrowUpIcon, DocumentIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Modal, Button, Input } from '@customdash/ui';
 import { useUploadCsv } from '@hooks/index';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 
 interface CsvUploadModalProps {
   isOpen: boolean;

@@ -1,7 +1,7 @@
 import { ChatBubbleLeftRightIcon, PlusIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Spinner } from '@customdash/ui';
 import { useAIConversations } from '@hooks/index';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 
 export function AIPage() {
   const { t } = useAppTranslation();

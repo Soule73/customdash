@@ -1,18 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { aiConversationService } from '@services/index';
+import { aiConversationKeys } from './keys';
 import type {
   CreateAIConversationData,
   UpdateAIConversationData,
   AddMessageData,
 } from '@type/ai-conversation.types';
 
-export const aiConversationKeys = {
-  all: ['ai-conversations'] as const,
-  lists: () => [...aiConversationKeys.all, 'list'] as const,
-  list: (filters?: { dataSourceId?: string }) => [...aiConversationKeys.lists(), filters] as const,
-  details: () => [...aiConversationKeys.all, 'detail'] as const,
-  detail: (id: string) => [...aiConversationKeys.details(), id] as const,
-};
+// Re-export for backwards compatibility
+export { aiConversationKeys };
 
 export function useAIConversations(dataSourceId?: string) {
   return useQuery({

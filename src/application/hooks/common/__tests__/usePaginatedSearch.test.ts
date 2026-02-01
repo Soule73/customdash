@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { usePaginatedSearch } from './usePaginatedSearch';
+import { usePaginatedSearch } from '../usePaginatedSearch';
 
 interface TestItem {
   id: number;

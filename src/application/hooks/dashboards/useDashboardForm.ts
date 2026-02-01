@@ -2,12 +2,10 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppStore } from '@stores/appStore';
-import { useDashboard, useCreateDashboard, useUpdateDashboard } from '@hooks/dashboard.queries';
-import { useWidgets } from '@hooks/widget.queries';
 import { dashboardFormService } from '@/core/dashboards';
-import { useNotifications } from '../useNotifications';
-import { useAppTranslation } from '../useAppTranslation';
 import type { Widget } from '@type/widget.types';
+import { useAppTranslation, useNotifications } from '../common';
+import { useCreateDashboard, useUpdateDashboard, useDashboard, useWidgets } from '../queries';
 
 interface UseDashboardFormOptions {
   dashboardId?: string;

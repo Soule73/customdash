@@ -5,7 +5,7 @@ import { Button } from '@customdash/ui';
 import type { ThemeColors } from '@customdash/visualizations';
 import { WidgetDisplay } from '@components/widgets';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import type { LayoutItem, LayoutItemStyles } from '@type/dashboard.types';
 import type { Widget } from '@type/widget.types';
 

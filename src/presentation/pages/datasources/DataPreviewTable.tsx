@@ -1,5 +1,5 @@
 import { Table, Badge } from '@customdash/ui';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 
 const TYPE_BADGE_VARIANT: Record<string, 'primary' | 'success' | 'warning' | 'info' | 'danger'> = {
   string: 'primary',

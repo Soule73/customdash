@@ -3,8 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { PlusIcon, EyeIcon, TrashIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 import { Button, Card, Modal, Input, Table, Badge, Skeleton } from '@customdash/ui';
 import { formatDate } from '@customdash/utils';
-import { useAppTranslation, useDashboards, usePaginatedSearch } from '@hooks/index';
-import { useDeleteDashboard } from '@hooks/dashboard.queries';
+import {
+  useAppTranslation,
+  useDashboards,
+  useDeleteDashboard,
+  usePaginatedSearch,
+} from '@hooks/index';
 import type { Dashboard } from '@type/dashboard.types';
 
 const PAGE_SIZE = 10;

@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button, Input } from '@customdash/ui';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 
 interface DashboardHeaderProps {
   isCreateMode: boolean;

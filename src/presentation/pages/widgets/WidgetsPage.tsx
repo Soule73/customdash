@@ -11,7 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button, Card, Table, Skeleton, Badge, Modal } from '@customdash/ui';
 import { useWidgets, useDeleteWidget, usePaginatedSearch } from '@hooks/index';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import { formatDate } from '@customdash/utils';
 import { NewWidgetModal } from '@components/widgets/modal';
 import type { Widget } from '@type/widget.types';

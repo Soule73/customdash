@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useShareDashboard } from '@hooks/dashboard.queries';
-import { useNotifications } from '../useNotifications';
+import { useNotifications } from '../common';
+import { useShareDashboard } from '../queries';
 
 interface UseDashboardShareReturn {
   shareId: string | null;

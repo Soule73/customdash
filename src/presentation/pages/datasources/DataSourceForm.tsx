@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { Button, Card, Input, Select } from '@customdash/ui';
 import { getDateColumns } from '@customdash/utils';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import { DataPreviewTable } from './DataPreviewTable';
 import { processingService } from '@services/index';
 import type { DataSourceType, AuthType, HttpMethod } from '@type/datasource.types';

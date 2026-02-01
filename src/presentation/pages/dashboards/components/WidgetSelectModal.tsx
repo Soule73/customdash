@@ -1,9 +1,8 @@
 import { useState, useMemo } from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Modal, Button, Input, Card, Badge, Spinner } from '@customdash/ui';
-import { useWidgets } from '@hooks/widget.queries';
+import { useWidgets, useAppTranslation } from '@hooks';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
-import { useAppTranslation } from '@hooks/useAppTranslation';
 import type { Widget } from '@type/widget.types';
 
 interface WidgetSelectModalProps {

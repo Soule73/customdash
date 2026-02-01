@@ -10,7 +10,7 @@ import {
 import { Button, Input, Card, Select } from '@customdash/ui';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppStore } from '@stores/appStore';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import { DASHBOARD_THEMES, type DashboardTheme } from '@core/constants/dashboardThemes';
 import { generateAccessibleColors, getEffectiveBackgroundColor } from '@core/utils/colorContrast';
 import type { DashboardStyles, LayoutItemStyles } from '@type/dashboard.types';

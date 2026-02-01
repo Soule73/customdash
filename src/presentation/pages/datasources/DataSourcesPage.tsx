@@ -11,9 +11,9 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button, Card, Table, Skeleton, Badge, Modal } from '@customdash/ui';
 import { useDataSources, useDeleteDataSource } from '@hooks/index';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import { formatDate } from '@customdash/utils';
-import { usePaginatedSearch } from '@hooks/usePaginatedSearch';
+import { usePaginatedSearch } from '@hooks';
 import { CsvUploadModal } from './CsvUploadModal';
 import type { DataSource } from '@type/datasource.types';
 

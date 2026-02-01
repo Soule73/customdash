@@ -1,14 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { userService } from '@services/index';
+import { userKeys } from './keys';
 import type { CreateUserData, UpdateUserData } from '@type/user.types';
 
-export const userKeys = {
-  all: ['users'] as const,
-  lists: () => [...userKeys.all, 'list'] as const,
-  list: (filters?: Record<string, unknown>) => [...userKeys.lists(), filters] as const,
-  details: () => [...userKeys.all, 'detail'] as const,
-  detail: (id: string) => [...userKeys.details(), id] as const,
-};
+// Re-export for backwards compatibility
+export { userKeys };
 
 export function useUsers() {
   return useQuery({

@@ -1,7 +1,7 @@
 import { UserCircleIcon, KeyIcon, BellIcon, PaintBrushIcon } from '@heroicons/react/24/outline';
 import { Card, Avatar } from '@customdash/ui';
 import { useAuthStore } from '@stores/authStore';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 
 type SectionId = 'profile' | 'security' | 'notifications' | 'appearance';
 

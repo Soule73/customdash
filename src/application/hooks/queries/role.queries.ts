@@ -1,15 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { roleService } from '@services/index';
+import { roleKeys } from './keys';
 import type { CreateRoleData, UpdateRoleData } from '@type/role.types';
 
-export const roleKeys = {
-  all: ['roles'] as const,
-  lists: () => [...roleKeys.all, 'list'] as const,
-  list: (filters?: Record<string, unknown>) => [...roleKeys.lists(), filters] as const,
-  details: () => [...roleKeys.all, 'detail'] as const,
-  detail: (id: string) => [...roleKeys.details(), id] as const,
-  permissions: () => [...roleKeys.all, 'permissions'] as const,
-};
+// Re-export for backwards compatibility
+export { roleKeys };
 
 export function useRoles() {
   return useQuery({
@@ -28,7 +23,7 @@ export function useRole(id: string) {
 
 export function usePermissions() {
   return useQuery({
-    queryKey: roleKeys.permissions(),
+    queryKey: [...roleKeys.all, 'permissions'] as const,
     queryFn: () => roleService.getAllPermissions(),
     staleTime: 1000 * 60 * 30,
   });

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWidgetFormStore } from '@stores';
-import { useDataSources } from '@hooks/datasource.queries';
 import { widgetService } from '@services/widget.service';
 import { dataSourceService } from '@services/data-source.service';
-import { useNotifications } from '../useNotifications';
 import type { WidgetType, WidgetParams } from '@customdash/visualizations';
 import type { MetricConfig, BucketConfig, WidgetFormConfig } from '@type/widget-form.types';
+import { useNotifications } from '../common';
+import { useDataSources } from '../queries';
 
 interface UseWidgetFormOptions {
   widgetId?: string;

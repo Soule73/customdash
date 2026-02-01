@@ -4,7 +4,7 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
 import { useDashboardGrid } from '@hooks/dashboards';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 import { DashboardGridItem } from './DashboardGridItem';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';

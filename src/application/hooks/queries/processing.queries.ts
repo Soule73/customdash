@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { processingService } from '@services/index';
+import { processingKeys } from './keys';
 import type {
   FetchDataOptions,
   AggregateConfig,
@@ -7,8 +8,12 @@ import type {
   AnalyzeSchemaOptions,
 } from '@type/processing.types';
 
-export const processingKeys = {
-  all: ['processing'] as const,
+// Re-export for backwards compatibility
+export { processingKeys };
+
+// Extended processing keys with specific data/schema keys
+export const extendedProcessingKeys = {
+  ...processingKeys,
   data: (dataSourceId: string, options?: FetchDataOptions) =>
     [...processingKeys.all, 'data', dataSourceId, options] as const,
   schema: (dataSourceId: string) => [...processingKeys.all, 'schema', dataSourceId] as const,
@@ -18,7 +23,7 @@ export const processingKeys = {
 
 export function useFetchData(dataSourceId: string, options?: FetchDataOptions) {
   return useQuery({
-    queryKey: processingKeys.data(dataSourceId, options),
+    queryKey: extendedProcessingKeys.data(dataSourceId, options),
     queryFn: () => processingService.fetchData(dataSourceId, options),
     enabled: !!dataSourceId,
   });
@@ -39,7 +44,7 @@ export function useDetectColumns() {
 
 export function useAnalyzeSchema(dataSourceId: string, options?: AnalyzeSchemaOptions) {
   return useQuery({
-    queryKey: processingKeys.schema(dataSourceId),
+    queryKey: extendedProcessingKeys.schema(dataSourceId),
     queryFn: () => processingService.analyzeSchema(dataSourceId, options),
     enabled: !!dataSourceId,
     staleTime: 1000 * 60 * 10,
@@ -48,7 +53,7 @@ export function useAnalyzeSchema(dataSourceId: string, options?: AnalyzeSchemaOp
 
 export function useQuickAnalyze(dataSourceId: string) {
   return useQuery({
-    queryKey: processingKeys.quickSchema(dataSourceId),
+    queryKey: extendedProcessingKeys.quickSchema(dataSourceId),
     queryFn: () => processingService.quickAnalyze(dataSourceId),
     enabled: !!dataSourceId,
     staleTime: 1000 * 60 * 10,

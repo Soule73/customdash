@@ -1,6 +1,6 @@
 import { Modal, Button, Input } from '@customdash/ui';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 
 interface DashboardSaveModalProps {
   open: boolean;

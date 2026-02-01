@@ -1,13 +1,9 @@
-export * from './auth.queries';
-export * from './user.queries';
-export * from './role.queries';
-export * from './dashboard.queries';
-export * from './widget.queries';
-export * from './datasource.queries';
-export * from './processing.queries';
-export * from './ai-conversation.queries';
-export * from './useAppTranslation';
-export * from './useNotifications';
-export * from './usePaginatedSearch';
+// Common hooks
+export * from './common';
+
+// Query hooks
+export * from './queries';
+
+// Domain-specific hooks
 export * from './widgets';
 export * from './dashboards';

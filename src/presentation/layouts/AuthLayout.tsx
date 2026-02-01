@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { Logo, ThemeToggle } from '@components/common';
-import { useAppTranslation } from '@hooks/useAppTranslation';
+import { useAppTranslation } from '@hooks';
 
 export function AuthLayout() {
   const { t } = useAppTranslation();

@@ -20,7 +20,7 @@ import { useAuthStore } from '@stores/authStore';
 import { useAppStore } from '@stores/appStore';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useLogout } from '@hooks/index';
-import { useAppTranslation, type TranslationKey } from '@hooks/useAppTranslation';
+import { useAppTranslation, type TranslationKey } from '@hooks';
 
 interface NavItem {
   nameKey: TranslationKey;

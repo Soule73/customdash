@@ -4,6 +4,7 @@ export const settings = {
   defaultUser: 'Utilisateur',
   defaultEmail: 'email@exemple.com',
   saved: 'Paramètres enregistrés',
+  syncing: 'Synchronisation...',
   sections: {
     profile: {
       name: 'Profil',

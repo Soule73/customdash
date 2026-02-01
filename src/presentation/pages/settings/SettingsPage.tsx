@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   PaintBrushIcon,
   GlobeAltIcon,
   CalculatorIcon,
   CheckIcon,
+  CloudArrowUpIcon,
 } from '@heroicons/react/24/outline';
 import { Card, Avatar, Input, Select, Switch } from '@customdash/ui';
 import { cn, formatNumber, formatCurrency, formatDate } from '@customdash/utils';
 import { useAuthStore } from '@stores/authStore';
 import { useAppStore } from '@stores/appStore';
-import { useFormatConfig } from '@hooks';
+import { useFormatConfig, usePreferencesSync } from '@hooks';
 import { useAppTranslation } from '@hooks';
 import { LOCALE_OPTIONS, CURRENCY_OPTIONS, DATE_FORMAT_OPTIONS } from '@type/format-config.types';
 import type { Theme, Language } from '@type/app.types';
@@ -44,6 +45,18 @@ export function SettingsPage() {
   const { user } = useAuthStore();
   const [activeSection, setActiveSection] = useState<SectionId>('appearance');
   const [saved, setSaved] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+
+  // Preferences sync hook
+  const { loadPreferences, saveTheme, saveLanguage, saveFormatConfigDebounced, isAuthenticated } =
+    usePreferencesSync();
+
+  // Load preferences from server on mount (if authenticated)
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadPreferences();
+    }
+  }, [isAuthenticated, loadPreferences]);
 
   // App settings (theme, language)
   const theme = useAppStore(s => s.theme);
@@ -72,44 +85,82 @@ export function SettingsPage() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const showSyncingIndicator = () => {
+    setSyncing(true);
+    setTimeout(() => setSyncing(false), 1500);
+  };
+
   const handleThemeChange = (value: string) => {
-    setTheme(value as Theme);
+    const newTheme = value as Theme;
+    setTheme(newTheme);
     showSavedIndicator();
+    // Save to server
+    if (isAuthenticated) {
+      showSyncingIndicator();
+      saveTheme(newTheme);
+    }
   };
 
   const handleLanguageChange = (value: string) => {
-    setLanguage(value as Language);
+    const newLanguage = value as Language;
+    setLanguage(newLanguage);
     showSavedIndicator();
+    // Save to server
+    if (isAuthenticated) {
+      showSyncingIndicator();
+      saveLanguage(newLanguage);
+    }
   };
 
   const handleLocaleChange = (value: string) => {
     setLocale(value);
     showSavedIndicator();
+    // Save to server with debounce
+    if (isAuthenticated) {
+      saveFormatConfigDebounced({ locale: value });
+    }
   };
 
   const handleCurrencyChange = (value: string) => {
     setCurrency(value);
     showSavedIndicator();
+    if (isAuthenticated) {
+      saveFormatConfigDebounced({ currency: value });
+    }
   };
 
   const handleDecimalsChange = (value: string) => {
-    setDecimals(parseInt(value, 10) || 2);
+    const newDecimals = parseInt(value, 10) || 2;
+    setDecimals(newDecimals);
     showSavedIndicator();
+    if (isAuthenticated) {
+      saveFormatConfigDebounced({ decimals: newDecimals });
+    }
   };
 
   const handleDateFormatChange = (value: string) => {
-    setDateFormat(value as DateFormatStyle);
+    const newDateFormat = value as DateFormatStyle;
+    setDateFormat(newDateFormat);
     showSavedIndicator();
+    if (isAuthenticated) {
+      saveFormatConfigDebounced({ dateFormat: newDateFormat });
+    }
   };
 
   const handleNullValueChange = (value: string) => {
     setNullValue(value);
     showSavedIndicator();
+    if (isAuthenticated) {
+      saveFormatConfigDebounced({ nullValue: value });
+    }
   };
 
   const handleIncludeTimeChange = (checked: boolean) => {
     setIncludeTime(checked);
     showSavedIndicator();
+    if (isAuthenticated) {
+      saveFormatConfigDebounced({ includeTime: checked });
+    }
   };
 
   // Preview values
@@ -126,12 +177,20 @@ export function SettingsPage() {
           </h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.subtitle')}</p>
         </div>
-        {saved && (
-          <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-green-700 dark:bg-green-900/20 dark:text-green-400">
-            <CheckIcon className="h-5 w-5" />
-            <span className="text-sm font-medium">{t('settings.saved')}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {syncing && isAuthenticated && (
+            <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
+              <CloudArrowUpIcon className="h-5 w-5 animate-pulse" />
+              <span className="text-sm font-medium">{t('settings.syncing')}</span>
+            </div>
+          )}
+          {saved && !syncing && (
+            <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-green-700 dark:bg-green-900/20 dark:text-green-400">
+              <CheckIcon className="h-5 w-5" />
+              <span className="text-sm font-medium">{t('settings.saved')}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* User Profile Card */}

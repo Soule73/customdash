@@ -193,7 +193,10 @@ export class RadarChartService {
       if (!groups.has(groupValue)) {
         groups.set(groupValue, []);
       }
-      groups.get(groupValue)!.push(row);
+      const group = groups.get(groupValue);
+      if (group) {
+        group.push(row);
+      }
     });
 
     const seriesData: RadarSeriesData[] = [];

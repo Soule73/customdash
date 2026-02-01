@@ -84,10 +84,12 @@ export class TableWidgetService {
     const configType = this.detectConfigType(config);
 
     if (configType.hasMetrics) {
-      const bucketColumns = configType.hasMultiBuckets ? createBucketColumns(config.buckets!) : [];
+      const bucketColumns = configType.hasMultiBuckets
+        ? createBucketColumns(config.buckets ?? [])
+        : [];
 
       // Merge metricStyles with metrics before creating columns
-      const metricsWithStyles = config.metrics!.map((metric, index) => {
+      const metricsWithStyles = (config.metrics ?? []).map((metric, index) => {
         const style = config.metricStyles?.[index] || {};
         return {
           ...metric,

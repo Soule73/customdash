@@ -76,9 +76,9 @@ describe('kpiUtils', () => {
   });
 
   describe('getKPIValueColor', () => {
-    it('should return default color when not configured', () => {
+    it('should return undefined when not configured', () => {
       const result = getKPIValueColor({});
-      expect(result).toBe('#2563eb');
+      expect(result).toBeUndefined();
     });
 
     it('should return custom color when configured', () => {
@@ -87,18 +87,18 @@ describe('kpiUtils', () => {
       expect(result).toBe('#ff0000');
     });
 
-    it('should return undefined when not configured', () => {
-      const result = getKPIValueColor({});
+    it('should return undefined when widgetParams exists but no valueColor', () => {
+      const result = getKPIValueColor({ widgetParams: {} });
       expect(result).toBeUndefined();
     });
   });
 
   describe('getCardColors', () => {
-    it('should return default colors when not configured', () => {
+    it('should return empty strings when not configured', () => {
       const result = getCardColors({ metrics: [] });
-      expect(result.iconColor).toBe('#6366f1');
-      expect(result.valueColor).toBe('#2563eb');
-      expect(result.descriptionColor).toBe('#6b7280');
+      expect(result.iconColor).toBe('');
+      expect(result.valueColor).toBe('');
+      expect(result.descriptionColor).toBe('');
     });
 
     it('should return custom colors when configured', () => {
@@ -114,6 +114,20 @@ describe('kpiUtils', () => {
       expect(result.iconColor).toBe('#ff0000');
       expect(result.valueColor).toBe('#00ff00');
       expect(result.descriptionColor).toBe('#0000ff');
+    });
+
+    it('should use themeColors when provided', () => {
+      const config = {
+        metrics: [],
+        themeColors: {
+          textColor: '#111111',
+          labelColor: '#222222',
+        },
+      };
+      const result = getCardColors(config);
+      expect(result.iconColor).toBe('#111111');
+      expect(result.valueColor).toBe('#111111');
+      expect(result.descriptionColor).toBe('#222222');
     });
   });
 

@@ -89,6 +89,7 @@ function EmptyDataPlaceholder({
  * Higher-Order Component that wraps chart widgets with common validation and error handling
  * Implements Decorator pattern
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function withChartWrapper<
   TConfig extends BaseChartConfig,
   P extends ChartWidgetBaseProps<TConfig>,

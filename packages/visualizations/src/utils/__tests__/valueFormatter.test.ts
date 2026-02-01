@@ -18,20 +18,20 @@ describe('valueFormatter', () => {
       expect(getCurrencyDisplayByLocale('en-GB', 'GBP')).toBe('symbol');
     });
 
-    it('should return code for EUR currency', () => {
-      expect(getCurrencyDisplayByLocale('fr-FR', 'EUR')).toBe('code');
+    it('should return symbol for EUR currency', () => {
+      expect(getCurrencyDisplayByLocale('fr-FR', 'EUR')).toBe('symbol');
     });
 
-    it('should return code for CHF currency', () => {
-      expect(getCurrencyDisplayByLocale('de-CH', 'CHF')).toBe('code');
+    it('should return symbol for CHF currency', () => {
+      expect(getCurrencyDisplayByLocale('de-CH', 'CHF')).toBe('symbol');
     });
 
     it('should return symbol for Japanese locale with JPY', () => {
       expect(getCurrencyDisplayByLocale('ja-JP', 'JPY')).toBe('symbol');
     });
 
-    it('should return code for EUR even with en-US locale', () => {
-      expect(getCurrencyDisplayByLocale('en-US', 'EUR')).toBe('code');
+    it('should return symbol for EUR even with en-US locale', () => {
+      expect(getCurrencyDisplayByLocale('en-US', 'EUR')).toBe('symbol');
     });
 
     it('should use defaults when no arguments provided', () => {
@@ -81,7 +81,7 @@ describe('valueFormatter', () => {
     it('should format EUR currency with French locale', () => {
       const result = formatCurrency(1234.56, 'fr-FR', 'EUR', 2);
       expect(result).toMatch(/1[\s\u202F]?234,56/);
-      expect(result).toContain('EUR');
+      expect(result).toContain('€');
     });
 
     it('should use default values', () => {

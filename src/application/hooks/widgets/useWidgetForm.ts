@@ -5,7 +5,7 @@ import { widgetService } from '@services/widget.service';
 import { dataSourceService } from '@services/data-source.service';
 import type { WidgetType, WidgetParams } from '@customdash/visualizations';
 import type { MetricConfig, BucketConfig, WidgetFormConfig } from '@type/widget-form.types';
-import { useNotifications } from '../common';
+import { useNotifications, useErrorHandler, useAppTranslation } from '../common';
 import { useDataSources } from '../queries';
 
 interface UseWidgetFormOptions {
@@ -32,7 +32,9 @@ interface UseWidgetFormReturn {
 export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetFormReturn {
   const { widgetId, dashboardId, initialSourceId, initialType } = options;
   const navigate = useNavigate();
-  const { showSuccess, showError } = useNotifications();
+  const { showSuccess } = useNotifications();
+  const { handleApiError } = useErrorHandler();
+  const { t } = useAppTranslation();
   const { data: dataSources } = useDataSources();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -66,10 +68,10 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
         store.loadSourceData(sourceId, data, columns, columnTypes);
       } catch (error) {
         console.error('Erreur loadSourceData:', error);
-        showError('Erreur lors du chargement des donnees');
+        handleApiError(error, 'fetch');
       }
     },
-    [store, showError],
+    [store, handleApiError],
   );
 
   const loadWidget = useCallback(
@@ -108,12 +110,12 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
           widgetDescription: widget.description || '',
         });
         await loadSourceData(widget.dataSourceId);
-      } catch {
-        showError('Erreur lors du chargement du widget');
+      } catch (error) {
+        handleApiError(error, 'load');
         navigate(-1);
       }
     },
-    [store, navigate, showError, loadSourceData],
+    [store, navigate, handleApiError, loadSourceData],
   );
 
   useEffect(() => {
@@ -182,7 +184,7 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
           description: store.widgetDescription,
           config,
         });
-        showSuccess('Widget mis a jour avec succes');
+        showSuccess(t('widgets.notifications.updateSuccess'));
       } else {
         await widgetService.create({
           title: store.widgetTitle,
@@ -191,17 +193,17 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
           description: store.widgetDescription,
           config,
         });
-        showSuccess('Widget cree avec succes');
+        showSuccess(t('widgets.notifications.createSuccess'));
       }
 
       store.resetForm();
       navigate(dashboardId ? `/dashboards/${dashboardId}` : '/widgets');
-    } catch {
-      showError('Erreur lors de la sauvegarde du widget');
+    } catch (error) {
+      handleApiError(error, 'save');
     } finally {
       setIsSaving(false);
     }
-  }, [isEditMode, widgetId, dashboardId, navigate, showSuccess, showError, store]);
+  }, [isEditMode, widgetId, dashboardId, navigate, showSuccess, handleApiError, store, t]);
 
   const cancel = useCallback(() => {
     store.resetForm();

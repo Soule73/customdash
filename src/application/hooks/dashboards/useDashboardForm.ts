@@ -4,7 +4,7 @@ import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppStore } from '@stores/appStore';
 import { dashboardFormService } from '@/core/dashboards';
 import type { Widget } from '@type/widget.types';
-import { useAppTranslation, useNotifications } from '../common';
+import { useAppTranslation, useNotifications, useErrorHandler } from '../common';
 import { useCreateDashboard, useUpdateDashboard, useDashboard, useWidgets } from '../queries';
 
 interface UseDashboardFormOptions {
@@ -31,6 +31,7 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
   const navigate = useNavigate();
   const { t } = useAppTranslation();
   const { showSuccess, showError } = useNotifications();
+  const { handleApiError } = useErrorHandler();
 
   const dashboardId = options.dashboardId || params.id;
   const isCreateMode = location.pathname.includes('/dashboards/create');
@@ -141,8 +142,8 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
         markClean();
         setEditMode(false);
       }
-    } catch {
-      showError(t('dashboards.notifications.saveError'));
+    } catch (error) {
+      handleApiError(error, 'save');
     }
   }, [
     config,
@@ -153,6 +154,7 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
     navigate,
     showSuccess,
     showError,
+    handleApiError,
     markClean,
     setEditMode,
     t,

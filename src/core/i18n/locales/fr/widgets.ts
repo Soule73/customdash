@@ -440,4 +440,9 @@ export const widgets = {
     metric: 'Métriques',
     data: 'Données',
   },
+  notifications: {
+    createSuccess: 'Widget créé avec succès',
+    updateSuccess: 'Widget mis à jour avec succès',
+    deleteSuccess: 'Widget supprimé avec succès',
+  },
 };

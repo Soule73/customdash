@@ -99,6 +99,11 @@ export const dashboards = {
     updateSuccess: 'Tableau de bord mis à jour',
     saveError: 'Erreur lors de la sauvegarde',
   },
+  share: {
+    enabled: 'Partage activé',
+    disabled: 'Partage désactivé',
+    linkCopied: 'Lien copié dans le presse-papiers',
+  },
   validation: {
     titleRequired: 'Le titre est requis',
     titleMinLength: 'Le titre doit contenir au moins 2 caractères',

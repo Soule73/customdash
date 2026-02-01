@@ -99,6 +99,11 @@ export const dashboards = {
     updateSuccess: 'Dashboard updated successfully',
     saveError: 'Error saving dashboard',
   },
+  share: {
+    enabled: 'Sharing enabled',
+    disabled: 'Sharing disabled',
+    linkCopied: 'Link copied to clipboard',
+  },
   validation: {
     titleRequired: 'Title is required',
     titleMinLength: 'Title must contain at least 2 characters',

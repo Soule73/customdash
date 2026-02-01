@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useNotifications } from '../common';
+import { useNotifications, useErrorHandler, useAppTranslation } from '../common';
 import { useShareDashboard } from '../queries';
 
 interface UseDashboardShareReturn {
@@ -14,7 +14,9 @@ interface UseDashboardShareReturn {
 export function useDashboardShare(dashboardId: string): UseDashboardShareReturn {
   const [shareId, setShareId] = useState<string | null>(null);
   const shareMutation = useShareDashboard();
-  const { showSuccess, showError } = useNotifications();
+  const { showSuccess } = useNotifications();
+  const { handleApiError } = useErrorHandler();
+  const { t } = useAppTranslation();
 
   const shareLink = shareId ? `${window.location.origin}/dashboards/share/${shareId}` : null;
 
@@ -27,11 +29,11 @@ export function useDashboardShare(dashboardId: string): UseDashboardShareReturn 
         shareEnabled: true,
       });
       setShareId(result.sharedWith?.[0] || null);
-      showSuccess('Partage active');
-    } catch {
-      showError("Erreur lors de l'activation du partage");
+      showSuccess(t('dashboards.share.enabled'));
+    } catch (error) {
+      handleApiError(error, 'update');
     }
-  }, [dashboardId, shareMutation, showSuccess, showError]);
+  }, [dashboardId, shareMutation, showSuccess, handleApiError, t]);
 
   const disableShare = useCallback(async () => {
     if (!dashboardId) return;
@@ -42,18 +44,18 @@ export function useDashboardShare(dashboardId: string): UseDashboardShareReturn 
         shareEnabled: false,
       });
       setShareId(null);
-      showSuccess('Partage desactive');
-    } catch {
-      showError('Erreur lors de la desactivation du partage');
+      showSuccess(t('dashboards.share.disabled'));
+    } catch (error) {
+      handleApiError(error, 'update');
     }
-  }, [dashboardId, shareMutation, showSuccess, showError]);
+  }, [dashboardId, shareMutation, showSuccess, handleApiError, t]);
 
   const copyShareLink = useCallback(() => {
     if (shareLink) {
       navigator.clipboard.writeText(shareLink);
-      showSuccess('Lien copie dans le presse-papiers');
+      showSuccess(t('dashboards.share.linkCopied'));
     }
-  }, [shareLink, showSuccess]);
+  }, [shareLink, showSuccess, t]);
 
   return {
     shareId,

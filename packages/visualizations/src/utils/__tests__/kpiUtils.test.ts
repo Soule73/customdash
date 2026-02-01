@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { formatConfigProvider } from '@customdash/utils';
 import {
   applyKPIFilters,
   calculateKPIValue,
@@ -19,6 +20,11 @@ const testData = [
 ];
 
 describe('kpiUtils', () => {
+  // Set locale to en-US for consistent test results
+  beforeEach(() => {
+    formatConfigProvider.setConfig({ locale: 'en-US' });
+  });
+
   describe('applyKPIFilters', () => {
     it('should return data without filters', () => {
       const config = {};

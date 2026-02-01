@@ -209,18 +209,23 @@ export const DEFAULT_KPI_COLORS = {
 
 /**
  * Default locale and currency settings
+ * These are fallback values - prefer using formatConfigProvider for dynamic access
+ * @deprecated Use formatConfigProvider.locale instead
  */
-export const DEFAULT_LOCALE = 'en-US' as const;
+export const DEFAULT_LOCALE = 'fr-FR' as const;
 
 /**
  * Default currency code
+ * @deprecated Use formatConfigProvider.currency instead
  */
-export const DEFAULT_CURRENCY = 'USD' as const;
+export const DEFAULT_CURRENCY = 'EUR' as const;
 
 /**
  * Default representation for null or undefined values
+ * @deprecated Use formatConfigProvider.nullValue instead
  */
 export const DEFAULT_NULL_VALUE = '-' as const;
+
 /**
  * Locales that typically place currency symbol before the amount
  */

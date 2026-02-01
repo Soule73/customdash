@@ -1,3 +1,4 @@
+import { formatConfigProvider } from '@customdash/utils';
 import type { FieldSchema } from '@type/widget-form.types';
 import { FieldSchemaFactory } from './FieldSchemaFactory';
 import { SelectOptionFactory } from './SelectOptionFactory';
@@ -128,21 +129,23 @@ export class WidgetFieldBuilder {
 
   /**
    * Creates a decimals field
+   * Uses the user's default decimals setting
    */
-  static decimals(defaultValue = 2): FieldSchema {
+  static decimals(defaultValue?: number): FieldSchema {
     return FieldSchemaFactory.createNumberField({
       label: 'widgets.params.decimals',
-      defaultValue,
+      defaultValue: defaultValue ?? formatConfigProvider.decimals,
     });
   }
 
   /**
    * Creates a currency field
+   * Uses the user's default currency setting
    */
-  static currency(defaultValue = 'EUR'): FieldSchema {
+  static currency(defaultValue?: string): FieldSchema {
     return FieldSchemaFactory.createSelectField({
       label: 'widgets.params.currency',
-      defaultValue,
+      defaultValue: defaultValue ?? formatConfigProvider.currency,
       options: CURRENCY_OPTIONS,
     });
   }

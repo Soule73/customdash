@@ -1,4 +1,10 @@
-import { generateId, setNestedValue, isNestedPath, getNestedValue } from '@customdash/utils';
+import {
+  generateId,
+  setNestedValue,
+  isNestedPath,
+  getNestedValue,
+  formatConfigProvider,
+} from '@customdash/utils';
 import type {
   WidgetType,
   WidgetParams,
@@ -29,19 +35,25 @@ import type {
 } from '../interfaces';
 import { widgetRegistry } from '../registry';
 
-const BASE_WIDGET_PARAMS: WidgetParams = {
-  title: '',
-  titleAlign: 'center',
-  legend: true,
-  legendPosition: 'top',
-  showGrid: true,
-  showValues: true,
-  labelFontSize: 12,
-  labelColor: '#374151',
-  format: 'number',
-  currency: 'EUR',
-  decimals: 2,
-};
+/**
+ * Get base widget params with current user config values
+ * This ensures currency and decimals use user preferences
+ */
+function getBaseWidgetParams(): WidgetParams {
+  return {
+    title: '',
+    titleAlign: 'center',
+    legend: true,
+    legendPosition: 'top',
+    showGrid: true,
+    showValues: true,
+    labelFontSize: 12,
+    labelColor: '#374151',
+    format: 'number',
+    currency: formatConfigProvider.currency,
+    decimals: formatConfigProvider.decimals,
+  };
+}
 
 const DEFAULT_METRIC_STYLE: MetricStyle = {
   color: '#6366f1',
@@ -109,7 +121,7 @@ export class WidgetFormService implements IWidgetFormService {
   }
 
   createDefaultWidgetParams(type: WidgetType): WidgetParams {
-    const baseParams = { ...BASE_WIDGET_PARAMS };
+    const baseParams = getBaseWidgetParams();
     return this.applySchemaDefaults(type, baseParams);
   }
 
@@ -150,7 +162,7 @@ export class WidgetFormService implements IWidgetFormService {
       }
       if (existingConfig.widgetParams) {
         config.widgetParams = this.applySchemaDefaults(type, {
-          ...BASE_WIDGET_PARAMS,
+          ...getBaseWidgetParams(),
           ...existingConfig.widgetParams,
         });
       }

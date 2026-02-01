@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@customdash/ui": "*",
+    "@customdash/utils": "*",
     "echarts": "^6.0.0",
     "echarts-for-react": "^3.0.6"
   },

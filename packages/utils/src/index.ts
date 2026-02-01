@@ -7,6 +7,16 @@ export {
 } from './formatters';
 
 export {
+  formatConfigProvider,
+  getConfigLocale,
+  getConfigCurrency,
+  getConfigDecimals,
+  getConfigNullValue,
+  getConfigDateFormat,
+  type FormatConfig,
+} from './formatConfigProvider';
+
+export {
   cn,
   generateId,
   debounce,

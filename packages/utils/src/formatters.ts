@@ -1,3 +1,5 @@
+import { formatConfigProvider } from './formatConfigProvider';
+
 interface NumberFormatOptions {
   locale?: string;
   decimals?: number;
@@ -18,7 +20,8 @@ interface DateFormatOptions {
 }
 
 export function formatNumber(value: number, options: NumberFormatOptions = {}): string {
-  const { locale = 'fr-FR', decimals = 0, prefix = '', suffix = '' } = options;
+  const config = formatConfigProvider.getConfig();
+  const { locale = config.locale, decimals = config.decimals, prefix = '', suffix = '' } = options;
 
   const formatted = new Intl.NumberFormat(locale, {
     minimumFractionDigits: decimals,
@@ -29,7 +32,12 @@ export function formatNumber(value: number, options: NumberFormatOptions = {}): 
 }
 
 export function formatCurrency(value: number, options: CurrencyFormatOptions = {}): string {
-  const { locale = 'fr-FR', currency = 'EUR', decimals = 2 } = options;
+  const config = formatConfigProvider.getConfig();
+  const {
+    locale = config.locale,
+    currency = config.currency,
+    decimals = config.decimals,
+  } = options;
 
   return new Intl.NumberFormat(locale, {
     style: 'currency',
@@ -39,21 +47,27 @@ export function formatCurrency(value: number, options: CurrencyFormatOptions = {
   }).format(value);
 }
 
-export function formatPercentage(value: number, decimals = 1): string {
-  return `${value.toFixed(decimals)}%`;
+export function formatPercentage(value: number, decimals?: number): string {
+  const dec = decimals ?? 1;
+  return `${value.toFixed(dec)}%`;
 }
 
 export function formatDate(date: Date | string | number, options: DateFormatOptions = {}): string {
-  const { locale = 'fr-FR', format = 'medium', includeTime = false } = options;
+  const config = formatConfigProvider.getConfig();
+  const {
+    locale = config.locale,
+    format = config.dateFormat,
+    includeTime = config.includeTime,
+  } = options;
 
   if (date === null || date === undefined || date === '') {
-    return '-';
+    return config.nullValue;
   }
 
   const dateObj = date instanceof Date ? date : new Date(date);
 
   if (isNaN(dateObj.getTime())) {
-    return '-';
+    return config.nullValue;
   }
 
   const dateStyleMap: Record<string, Intl.DateTimeFormatOptions['dateStyle']> = {
@@ -74,12 +88,14 @@ export function formatDate(date: Date | string | number, options: DateFormatOpti
   return new Intl.DateTimeFormat(locale, formatOptions).format(dateObj);
 }
 
-export function formatRelativeDate(date: Date | string | number, locale = 'fr-FR'): string {
+export function formatRelativeDate(date: Date | string | number, locale?: string): string {
+  const config = formatConfigProvider.getConfig();
+  const loc = locale ?? config.locale;
   const dateObj = date instanceof Date ? date : new Date(date);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
 
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat(loc, { numeric: 'auto' });
 
   if (diffInSeconds < 60) {
     return rtf.format(-diffInSeconds, 'second');

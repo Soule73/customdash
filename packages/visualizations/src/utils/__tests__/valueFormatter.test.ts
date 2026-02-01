@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { formatConfigProvider } from '@customdash/utils';
 import {
   formatValue,
   formatNumber,
@@ -8,7 +9,27 @@ import {
   getCurrencyDisplayByLocale,
 } from '../valueFormatter';
 
+// Store original config to restore after tests
+const originalConfig = formatConfigProvider.getConfig();
+
 describe('valueFormatter', () => {
+  // Reset config before each test to ensure consistent defaults (fr-FR, EUR)
+  beforeEach(() => {
+    formatConfigProvider.setConfig({
+      locale: 'fr-FR',
+      currency: 'EUR',
+      decimals: 2,
+      dateFormat: 'short',
+      nullValue: '-',
+      includeTime: false,
+    });
+  });
+
+  // Restore original config after all tests
+  afterEach(() => {
+    formatConfigProvider.setConfig(originalConfig);
+  });
+
   describe('getCurrencyDisplayByLocale', () => {
     it('should return symbol for US locale with USD', () => {
       expect(getCurrencyDisplayByLocale('en-US', 'USD')).toBe('symbol');
@@ -84,9 +105,9 @@ describe('valueFormatter', () => {
       expect(result).toContain('€');
     });
 
-    it('should use default values', () => {
+    it('should use default values (fr-FR, EUR)', () => {
       const result = formatCurrency(100);
-      expect(result).toContain('$');
+      expect(result).toContain('€');
       expect(result).toContain('100');
     });
 
@@ -185,9 +206,9 @@ describe('valueFormatter', () => {
         expect(result).toContain('1,234.56');
       });
 
-      it('should use default currency', () => {
+      it('should use default currency (EUR)', () => {
         const result = formatValue(100, 'currency', { locale: 'en-US' });
-        expect(result).toContain('$');
+        expect(result).toContain('€');
       });
 
       it('should return string for non-number', () => {
@@ -258,14 +279,14 @@ describe('valueFormatter', () => {
     });
 
     describe('options defaults', () => {
-      it('should use default locale', () => {
+      it('should use default locale (fr-FR)', () => {
         const result = formatValue(1000, 'number');
         expect(result).toContain('1');
       });
 
-      it('should use default currency', () => {
+      it('should use default currency (EUR)', () => {
         const result = formatValue(100, 'currency');
-        expect(result).toContain('$');
+        expect(result).toContain('€');
       });
     });
   });

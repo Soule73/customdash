@@ -4,6 +4,7 @@ import { Toaster } from 'sonner';
 import { AuthLayout, AppLayout } from '@/presentation/layouts';
 import { RequireAuth, GuestOnly } from '@components/common';
 import { useAppStore } from '@stores/appStore';
+import { useUserConfigStore } from '@stores/userConfigStore';
 import {
   LoginPage,
   DashboardsPage,
@@ -22,6 +23,12 @@ import {
 function useInitializeApp() {
   const theme = useAppStore(s => s.theme);
   const language = useAppStore(s => s.language);
+  const initializeUserConfig = useUserConfigStore(s => s.initialize);
+
+  // Initialize user config on app start (syncs with formatConfigProvider)
+  useEffect(() => {
+    initializeUserConfig();
+  }, [initializeUserConfig]);
 
   useEffect(() => {
     const root = document.documentElement;

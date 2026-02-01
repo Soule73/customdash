@@ -1,40 +1,40 @@
-import { DEFAULT_CURRENCY, DEFAULT_LOCALE, DEFAULT_NULL_VALUE } from '../constants';
+import { formatConfigProvider } from '@customdash/utils';
 
 /**
- * Returns the provided locale or the default locale if none is provided.
+ * Returns the provided locale or the locale from config provider if none is provided.
  * @param locale - The locale string to use.
- * @returns The provided locale or the default locale.
+ * @returns The provided locale or the config provider locale.
  *
  * @example
  * getLocal('fr-FR'); // Returns 'fr-FR'
- * getLocal(); // Returns the default locale 'en-US'
+ * getLocal(); // Returns the config provider locale (e.g., 'fr-FR')
  */
 export function getLocal(locale?: string): string {
-  return locale || DEFAULT_LOCALE;
+  return locale || formatConfigProvider.locale;
 }
 
 /**
- * Returns the provided currency or the default currency if none is provided.
+ * Returns the provided currency or the currency from config provider if none is provided.
  * @param currency - The currency code to use.
- * @returns The provided currency or the default currency.
+ * @returns The provided currency or the config provider currency.
  *
  * @example
  * getCurrency('EUR'); // Returns 'EUR'
- * getCurrency(); // Returns the default currency 'USD'
+ * getCurrency(); // Returns the config provider currency (e.g., 'EUR')
  */
 export function getCurrency(currency?: string): string {
-  return currency || DEFAULT_CURRENCY;
+  return currency || formatConfigProvider.currency;
 }
 
 /**
- * Returns the provided null value representation or the default if none is provided.
+ * Returns the provided null value representation or the one from config provider if none is provided.
  * @param nullValue - The string to represent null or undefined values.
- * @returns The provided null value representation or the default.
+ * @returns The provided null value representation or the config provider value.
  *
  * @example
  * getNullValue('N/A'); // Returns 'N/A'
- * getNullValue(); // Returns the default null value '-'
+ * getNullValue(); // Returns the config provider null value (e.g., '-')
  */
 export function getNullValue(nullValue?: string): string {
-  return nullValue || DEFAULT_NULL_VALUE;
+  return nullValue || formatConfigProvider.nullValue;
 }

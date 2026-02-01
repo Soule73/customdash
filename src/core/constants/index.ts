@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   TOKEN: 'customdash_token',
   USER: 'customdash_user',
   THEME: 'customdash_theme',
+  USER_CONFIG: 'customdash_user_config',
 } as const;
 
 export const ROUTES = {

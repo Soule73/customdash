@@ -2,8 +2,13 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { PlusIcon, EyeIcon, TrashIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 import { Button, Card, Modal, Input, Table, Badge, Skeleton } from '@customdash/ui';
-import { formatDate } from '@customdash/utils';
-import { useAppTranslation, useDashboards, useDeleteDashboard, usePaginatedSearch } from '@hooks';
+import {
+  useAppTranslation,
+  useDashboards,
+  useDeleteDashboard,
+  usePaginatedSearch,
+  useFormattedValue,
+} from '@hooks';
 import type { Dashboard } from '@type/dashboard.types';
 
 const PAGE_SIZE = 10;
@@ -13,6 +18,7 @@ export function DashboardsPage() {
   const navigate = useNavigate();
   const { data: dashboards, isLoading } = useDashboards();
   const deleteMutation = useDeleteDashboard();
+  const { formatDate } = useFormattedValue();
 
   const {
     paginatedData: paginatedDashboards,
@@ -130,7 +136,7 @@ export function DashboardsPage() {
                       {dashboard.visibility}
                     </Badge>
                   </Table.Cell>
-                  <Table.Cell>{formatDate(dashboard.createdAt, { locale: 'fr-FR' })}</Table.Cell>
+                  <Table.Cell>{formatDate(dashboard.createdAt)}</Table.Cell>
                   <Table.Cell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button

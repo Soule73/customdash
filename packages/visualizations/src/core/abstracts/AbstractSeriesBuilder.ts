@@ -254,7 +254,15 @@ export class PieSeriesBuilder {
     const pieConfig = this.echartsConfig?.pie;
     const metricStyles = this.context.metricStyles;
 
-    const cutoutValue = params.cutout ? parseInt(params.cutout.replace('%', ''), 10) : 0;
+    // Handle cutout value - can be string ('50%') or number (50)
+    let cutoutValue = 0;
+    if (params.cutout !== undefined && params.cutout !== null) {
+      if (typeof params.cutout === 'string') {
+        cutoutValue = parseInt(params.cutout.replace('%', ''), 10) || 0;
+      } else if (typeof params.cutout === 'number') {
+        cutoutValue = params.cutout;
+      }
+    }
     const innerRadius = cutoutValue > 0 ? `${cutoutValue}%` : 0;
     const rawLabelPosition = this.echartsConfig?.labelPosition ?? 'outside';
     const labelPosition = rawLabelPosition === 'top' ? 'outside' : rawLabelPosition;
@@ -293,7 +301,8 @@ export class PieSeriesBuilder {
         position: labelPosition,
         formatter: this.echartsConfig?.labelFormatter ?? '{b}: {c} ({d}%)',
         fontSize: params.labelFontSize ?? 12,
-        color: labelColor,
+        // Only set color when explicitly configured — an absent color lets the ECharts theme decide
+        ...(labelColor !== undefined ? { color: labelColor } : {}),
         rotate: this.echartsConfig?.labelRotate ?? 0,
       },
       labelLine: {

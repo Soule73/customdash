@@ -3,31 +3,39 @@ import type { FormatType } from '../types';
 import type { FormatOptions } from '../interfaces';
 
 /**
+ * Default fallback values if config provider is not initialized
+ */
+const FALLBACK_LOCALE = 'fr-FR';
+const FALLBACK_CURRENCY = 'EUR';
+const FALLBACK_DECIMALS = 2;
+const FALLBACK_NULL_VALUE = '-';
+
+/**
  * Gets the current locale from the config provider
  */
 function getLocale(): string {
-  return formatConfigProvider.locale;
+  return formatConfigProvider.locale || FALLBACK_LOCALE;
 }
 
 /**
  * Gets the current currency from the config provider
  */
 function getCurrency(): string {
-  return formatConfigProvider.currency;
+  return formatConfigProvider.currency || FALLBACK_CURRENCY;
 }
 
 /**
  * Gets the current decimals from the config provider
  */
 function getDecimals(): number {
-  return formatConfigProvider.decimals;
+  return formatConfigProvider.decimals ?? FALLBACK_DECIMALS;
 }
 
 /**
  * Gets the null value representation from the config provider
  */
 function getNullValue(): string {
-  return formatConfigProvider.nullValue;
+  return formatConfigProvider.nullValue || FALLBACK_NULL_VALUE;
 }
 
 /**

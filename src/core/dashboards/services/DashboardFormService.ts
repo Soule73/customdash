@@ -78,7 +78,6 @@ class DashboardFormServiceImpl implements IDashboardFormService {
       description: dashboard.description || '',
       visibility: dashboard.visibility,
       layout: dashboard.layout || [],
-      styles: dashboard.styles,
       timeRange: this.createDefaultTimeRange(),
       autoRefresh: this.createDefaultAutoRefresh(),
       globalFilters: [],
@@ -137,7 +136,6 @@ class DashboardFormServiceImpl implements IDashboardFormService {
     const payload: DashboardSaveData = {
       title: config.title.trim(),
       layout: config.layout,
-      styles: config.styles,
       visibility: config.visibility,
     };
 

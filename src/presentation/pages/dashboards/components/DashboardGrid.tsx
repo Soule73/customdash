@@ -13,16 +13,6 @@ interface DashboardGridProps {
   onAddWidget?: () => void;
 }
 
-function parseGapToMargin(gap?: string): [number, number] {
-  if (!gap) return [8, 8];
-  const numericMatch = gap.match(/^(\d+(?:\.\d+)?)/);
-  if (numericMatch) {
-    const value = parseFloat(numericMatch[1]);
-    return [value, value];
-  }
-  return [8, 8];
-}
-
 export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
   const { t } = useAppTranslation();
   const {
@@ -35,11 +25,8 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
   } = useDashboardGrid();
 
   const layout = useDashboardFormStore(s => s.config.layout);
-  const styles = useDashboardFormStore(s => s.config.styles);
   const widgets = useDashboardFormStore(s => s.widgets);
   const editMode = useDashboardFormStore(s => s.editMode);
-
-  const gridMargin = useMemo(() => parseGapToMargin(styles?.gap), [styles?.gap]);
 
   const gridItems = useMemo(() => {
     return layout.map(item => {
@@ -100,7 +87,7 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
         draggableHandle=".drag-handle"
         compactType="vertical"
         preventCollision={false}
-        margin={gridMargin}
+        margin={[8, 8]}
       >
         {gridItems}
       </ReactGridLayout>

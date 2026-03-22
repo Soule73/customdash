@@ -1,9 +1,17 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import {
+  useNavigate,
+  //  Link
+} from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Alert, Checkbox } from '@customdash/ui';
+import {
+  Button,
+  Input,
+  Alert,
+  // Checkbox
+} from '@customdash/ui';
 import { useLogin } from '@hooks';
 import { Logo } from '@components/common';
 import { useAppTranslation } from '@hooks';
@@ -83,7 +91,7 @@ export function LoginPage() {
           </Button>
         </div>
 
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <Checkbox
             label={t('auth.rememberMe')}
             className="text-sm text-gray-600 dark:text-gray-400"
@@ -94,7 +102,7 @@ export function LoginPage() {
           >
             {t('auth.forgotPassword')}
           </Link>
-        </div>
+        </div> */}
 
         <Button type="submit" variant="primary" size="lg" isLoading={isPending} className="w-full">
           {t('auth.login')}

@@ -96,22 +96,23 @@ export default function CardWidget({ data, config }: CardWidgetInput): JSX.Eleme
             <CardIcon name={iconName} color={iconColor} />
           </span>
         )}
+        {/* CSS custom properties guarantee dark-mode adaptation without Tailwind scanning */}
         <span
-          className="text-2xl font-bold text-gray-900 dark:text-white"
-          style={titleColor ? { color: titleColor } : undefined}
+          className="text-2xl font-bold"
+          style={{ color: titleColor || 'rgb(var(--color-foreground))' }}
         >
           {title}
         </span>
         <span
-          className="text-3xl font-extrabold mt-1 text-blue-600 dark:text-blue-400"
-          style={valueColor ? { color: valueColor } : undefined}
+          className="text-3xl font-extrabold mt-1"
+          style={{ color: valueColor || 'rgb(var(--color-primary))' }}
         >
           {formattedValue}
         </span>
         {description && (
           <span
-            className="text-xs mt-1 text-gray-500 dark:text-gray-400"
-            style={descriptionColor ? { color: descriptionColor } : undefined}
+            className="text-xs mt-1"
+            style={{ color: descriptionColor || 'rgb(var(--color-muted-foreground))' }}
           >
             {description}
           </span>

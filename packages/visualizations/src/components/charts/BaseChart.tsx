@@ -1,6 +1,7 @@
 import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 import type { CSSProperties } from 'react';
+import { useEChartsTheme } from '../../hooks/useEChartsTheme';
 
 export interface BaseChartProps {
   option: EChartsOption;
@@ -17,6 +18,7 @@ export interface BaseChartProps {
 /**
  * Base wrapper component for Apache ECharts visualizations.
  * Provides consistent styling and event handling across all chart types.
+ * Automatically adapts to the application dark/light mode via ECharts built-in themes.
  * @param editMode - When true, forces notMerge=true for real-time updates during editing
  */
 export function BaseChart({
@@ -30,6 +32,9 @@ export function BaseChart({
   editMode = false,
   onEvents,
 }: BaseChartProps) {
+  const autoTheme = useEChartsTheme();
+  // Explicit theme prop takes precedence; fall back to auto-detected dark/light theme
+  const resolvedTheme = theme ?? autoTheme;
   const shouldNotMerge = notMerge ?? editMode;
   const defaultStyle: CSSProperties = {
     // width: '100%',
@@ -45,11 +50,15 @@ export function BaseChart({
 
   return (
     <ReactECharts
+      // key forces a full re-mount when the theme changes.
+      // echarts.init(dom, theme) is only called once — without re-mount the theme
+      // switch has no effect on already rendered charts.
+      key={resolvedTheme ?? 'light'}
       option={option}
       style={defaultStyle}
       className={className}
       showLoading={loading}
-      theme={theme}
+      theme={resolvedTheme}
       notMerge={shouldNotMerge}
       lazyUpdate={lazyUpdate}
       onEvents={onEvents}

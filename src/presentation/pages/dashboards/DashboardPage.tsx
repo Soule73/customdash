@@ -8,7 +8,6 @@ import {
   DashboardHeader,
   WidgetSelectModal,
   DashboardSaveModal,
-  StyleEditorPanel,
 } from './components';
 
 export function DashboardPage() {
@@ -48,7 +47,7 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 dashboard-container">
       <DashboardHeader
         isCreateMode={isCreateMode}
         isSaving={isSaving}
@@ -67,8 +66,6 @@ export function DashboardPage() {
         onConfirm={handleConfirmSave}
         isSaving={isSaving}
       />
-
-      <StyleEditorPanel />
     </div>
   );
 }

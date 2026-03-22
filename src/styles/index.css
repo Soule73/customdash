@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+/* Guarantee Tailwind v4 scans all workspace packages for dark: utility classes */
+@source "../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../packages/visualizations/src/**/*.{ts,tsx}";
+@source "../../packages/utils/src/**/*.{ts,tsx}";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
@@ -208,6 +213,7 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
 }
 
 @layer utilities {

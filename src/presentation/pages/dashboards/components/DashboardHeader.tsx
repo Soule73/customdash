@@ -1,4 +1,3 @@
-import { useMemo, type CSSProperties } from 'react';
 import {
   PencilIcon,
   CheckIcon,
@@ -6,7 +5,6 @@ import {
   PlusIcon,
   ArrowDownTrayIcon,
   ShareIcon,
-  SwatchIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Input } from '@customdash/ui';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
@@ -38,19 +36,8 @@ export function DashboardHeader({
   const setTitle = useDashboardFormStore(s => s.setTitle);
   const editMode = useDashboardFormStore(s => s.editMode);
   const setEditMode = useDashboardFormStore(s => s.setEditMode);
-  const stylePanelOpen = useDashboardFormStore(s => s.stylePanelOpen);
-  const setStylePanelOpen = useDashboardFormStore(s => s.setStylePanelOpen);
-  const styles = useDashboardFormStore(s => s.config.styles);
 
   const isEditing = editMode || isCreateMode;
-
-  const titleStyle = useMemo((): CSSProperties | undefined => {
-    if (!styles?.titleFontSize && !styles?.titleColor) return undefined;
-    return {
-      fontSize: styles.titleFontSize,
-      color: styles.titleColor,
-    };
-  }, [styles]);
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -61,10 +48,9 @@ export function DashboardHeader({
             onChange={e => setTitle(e.target.value)}
             placeholder={t('dashboards.header.titlePlaceholder')}
             className=" bg-transparent! border-x-0! border-t-0! rounded-none! font-semibold"
-            style={titleStyle}
           />
         ) : (
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white" style={titleStyle}>
+          <h1 className="dashboard-title text-2xl font-semibold text-gray-900 dark:text-white">
             {title || t('dashboards.header.untitled')}
           </h1>
         )}
@@ -80,14 +66,6 @@ export function DashboardHeader({
               onClick={onAddWidget}
             >
               {t('dashboards.header.addWidget')}
-            </Button>
-            <Button
-              variant={stylePanelOpen ? 'secondary' : 'outline'}
-              size="sm"
-              leftIcon={<SwatchIcon className="h-4 w-4" />}
-              onClick={() => setStylePanelOpen(!stylePanelOpen)}
-            >
-              {t('dashboards.header.customize')}
             </Button>
             <Button
               variant="primary"

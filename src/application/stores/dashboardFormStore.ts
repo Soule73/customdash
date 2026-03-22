@@ -10,7 +10,7 @@ import type {
   DashboardFilter,
   InitializeDashboardFormParams,
 } from '@type/dashboard-form.types';
-import type { LayoutItem, DashboardStyles, LayoutItemStyles } from '@type/dashboard.types';
+import type { LayoutItem } from '@type/dashboard.types';
 import type { Widget } from '@type/widget.types';
 
 declare global {
@@ -24,7 +24,6 @@ const createInitialState = (): DashboardFormState => ({
   widgets: new Map(),
   editMode: false,
   selectedItemId: null,
-  stylePanelOpen: false,
   isDirty: false,
   isLoading: false,
   isSaving: false,
@@ -98,10 +97,6 @@ const createStore: StateCreator<DashboardFormStore> = (set, get) => ({
     const { config, widgets } = get();
     const position = dashboardFormService.calculateNextPosition(config.layout);
     const layoutItem = dashboardFormService.createLayoutItem(widgetId, position);
-    const existingStyles = config.layout[0]?.styles;
-    if (existingStyles) {
-      layoutItem.styles = { ...existingStyles };
-    }
 
     const newWidgets = new Map(widgets);
     newWidgets.set(widgetId, widget);
@@ -181,7 +176,8 @@ const createStore: StateCreator<DashboardFormStore> = (set, get) => ({
 
     if (params.widgets) {
       for (const widget of params.widgets) {
-        widgetsMap.set(widget.widgetId, widget);
+        // Use widget.id (ObjectId) as key to match layout.widgetId
+        widgetsMap.set(widget.id, widget);
       }
     }
 
@@ -192,7 +188,6 @@ const createStore: StateCreator<DashboardFormStore> = (set, get) => ({
       widgets: widgetsMap,
       editMode: params.isCreateMode ?? false,
       selectedItemId: null,
-      stylePanelOpen: false,
       isDirty: false,
       isLoading: false,
       isSaving: false,
@@ -203,35 +198,6 @@ const createStore: StateCreator<DashboardFormStore> = (set, get) => ({
 
   selectItem: (itemId: string | null) => {
     set({ selectedItemId: itemId });
-  },
-
-  setStylePanelOpen: (open: boolean) => {
-    set({ stylePanelOpen: open });
-    if (!open) {
-      set({ selectedItemId: null });
-    }
-  },
-
-  setDashboardStyles: (styles: Partial<DashboardStyles>) => {
-    set(state => ({
-      config: {
-        ...state.config,
-        styles: { ...state.config.styles, ...styles },
-      },
-      isDirty: true,
-    }));
-  },
-
-  setItemStyles: (widgetId: string, styles: Partial<LayoutItemStyles>) => {
-    set(state => ({
-      config: {
-        ...state.config,
-        layout: state.config.layout.map(item =>
-          item.widgetId === widgetId ? { ...item, styles: { ...item.styles, ...styles } } : item,
-        ),
-      },
-      isDirty: true,
-    }));
   },
 
   resetForm: () => {

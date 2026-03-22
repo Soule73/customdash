@@ -35,17 +35,16 @@ export function usePreferencesSync() {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // App store selectors
-  const theme = useAppStore(state => state.theme);
-  const language = useAppStore(state => state.language);
+  // App store setters only (avoid reading values in dependencies to prevent loops)
   const setTheme = useAppStore(state => state.setTheme);
   const setLanguage = useAppStore(state => state.setLanguage);
 
-  // User config store selectors
-  const userConfigStore = useUserConfigStore();
+  // User config store - get updateConfig function only
+  const updateFormatConfigInStore = useUserConfigStore(state => state.updateConfig);
 
   /**
    * Load preferences from the backend and apply them to local stores
+   * Note: We don't read current values to avoid dependency loops
    */
   const loadPreferences = useCallback(async (): Promise<UserPreferences | null> => {
     if (!isAuthenticated) {
@@ -55,20 +54,20 @@ export function usePreferencesSync() {
     try {
       const prefs = await preferencesService.getPreferences();
 
-      // Apply theme if different from current
-      if (prefs.theme && prefs.theme !== theme) {
+      // Apply theme if present
+      if (prefs.theme) {
         setTheme(prefs.theme as Theme);
       }
 
-      // Apply language if different from current
-      if (prefs.language && prefs.language !== language) {
+      // Apply language if present
+      if (prefs.language) {
         setLanguage(prefs.language as Language);
       }
 
       // Apply format config if present
       if (prefs.formatConfig) {
         const formatConfig = prefs.formatConfig as Partial<FormatConfig>;
-        userConfigStore.updateConfig(formatConfig);
+        updateFormatConfigInStore(formatConfig);
       }
 
       return prefs;
@@ -77,49 +76,7 @@ export function usePreferencesSync() {
       console.warn('Failed to load preferences from server:', error);
       return null;
     }
-  }, [isAuthenticated, theme, language, setTheme, setLanguage, userConfigStore]);
-
-  /**
-   * Save current preferences to the backend
-   */
-  const savePreferences = useCallback(async (): Promise<void> => {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    try {
-      const formatConfig: Partial<FormatConfig> = {
-        locale: userConfigStore.locale,
-        currency: userConfigStore.currency,
-        decimals: userConfigStore.decimals,
-        dateFormat: userConfigStore.dateFormat,
-        nullValue: userConfigStore.nullValue,
-        includeTime: userConfigStore.includeTime,
-      };
-
-      await preferencesService.updatePreferences({
-        theme,
-        language,
-        formatConfig,
-      });
-    } catch (error) {
-      // Silently fail - preferences are still saved locally
-      console.warn('Failed to save preferences to server:', error);
-    }
-  }, [isAuthenticated, theme, language, userConfigStore]);
-
-  /**
-   * Save preferences with debouncing to prevent too many API calls
-   */
-  const savePreferencesDebounced = useCallback(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      savePreferences();
-    }, DEBOUNCE_DELAY);
-  }, [savePreferences]);
+  }, [isAuthenticated, setTheme, setLanguage, updateFormatConfigInStore]);
 
   /**
    * Save theme preference immediately
@@ -177,8 +134,6 @@ export function usePreferencesSync() {
 
   return {
     loadPreferences,
-    savePreferences,
-    savePreferencesDebounced,
     saveTheme,
     saveLanguage,
     saveFormatConfigDebounced,

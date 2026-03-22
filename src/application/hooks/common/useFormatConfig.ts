@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { useShallow } from 'zustand/shallow';
 import { formatConfigProvider } from '@customdash/utils';
 import { useUserConfigStore, selectFormatConfig } from '@stores/userConfigStore';
 import type { FormatConfig, FormatConfigUpdate } from '@type/format-config.types';
@@ -25,8 +26,8 @@ import type { FormatConfig, FormatConfigUpdate } from '@type/format-config.types
 export function useFormatConfig() {
   const store = useUserConfigStore();
 
-  // Get the full config object
-  const config = useUserConfigStore(selectFormatConfig);
+  // Get the full config object with shallow comparison to prevent infinite loops
+  const config = useUserConfigStore(useShallow(selectFormatConfig));
 
   // Memoized update function for bulk updates
   const updateConfig = useCallback(
@@ -75,7 +76,7 @@ export function useFormatConfig() {
  * }
  */
 export function useFormattedValue() {
-  const config = useUserConfigStore(selectFormatConfig);
+  const config = useUserConfigStore(useShallow(selectFormatConfig));
 
   const formatNumber = useCallback(
     (value: number, decimals?: number): string => {

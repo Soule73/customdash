@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   Squares2X2Icon,
@@ -16,7 +16,6 @@ import { Button, Avatar, Tooltip } from '@customdash/ui';
 import { cn } from '@customdash/utils';
 import { Logo, ThemeToggle } from '@components/common';
 import { useAuthStore } from '@stores/authStore';
-import { useAppStore } from '@stores/appStore';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useLogout } from '@hooks';
 import { useAppTranslation, type TranslationKey } from '@hooks';
@@ -48,26 +47,11 @@ export function AppLayout() {
   const { t } = useAppTranslation();
 
   const stylePanelOpen = useDashboardFormStore(s => s.stylePanelOpen);
-  const layoutStyles = useAppStore(s => s.layoutStyles);
   const isDashboardPage = location.pathname.includes('/dashboards/');
 
-  const mainStyle = useMemo((): React.CSSProperties | undefined => {
-    if (!isDashboardPage) return undefined;
-
-    const style: React.CSSProperties = {};
-
-    if (layoutStyles.backgroundGradient) {
-      style.background = layoutStyles.backgroundGradient;
-    } else if (layoutStyles.backgroundColor) {
-      style.backgroundColor = layoutStyles.backgroundColor;
-    }
-
-    if (layoutStyles.padding) {
-      style.padding = layoutStyles.padding;
-    }
-
-    return Object.keys(style).length > 0 ? style : undefined;
-  }, [isDashboardPage, layoutStyles]);
+  // Auto-collapse sidebar when style panel is open on dashboard pages
+  const isAutoCollapsed = isDashboardPage && stylePanelOpen;
+  const effectiveCollapsed = collapsed || isAutoCollapsed;
 
   const handleLogout = () => {
     logout();
@@ -88,16 +72,16 @@ export function AppLayout() {
           'fixed inset-y-0 left-0 z-50 flex flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950',
           'lg:static lg:translate-x-0 transition-all duration-300 ease-in-out',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-          collapsed ? 'w-18' : 'w-64',
+          effectiveCollapsed ? 'w-18' : 'w-64',
         )}
       >
         <div
           className={cn(
             'flex h-16 shrink-0 items-center border-b border-gray-200 dark:border-gray-800',
-            collapsed ? 'justify-center px-2' : 'justify-between px-4',
+            effectiveCollapsed ? 'justify-center px-2' : 'justify-between px-4',
           )}
         >
-          {collapsed ? <Logo size="sm" showText={false} /> : <Logo size="sm" />}
+          {effectiveCollapsed ? <Logo size="sm" showText={false} /> : <Logo size="sm" />}
           <Button
             variant="ghost"
             size="sm"
@@ -115,8 +99,8 @@ export function AppLayout() {
                 key={item.nameKey}
                 content={t(item.nameKey)}
                 position="right"
-                disabled={!collapsed}
-                className={collapsed ? '' : 'w-full'}
+                disabled={!effectiveCollapsed}
+                className={effectiveCollapsed ? '' : 'w-full'}
               >
                 <NavLink
                   to={item.href}
@@ -124,7 +108,7 @@ export function AppLayout() {
                   className={({ isActive }) =>
                     cn(
                       'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
-                      collapsed && 'justify-center px-2',
+                      effectiveCollapsed && 'justify-center px-2',
                       isActive
                         ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
@@ -142,7 +126,7 @@ export function AppLayout() {
                           !isActive && 'group-hover:scale-110',
                         )}
                       />
-                      {!collapsed && <span>{t(item.nameKey)}</span>}
+                      {!effectiveCollapsed && <span>{t(item.nameKey)}</span>}
                     </>
                   )}
                 </NavLink>
@@ -156,8 +140,8 @@ export function AppLayout() {
                 key={item.nameKey}
                 content={t(item.nameKey)}
                 position="right"
-                disabled={!collapsed}
-                className={collapsed ? '' : 'w-full'}
+                disabled={!effectiveCollapsed}
+                className={effectiveCollapsed ? '' : 'w-full'}
               >
                 <NavLink
                   to={item.href}
@@ -165,7 +149,7 @@ export function AppLayout() {
                   className={({ isActive }) =>
                     cn(
                       'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
-                      collapsed && 'justify-center px-2',
+                      effectiveCollapsed && 'justify-center px-2',
                       isActive
                         ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
@@ -183,7 +167,7 @@ export function AppLayout() {
                           !isActive && 'group-hover:scale-110',
                         )}
                       />
-                      {!collapsed && <span>{t(item.nameKey)}</span>}
+                      {!effectiveCollapsed && <span>{t(item.nameKey)}</span>}
                     </>
                   )}
                 </NavLink>
@@ -191,9 +175,9 @@ export function AppLayout() {
             ))}
 
             <Tooltip
-              content={collapsed ? t('layout.expand') : t('layout.collapse')}
+              content={effectiveCollapsed ? t('layout.expand') : t('layout.collapse')}
               position="right"
-              disabled={!collapsed}
+              disabled={!effectiveCollapsed}
             >
               <Button
                 variant="ghost"
@@ -202,10 +186,10 @@ export function AppLayout() {
                 className={cn(
                   'hidden lg:flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium',
                   'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
-                  collapsed && 'justify-center px-2',
+                  effectiveCollapsed && 'justify-center px-2',
                 )}
               >
-                {collapsed ? (
+                {effectiveCollapsed ? (
                   <ChevronRightIcon className="h-5 w-5 shrink-0" />
                 ) : (
                   <>
@@ -219,7 +203,7 @@ export function AppLayout() {
         </nav>
 
         <div className="border-t border-gray-200 p-3 dark:border-gray-800">
-          {collapsed ? (
+          {effectiveCollapsed ? (
             <div className="flex flex-col items-center gap-2">
               <Tooltip content={user?.username || t('layout.user')} position="right">
                 <Avatar size="sm" name={user?.username || t('layout.user')} />
@@ -276,11 +260,10 @@ export function AppLayout() {
 
         <main
           className={cn(
-            'flex-1 overflow-auto transition-all duration-300',
+            'flex-1 overflow-auto transition-all duration-300 bg-gray-50 dark:bg-gray-900',
             isDashboardPage && stylePanelOpen && 'mr-80',
-            !mainStyle && 'bg-gray-50 p-6 dark:bg-gray-900',
+            !isDashboardPage && 'p-6',
           )}
-          style={mainStyle}
         >
           <Outlet />
         </main>

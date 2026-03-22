@@ -8,7 +8,6 @@ import type { User } from '@type/auth.types';
 
 describe('authStore', () => {
   const mockUser: User = {
-    _id: '1',
     id: '1',
     email: 'test@example.com',
     username: 'testuser',

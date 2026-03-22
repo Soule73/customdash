@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
-import { useAppStore } from '@stores/appStore';
 import { dashboardFormService } from '@/core/dashboards';
 import type { Widget } from '@type/widget.types';
 import { useAppTranslation, useNotifications, useErrorHandler } from '../common';
@@ -46,8 +45,6 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
 
   const createMutation = useCreateDashboard();
   const updateMutation = useUpdateDashboard();
-  const setLayoutStyles = useAppStore(s => s.setLayoutStyles);
-  const resetLayoutStyles = useAppStore(s => s.resetLayoutStyles);
 
   const { data: dashboard, isLoading: isDashboardLoading } = useDashboard(
     isCreateMode ? '' : dashboardId || '',
@@ -61,45 +58,27 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
       isInitializedRef.current = true;
       initializeForm({ isCreateMode: true });
       setEditMode(true);
-      resetLayoutStyles();
       return;
     }
 
     if (!isCreateMode && dashboard && allWidgets && !isInitializedRef.current) {
       isInitializedRef.current = true;
       const dashboardWidgetIds = new Set(dashboard.layout?.map(item => item.widgetId) || []);
-      const widgets = allWidgets.filter((w: Widget) => dashboardWidgetIds.has(w.widgetId));
+      const widgets = allWidgets.filter((w: Widget) => dashboardWidgetIds.has(w.id));
 
       initializeForm({
         dashboard,
         widgets,
         isCreateMode: false,
       });
-
-      if (dashboard.styles) {
-        setLayoutStyles({
-          backgroundColor: dashboard.styles.backgroundColor,
-          backgroundGradient: dashboard.styles.backgroundGradient,
-          padding: dashboard.styles.padding,
-        });
-      }
     }
-  }, [
-    dashboard,
-    allWidgets,
-    isCreateMode,
-    initializeForm,
-    setEditMode,
-    setLayoutStyles,
-    resetLayoutStyles,
-  ]);
+  }, [dashboard, allWidgets, isCreateMode, initializeForm, setEditMode]);
 
   useEffect(() => {
     return () => {
       isInitializedRef.current = false;
-      resetLayoutStyles();
     };
-  }, [dashboardId, resetLayoutStyles]);
+  }, [dashboardId]);
 
   const save = useCallback(async () => {
     const validationErrors = dashboardFormService.validateConfig(config, {
@@ -122,7 +101,6 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
           title: payload.title,
           description: payload.description,
           layout: payload.layout,
-          styles: payload.styles,
           visibility: payload.visibility,
         });
         showSuccess(t('dashboards.notifications.createSuccess'));
@@ -134,7 +112,6 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
             title: payload.title,
             description: payload.description,
             layout: payload.layout,
-            styles: payload.styles,
             visibility: payload.visibility,
           },
         });

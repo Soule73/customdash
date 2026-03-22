@@ -129,7 +129,7 @@ export function NewWidgetModal({ isOpen, onClose, dashboardId }: NewWidgetModalP
                           ${
                             isSelected
                               ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                              : 'border-gray-200 bg-white hover:border-primary-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-600 dark:hover:bg-gray-750'
+                              : 'border-gray-200 bg-white hover:border-primary-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-600 dark:hover:bg-gray-900'
                           }
                         `}
                       >

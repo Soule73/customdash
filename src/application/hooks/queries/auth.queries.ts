@@ -1,12 +1,45 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { authService } from '@services/index';
+import { authService, preferencesService } from '@services/index';
 import { useAuthStore } from '@stores/authStore';
+import { useAppStore } from '@stores/appStore';
+import { useUserConfigStore } from '@stores/userConfigStore';
 import type { LoginCredentials, RegisterData } from '@type/auth.types';
+import type { Theme, Language } from '@type/app.types';
+import type { FormatConfig } from '@type/format-config.types';
 
 export const authKeys = {
   all: ['auth'] as const,
   me: () => [...authKeys.all, 'me'] as const,
 };
+
+/**
+ * Load user preferences from the backend and apply them to local stores
+ */
+async function loadAndApplyPreferences(): Promise<void> {
+  try {
+    const prefs = await preferencesService.getPreferences();
+    const appStore = useAppStore.getState();
+    const userConfigStore = useUserConfigStore.getState();
+
+    // Apply theme if present
+    if (prefs.theme) {
+      appStore.setTheme(prefs.theme as Theme);
+    }
+
+    // Apply language if present
+    if (prefs.language) {
+      appStore.setLanguage(prefs.language as Language);
+    }
+
+    // Apply format config if present
+    if (prefs.formatConfig) {
+      userConfigStore.updateConfig(prefs.formatConfig as Partial<FormatConfig>);
+    }
+  } catch {
+    // Silently fail - user can still use local preferences
+    console.warn('Failed to load preferences from server');
+  }
+}
 
 export function useCurrentUser() {
   const { isAuthenticated } = useAuthStore();
@@ -25,9 +58,12 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: (credentials: LoginCredentials) => authService.login(credentials),
-    onSuccess: data => {
+    onSuccess: async data => {
       setAuth(data.user, data.accessToken);
       queryClient.setQueryData(authKeys.me(), data.user);
+
+      // Load preferences from server after successful login
+      await loadAndApplyPreferences();
     },
   });
 }
@@ -38,9 +74,12 @@ export function useRegister() {
 
   return useMutation({
     mutationFn: (data: RegisterData) => authService.register(data),
-    onSuccess: data => {
+    onSuccess: async data => {
       setAuth(data.user, data.accessToken);
       queryClient.setQueryData(authKeys.me(), data.user);
+
+      // Load preferences from server after successful registration
+      await loadAndApplyPreferences();
     },
   });
 }

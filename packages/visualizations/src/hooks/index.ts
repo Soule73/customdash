@@ -27,3 +27,5 @@ export type { CardWidgetVM } from './useCardWidgetVM';
 
 export { useTableWidgetVM } from './useTableWidgetVM';
 export type { TableWidgetVM } from './useTableWidgetVM';
+
+export { useEChartsTheme } from './useEChartsTheme';

@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { aiConversationService } from '@services/index';
+import { aiConversationService, aiService } from '@services/index';
 import { aiConversationKeys } from './keys';
 import type {
   CreateAIConversationData,
   UpdateAIConversationData,
   AddMessageData,
+  GenerateWidgetData,
 } from '@type/ai-conversation.types';
 
 // Re-export for backwards compatibility
@@ -68,6 +69,17 @@ export function useDeleteAIConversation() {
 
   return useMutation({
     mutationFn: (id: string) => aiConversationService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: aiConversationKeys.lists() });
+    },
+  });
+}
+
+export function useGenerateWidget() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: GenerateWidgetData) => aiService.generateWidget(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: aiConversationKeys.lists() });
     },

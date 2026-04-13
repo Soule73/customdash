@@ -7,5 +7,6 @@ export { widgetService } from './widget.service';
 export { dataSourceService } from './data-source.service';
 export { processingService } from './processing.service';
 export { aiConversationService } from './ai-conversation.service';
+export { aiService } from './ai.service';
 export { preferencesService } from './preferences.service';
 export type { UserPreferences } from './preferences.service';

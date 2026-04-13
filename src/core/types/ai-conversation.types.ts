@@ -43,3 +43,32 @@ export interface AddMessageData {
   content: string;
   role?: 'user' | 'assistant';
 }
+
+export interface GenerateWidgetData {
+  dataSourceId: string;
+  userPrompt: string;
+  conversationId?: string;
+  maxWidgets?: number;
+}
+
+export interface AIGeneratedWidget {
+  _id?: string;
+  id: string;
+  title: string;
+  type: string;
+  dataSourceId: string;
+  config: Record<string, unknown>;
+  isGeneratedByAI: boolean;
+  isDraft: boolean;
+  description?: string;
+  reasoning?: string;
+  confidence?: number;
+}
+
+export interface AIGenerationResult {
+  widgets: AIGeneratedWidget[];
+  conversationId: string;
+  conversationTitle: string;
+  aiMessage: string;
+  suggestions: string[];
+}

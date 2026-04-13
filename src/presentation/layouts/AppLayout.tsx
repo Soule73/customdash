@@ -16,7 +16,6 @@ import { Button, Avatar, Tooltip } from '@customdash/ui';
 import { cn } from '@customdash/utils';
 import { Logo, ThemeToggle } from '@components/common';
 import { useAuthStore } from '@stores/authStore';
-import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useLogout } from '@hooks';
 import { useAppTranslation, type TranslationKey } from '@hooks';
 
@@ -46,11 +45,11 @@ export function AppLayout() {
   const location = useLocation();
   const { t } = useAppTranslation();
 
-  const stylePanelOpen = useDashboardFormStore(s => s.stylePanelOpen);
   const isDashboardPage = location.pathname.includes('/dashboards/');
+  const isAIPage = location.pathname.startsWith('/ai');
 
   // Auto-collapse sidebar when style panel is open on dashboard pages
-  const isAutoCollapsed = isDashboardPage && stylePanelOpen;
+  const isAutoCollapsed = isDashboardPage;
   const effectiveCollapsed = collapsed || isAutoCollapsed;
 
   const handleLogout = () => {
@@ -261,8 +260,8 @@ export function AppLayout() {
         <main
           className={cn(
             'flex-1 overflow-auto transition-all duration-300 bg-gray-50 dark:bg-gray-900',
-            isDashboardPage && stylePanelOpen && 'mr-80',
-            !isDashboardPage && 'p-6',
+            isDashboardPage && 'mr-80',
+            !isDashboardPage && !isAIPage && 'p-6',
           )}
         >
           <Outlet />

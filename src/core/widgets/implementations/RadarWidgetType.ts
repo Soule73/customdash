@@ -15,6 +15,7 @@ import {
   MetricConfigFactory,
   EChartsParamsFactory,
   SelectOptionFactory,
+  FieldSchemaFactory,
 } from '../factories';
 import { t } from '../utils/i18nHelper';
 
@@ -36,14 +37,15 @@ export class RadarWidgetType extends AbstractChartWidgetType {
   protected readonly widgetComponent = RadarChartWidget as unknown as WidgetComponent;
 
   /**
-   * Builds radar-specific metric styles
-   * Uses builder pattern for consistent field creation
+   * Radar metrics are axes, not series — no per-metric style.
+   * Polygon appearance is configured globally via widgetParams.
    */
+  protected buildMetricStyles(): Record<string, FieldSchema> {
+    return {};
+  }
+
   protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
-    return {
-      colors: WidgetFieldBuilder.colors(DEFAULT_CHART_COLORS),
-      opacity: WidgetFieldBuilder.opacity(0.25),
-    };
+    return {};
   }
 
   /**
@@ -58,6 +60,16 @@ export class RadarWidgetType extends AbstractChartWidgetType {
       legendPosition: WidgetFieldBuilder.legendPosition(),
       showPoints: WidgetFieldBuilder.showPoints(),
       showValues: WidgetFieldBuilder.showValues(),
+      seriesColor: FieldSchemaFactory.createColorField({
+        label: 'widgets.styles.color',
+        defaultValue: '#6366f1',
+      }),
+      seriesColors: WidgetFieldBuilder.colors(DEFAULT_CHART_COLORS),
+      seriesBorderWidth: FieldSchemaFactory.createNumberField({
+        label: 'widgets.styles.borderWidth',
+        defaultValue: 2,
+      }),
+      seriesOpacity: WidgetFieldBuilder.opacity(0.25),
       ...EChartsParamsFactory.nonAxisCommonParams({
         animationEasingOptions: SelectOptionFactory.createFromI18nKeys(
           ['linear', 'cubicIn', 'cubicOut', 'cubicInOut', 'elasticOut', 'bounceOut'],

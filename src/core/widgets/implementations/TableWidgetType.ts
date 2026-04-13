@@ -56,6 +56,9 @@ export class TableWidgetType extends AbstractWidgetType {
     return {
       title: WidgetFieldBuilder.title(),
       pageSize: WidgetFieldBuilder.pageSize(10),
+      searchable: WidgetFieldBuilder.searchable(true),
+      striped: WidgetFieldBuilder.striped(true),
+      compact: WidgetFieldBuilder.compact(false),
     };
   }
 

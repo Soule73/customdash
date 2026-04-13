@@ -29,4 +29,5 @@ export const common = {
   noResultsFound: 'Aucun resultat trouve',
   selectOption: 'Selectionner une option',
   retry: 'Reessayer',
+  selected: 'Selectionne',
 };

@@ -18,8 +18,6 @@ describe('appStore', () => {
     useAppStore.setState({
       theme: 'system',
       language: 'fr',
-      layoutStyles: { padding: '24px' },
-      isLayoutStylesOverridden: false,
     });
     vi.clearAllMocks();
   });
@@ -29,8 +27,6 @@ describe('appStore', () => {
       const state = useAppStore.getState();
       expect(state.theme).toBe('system');
       expect(state.language).toBe('fr');
-      expect(state.layoutStyles).toEqual({ padding: '24px' });
-      expect(state.isLayoutStylesOverridden).toBe(false);
     });
   });
 
@@ -65,57 +61,16 @@ describe('appStore', () => {
     });
   });
 
-  describe('setLayoutStyles', () => {
-    it('should update layout styles', () => {
-      useAppStore.getState().setLayoutStyles({
-        backgroundColor: '#ff0000',
-        padding: '16px',
-      });
-
-      const state = useAppStore.getState();
-      expect(state.layoutStyles.backgroundColor).toBe('#ff0000');
-      expect(state.layoutStyles.padding).toBe('16px');
-      expect(state.isLayoutStylesOverridden).toBe(true);
-    });
-
-    it('should merge with existing styles', () => {
-      useAppStore.getState().setLayoutStyles({ backgroundColor: '#ff0000' });
-      useAppStore.getState().setLayoutStyles({ backgroundGradient: 'linear-gradient(...)' });
-
-      const state = useAppStore.getState();
-      expect(state.layoutStyles.backgroundColor).toBe('#ff0000');
-      expect(state.layoutStyles.backgroundGradient).toBe('linear-gradient(...)');
-    });
-  });
-
-  describe('resetLayoutStyles', () => {
-    it('should reset layout styles to default', () => {
-      useAppStore.getState().setLayoutStyles({
-        backgroundColor: '#ff0000',
-        padding: '16px',
-      });
-
-      useAppStore.getState().resetLayoutStyles();
-
-      const state = useAppStore.getState();
-      expect(state.layoutStyles).toEqual({ padding: '24px' });
-      expect(state.isLayoutStylesOverridden).toBe(false);
-    });
-  });
-
   describe('reset', () => {
-    it('should reset layout but keep theme and language', () => {
+    it('should keep theme and language', () => {
       useAppStore.getState().setTheme('dark');
       useAppStore.getState().setLanguage('en');
-      useAppStore.getState().setLayoutStyles({ backgroundColor: '#ff0000' });
 
       useAppStore.getState().reset();
 
       const state = useAppStore.getState();
       expect(state.theme).toBe('dark');
       expect(state.language).toBe('en');
-      expect(state.layoutStyles).toEqual({ padding: '24px' });
-      expect(state.isLayoutStylesOverridden).toBe(false);
     });
   });
 

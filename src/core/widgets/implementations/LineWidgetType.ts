@@ -14,6 +14,7 @@ import {
   MetricConfigFactory,
   EChartsParamsFactory,
   SelectOptionFactory,
+  FieldSchemaFactory,
 } from '../factories';
 import { t } from '../utils/i18nHelper';
 
@@ -37,8 +38,16 @@ export class LineWidgetType extends AbstractChartWidgetType {
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = LineChartWidget as unknown as WidgetComponent;
 
-  protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
+  protected buildMetricStyles(): Record<string, FieldSchema> {
     return {
+      color: FieldSchemaFactory.createColorField({
+        label: 'widgets.styles.color',
+        defaultValue: '#6366f1',
+      }),
+      borderWidth: FieldSchemaFactory.createNumberField({
+        label: 'widgets.styles.borderWidth',
+        defaultValue: 1,
+      }),
       fill: {
         default: false,
         inputType: 'checkbox',
@@ -53,22 +62,11 @@ export class LineWidgetType extends AbstractChartWidgetType {
           return t('widgets.styles.tension');
         },
       },
-      pointStyle: {
-        default: 'circle',
-        inputType: 'select',
-        get label() {
-          return t('widgets.styles.pointStyle');
-        },
-        options: POINT_STYLE_OPTIONS,
-      },
-      stepped: {
-        default: false,
-        inputType: 'checkbox',
-        get label() {
-          return t('widgets.styles.stepped');
-        },
-      },
     };
+  }
+
+  protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
+    return {};
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {

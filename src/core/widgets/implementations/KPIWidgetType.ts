@@ -38,9 +38,11 @@ export class KPIWidgetType extends AbstractWidgetType {
       titleColor: WidgetFieldBuilder.titleColor(),
       showTrend: WidgetFieldBuilder.showTrend(),
       showValue: WidgetFieldBuilder.showValue(),
+      showPercent: WidgetFieldBuilder.showPercent(false),
       format: WidgetFieldBuilder.format(),
       decimals: WidgetFieldBuilder.decimals(),
       currency: WidgetFieldBuilder.currency(),
+      trendThreshold: WidgetFieldBuilder.trendThreshold(0),
       trendType: {
         default: 'arrow',
         inputType: 'select',

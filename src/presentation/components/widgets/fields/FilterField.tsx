@@ -12,10 +12,8 @@ const OPERATOR_KEYS: FilterOperator[] = [
   'not_contains',
   'greater_than',
   'less_than',
-  'greater_equal',
-  'less_equal',
-  'starts_with',
-  'ends_with',
+  'greater_than_or_equal',
+  'less_than_or_equal',
 ];
 
 interface FilterFieldProps {

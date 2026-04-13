@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ChartBarIcon,
@@ -16,6 +16,7 @@ import {
   useWidgetFormIsLoading,
   useWidgetFormActions,
 } from '@stores';
+import { widgetRegistry } from '@core/widgets';
 import type { WidgetFormTab } from '@type/widget-form.types';
 import { DataConfigSection } from '../sections/DataConfigSection';
 import { StyleConfigSection } from '../sections/StyleConfigSection';
@@ -72,12 +73,26 @@ export function WidgetFormLayout({
 
   const [showSaveModal, setShowSaveModal] = useState(false);
 
+  // Hide the Style tab when the current widget type has no per-metric styles to configure
+  const hasStyleTab = useMemo(() => {
+    const schema = widgetRegistry.getConfigSchema(type);
+    return Object.keys(schema?.metricStyles ?? {}).length > 0;
+  }, [type]);
+
   const tabs = useMemo(() => {
-    return TAB_DEFINITIONS.map(tab => ({
+    return TAB_DEFINITIONS.filter(tab => tab.id !== 'style' || hasStyleTab).map(tab => ({
       ...tab,
       label: t(tab.labelKey),
     }));
-  }, [t]);
+  }, [t, hasStyleTab]);
+
+  // If the active tab becomes hidden (e.g. switching to a widget with no styles),
+  // fall back to the 'data' tab so the user is never left on a hidden tab.
+  useEffect(() => {
+    if (activeTab === 'style' && !hasStyleTab) {
+      setActiveTab('data');
+    }
+  }, [activeTab, hasStyleTab, setActiveTab]);
 
   const handleTabChange = (tab: WidgetFormTab) => {
     setActiveTab(tab);

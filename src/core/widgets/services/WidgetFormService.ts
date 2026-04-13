@@ -116,8 +116,12 @@ export class WidgetFormService implements IWidgetFormService {
     };
   }
 
-  createMetricStyle(): MetricStyle {
-    return { ...DEFAULT_METRIC_STYLE };
+  createMetricStyle(type?: WidgetType): MetricStyle {
+    const base = { ...DEFAULT_METRIC_STYLE };
+    if (!type) return base;
+    const configSchema = this.getConfigSchema(type);
+    const schemaDefaults = this.getSchemaDefaults(configSchema?.metricStyles);
+    return { ...base, ...schemaDefaults } as MetricStyle;
   }
 
   createDefaultWidgetParams(type: WidgetType): WidgetParams {
@@ -134,7 +138,7 @@ export class WidgetFormService implements IWidgetFormService {
       metrics: [this.createMetric({ datasetType })],
       buckets: [this.createBucket()],
       globalFilters: [],
-      metricStyles: [this.createMetricStyle()],
+      metricStyles: [this.createMetricStyle(type)],
       widgetParams: this.createDefaultWidgetParams(type),
     };
 
@@ -142,7 +146,7 @@ export class WidgetFormService implements IWidgetFormService {
       if (existingConfig.metrics?.length) {
         config.metrics = existingConfig.metrics;
         config.metricStyles = existingConfig.metrics.map(metric => {
-          const baseStyle = this.createMetricStyle();
+          const baseStyle = this.createMetricStyle(type);
           return {
             ...baseStyle,
             width: metric.width,

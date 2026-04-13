@@ -282,6 +282,56 @@ export class WidgetFieldBuilder {
   }
 
   /**
+   * Creates a searchable toggle field for table widget
+   */
+  static searchable(defaultValue = true): FieldSchema {
+    return FieldSchemaFactory.createCheckboxField({
+      label: 'widgets.params.searchable',
+      defaultValue,
+    });
+  }
+
+  /**
+   * Creates a striped rows toggle field for table widget
+   */
+  static striped(defaultValue = true): FieldSchema {
+    return FieldSchemaFactory.createCheckboxField({
+      label: 'widgets.params.striped',
+      defaultValue,
+    });
+  }
+
+  /**
+   * Creates a compact mode toggle field for table widget
+   */
+  static compact(defaultValue = false): FieldSchema {
+    return FieldSchemaFactory.createCheckboxField({
+      label: 'widgets.params.compact',
+      defaultValue,
+    });
+  }
+
+  /**
+   * Creates a show percent toggle field for KPI widget
+   */
+  static showPercent(defaultValue = false): FieldSchema {
+    return FieldSchemaFactory.createCheckboxField({
+      label: 'widgets.params.showPercent',
+      defaultValue,
+    });
+  }
+
+  /**
+   * Creates a trend threshold field for KPI widget
+   */
+  static trendThreshold(defaultValue = 0): FieldSchema {
+    return FieldSchemaFactory.createNumberField({
+      label: 'widgets.params.trendThreshold',
+      defaultValue,
+    });
+  }
+
+  /**
    * Creates a border width field
    */
   static borderWidth(defaultValue = 2): FieldSchema {

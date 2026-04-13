@@ -29,7 +29,7 @@ export class KPIGroupWidgetType extends AbstractWidgetType {
 
   protected buildMetricStyles(): Record<string, FieldSchema> {
     return {
-      valueColor: WidgetFieldBuilder.valueColor(),
+      color: WidgetFieldBuilder.valueColor(),
     };
   }
 

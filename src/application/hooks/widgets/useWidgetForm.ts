@@ -183,6 +183,7 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
           title: store.widgetTitle,
           description: store.widgetDescription,
           config,
+          isDraft: false,
         });
         showSuccess(t('widgets.notifications.updateSuccess'));
       } else {

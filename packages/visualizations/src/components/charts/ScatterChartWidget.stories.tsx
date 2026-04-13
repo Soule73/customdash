@@ -324,7 +324,7 @@ export const MultipleWithDataZoom: Story = {
           x: 'height',
           y: 'weight',
           label: 'Senior (30+)',
-          datasetFilters: [{ field: 'age', operator: 'greater_equal', value: 30 }],
+          datasetFilters: [{ field: 'age', operator: 'greater_than_or_equal', value: 30 }],
         },
       ],
       widgetParams: {

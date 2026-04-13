@@ -305,10 +305,10 @@ describe('kpiUtils', () => {
 
     it('should return darker colors when threshold exceeded', () => {
       const upResult = getKPITrendColor('up', 50, 10);
-      expect(upResult).toBe('text-green-700');
+      expect(upResult).toBe('text-green-700 dark:text-green-400');
 
       const downResult = getKPITrendColor('down', -50, 10);
-      expect(downResult).toBe('text-red-700');
+      expect(downResult).toBe('text-red-700 dark:text-red-400');
     });
   });
 

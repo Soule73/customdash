@@ -9,6 +9,14 @@ import type {
 } from './types';
 
 /**
+ * Maximum number of decimal places applied to all computed chart values.
+ * Prevents floating-point artefacts like 16278.3099999999998 from appearing
+ * in series data, tooltips, and axis labels.
+ * Change this single constant to adjust precision across the entire visualizations package.
+ */
+export const CHART_VALUE_PRECISION = 4;
+
+/**
  * Default chart color palette for visualizations
  */
 export const DEFAULT_CHART_COLORS: readonly string[] = [
@@ -83,10 +91,8 @@ export const FILTER_OPERATOR_OPTIONS: SelectOption<FilterOperator>[] = [
   { value: 'not_contains', label: 'Does not contain' },
   { value: 'greater_than', label: 'Greater than' },
   { value: 'less_than', label: 'Less than' },
-  { value: 'greater_equal', label: 'Greater or equal' },
-  { value: 'less_equal', label: 'Less or equal' },
-  { value: 'starts_with', label: 'Starts with' },
-  { value: 'ends_with', label: 'Ends with' },
+  { value: 'greater_than_or_equal', label: 'Greater or equal' },
+  { value: 'less_than_or_equal', label: 'Less or equal' },
 ];
 
 /**
@@ -99,10 +105,8 @@ export const VALID_FILTER_OPERATORS: FilterOperator[] = [
   'not_contains',
   'greater_than',
   'less_than',
-  'greater_equal',
-  'less_equal',
-  'starts_with',
-  'ends_with',
+  'greater_than_or_equal',
+  'less_than_or_equal',
 ];
 
 /**
@@ -164,8 +168,6 @@ export const DEFAULT_WIDGET_PARAMS = {
   legendPosition: 'top' as const,
   xLabel: '',
   yLabel: '',
-  labelFormat: '{label}: {value} ({percent}%)',
-  tooltipFormat: '{label}: {value}',
   titleAlign: 'center' as const,
   labelFontSize: 12,
   labelColor: '#000000',
@@ -310,8 +312,6 @@ export const VALID_OPERATORS: FilterOperator[] = [
   'not_contains',
   'greater_than',
   'less_than',
-  'greater_equal',
-  'less_equal',
-  'starts_with',
-  'ends_with',
+  'greater_than_or_equal',
+  'less_than_or_equal',
 ];

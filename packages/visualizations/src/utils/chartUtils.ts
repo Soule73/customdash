@@ -1,5 +1,5 @@
 import type { AggregationType } from '../types';
-import { DEFAULT_CHART_COLORS } from '../constants';
+import { DEFAULT_CHART_COLORS, CHART_VALUE_PRECISION } from '../constants';
 import { aggregateFromRecords } from './aggregation';
 import { getLocal } from './config';
 
@@ -25,7 +25,10 @@ export function aggregate(
   agg: AggregationType,
   field: string,
 ): number {
-  return aggregateFromRecords(rows, agg, field);
+  const raw = aggregateFromRecords(rows, agg, field);
+  // Round to avoid floating-point artefacts (e.g. 16278.3099999999998).
+  // Precision is controlled by CHART_VALUE_PRECISION in constants.ts.
+  return parseFloat(raw.toFixed(CHART_VALUE_PRECISION));
 }
 
 /**

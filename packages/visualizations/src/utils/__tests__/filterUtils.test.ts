@@ -72,27 +72,14 @@ describe('filterUtils', () => {
       expect(result.every(r => (r.age as number) < 28)).toBe(true);
     });
 
-    it('should filter with greater_equal operator', () => {
-      const filter: Filter = { field: 'age', operator: 'greater_equal', value: 28 };
+    it('should filter with greater_than_or_equal operator', () => {
+      const filter: Filter = { field: 'age', operator: 'greater_than_or_equal', value: 28 };
       const result = applyFilter(testData, filter);
       expect(result).toHaveLength(3);
     });
 
-    it('should filter with less_equal operator', () => {
-      const filter: Filter = { field: 'age', operator: 'less_equal', value: 28 };
-      const result = applyFilter(testData, filter);
-      expect(result).toHaveLength(3);
-    });
-
-    it('should filter with starts_with operator', () => {
-      const filter: Filter = { field: 'name', operator: 'starts_with', value: 'a' };
-      const result = applyFilter(testData, filter);
-      expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('Alice');
-    });
-
-    it('should filter with ends_with operator', () => {
-      const filter: Filter = { field: 'name', operator: 'ends_with', value: 'e' };
+    it('should filter with less_than_or_equal operator', () => {
+      const filter: Filter = { field: 'age', operator: 'less_than_or_equal', value: 28 };
       const result = applyFilter(testData, filter);
       expect(result).toHaveLength(3);
     });

@@ -103,10 +103,8 @@ describe('constants', () => {
       expect(VALID_FILTER_OPERATORS).toContain('not_contains');
       expect(VALID_FILTER_OPERATORS).toContain('greater_than');
       expect(VALID_FILTER_OPERATORS).toContain('less_than');
-      expect(VALID_FILTER_OPERATORS).toContain('greater_equal');
-      expect(VALID_FILTER_OPERATORS).toContain('less_equal');
-      expect(VALID_FILTER_OPERATORS).toContain('starts_with');
-      expect(VALID_FILTER_OPERATORS).toContain('ends_with');
+      expect(VALID_FILTER_OPERATORS).toContain('greater_than_or_equal');
+      expect(VALID_FILTER_OPERATORS).toContain('less_than_or_equal');
     });
 
     it('should match FILTER_OPERATOR_OPTIONS values', () => {

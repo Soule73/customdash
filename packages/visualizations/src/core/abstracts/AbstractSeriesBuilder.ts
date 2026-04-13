@@ -164,6 +164,7 @@ export class LineSeriesBuilder extends AbstractSeriesBuilder<LineSeriesOption> {
       name: this.getMetricLabel(metric),
       type: 'line',
       data: values,
+      stack: lineConfig?.stack ?? (params.stacked ? 'total' : undefined),
       smooth: smoothValue,
       smoothMonotone: lineConfig?.smoothMonotone,
       step: stepValue,

@@ -54,17 +54,11 @@ export function applyFilter(
       case 'less_than':
         return Number(fieldValue) < Number(filter.value);
 
-      case 'greater_equal':
+      case 'greater_than_or_equal':
         return Number(fieldValue) >= Number(filter.value);
 
-      case 'less_equal':
+      case 'less_than_or_equal':
         return Number(fieldValue) <= Number(filter.value);
-
-      case 'starts_with':
-        return String(fieldValue).toLowerCase().startsWith(String(filter.value).toLowerCase());
-
-      case 'ends_with':
-        return String(fieldValue).toLowerCase().endsWith(String(filter.value).toLowerCase());
 
       default:
         return String(fieldValue) === String(filter.value);

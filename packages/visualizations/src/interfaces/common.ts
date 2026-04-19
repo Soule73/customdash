@@ -134,6 +134,7 @@ export interface WidgetParams {
   format?: FormatType;
   currency?: string;
   decimals?: number;
+  themeColors?: ThemeColors;
   echarts?: EChartsWidgetParams;
 }
 

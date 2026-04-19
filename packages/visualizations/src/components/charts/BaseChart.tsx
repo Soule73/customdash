@@ -53,7 +53,7 @@ export function BaseChart({
       // key forces a full re-mount when the theme changes.
       // echarts.init(dom, theme) is only called once — without re-mount the theme
       // switch has no effect on already rendered charts.
-      key={resolvedTheme ?? 'light'}
+      key={(resolvedTheme as string) ?? 'light'}
       option={option}
       style={defaultStyle}
       className={className}

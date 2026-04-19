@@ -48,9 +48,7 @@ export function AppLayout() {
   const isDashboardPage = location.pathname.includes('/dashboards/');
   const isAIPage = location.pathname.startsWith('/ai');
 
-  // Auto-collapse sidebar when style panel is open on dashboard pages
-  const isAutoCollapsed = isDashboardPage;
-  const effectiveCollapsed = collapsed || isAutoCollapsed;
+  const effectiveCollapsed = collapsed;
 
   const handleLogout = () => {
     logout();
@@ -260,7 +258,6 @@ export function AppLayout() {
         <main
           className={cn(
             'flex-1 overflow-auto transition-all duration-300 bg-gray-50 dark:bg-gray-900',
-            isDashboardPage && 'mr-80',
             !isDashboardPage && !isAIPage && 'p-6',
           )}
         >

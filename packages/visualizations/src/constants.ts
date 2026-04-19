@@ -170,7 +170,7 @@ export const DEFAULT_WIDGET_PARAMS = {
   yLabel: '',
   titleAlign: 'center' as const,
   labelFontSize: 12,
-  labelColor: '#000000',
+  labelColor: '',
   legend: true,
   showGrid: true,
   showValues: false,

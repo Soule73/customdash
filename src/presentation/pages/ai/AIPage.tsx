@@ -216,12 +216,11 @@ export function AIPage() {
         suggestions: result.suggestions,
       };
       setSessionMessages(prev => [...prev, assistantMessage]);
-    } catch {
+    } catch (err) {
       const errorMessage: SessionMessage = {
         id: `error-${Date.now()}`,
         role: 'assistant',
-        content:
-          generateWidget.error instanceof Error ? generateWidget.error.message : t('common.error'),
+        content: err instanceof Error ? err.message : t('common.error'),
       };
       setSessionMessages(prev => [...prev, errorMessage]);
     }

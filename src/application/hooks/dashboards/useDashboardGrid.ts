@@ -47,9 +47,13 @@ export function useDashboardGrid(): UseDashboardGridReturn {
       resizeObserver.observe(containerRef.current);
     }
 
-    // Also listen for transition end on the main element to catch sidebar collapse
+    // Also listen for transition end on the sidebar/main elements to catch sidebar collapse
     const handleTransitionEnd = (e: TransitionEvent) => {
-      if (e.propertyName === 'width' || e.propertyName === 'transform') {
+      const target = e.target as HTMLElement;
+      if (
+        (e.propertyName === 'width' || e.propertyName === 'transform') &&
+        (target.tagName === 'ASIDE' || target.tagName === 'MAIN')
+      ) {
         // Small delay to ensure layout is settled
         setTimeout(updateDimensions, 50);
       }

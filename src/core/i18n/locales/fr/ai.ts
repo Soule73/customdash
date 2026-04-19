@@ -29,6 +29,10 @@ export const ai = {
     confidenceMedium: 'Moyen',
     confidenceLow: 'Faible',
   },
+  draftBanner: {
+    title: "Ce widget a ete genere par l'IA et est un brouillon.",
+    hint: 'Verifiez et ajustez la configuration avant de sauvegarder.',
+  },
   chat: {
     welcomeTitle: 'Comment puis-je vous aider ?',
     welcomeSubtitle:

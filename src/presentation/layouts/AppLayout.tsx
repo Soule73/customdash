@@ -45,7 +45,6 @@ export function AppLayout() {
   const location = useLocation();
   const { t } = useAppTranslation();
 
-  const isDashboardPage = location.pathname.includes('/dashboards/');
   const isAIPage = location.pathname.startsWith('/ai');
 
   const effectiveCollapsed = collapsed;
@@ -258,7 +257,7 @@ export function AppLayout() {
         <main
           className={cn(
             'flex-1 overflow-auto transition-all duration-300 bg-gray-50 dark:bg-gray-900',
-            !isDashboardPage && !isAIPage && 'p-6',
+            !isAIPage && 'p-6',
           )}
         >
           <Outlet />

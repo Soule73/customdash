@@ -3,6 +3,16 @@ import type { EChartsOption } from 'echarts';
 import type { RadarChartConfig, WidgetParams, ThemeColors } from '../interfaces';
 import type { EChartsWidgetParams } from '../types/echarts.types';
 import { RadarChartService, type RadarDataResult } from '../core/services/RadarChartService';
+import { useEChartsTheme } from './useEChartsTheme';
+
+/** Colors injected into ECharts options when dark mode is active */
+const DARK_THEME_COLORS: ThemeColors = {
+  textColor: '#e2e8f0',
+  labelColor: '#cbd5e1',
+  gridColor: '#334155',
+  tooltipBackground: '#1e293b',
+  tooltipTextColor: '#f1f5f9',
+};
 
 export interface RadarChartVM {
   option: EChartsOption;
@@ -27,6 +37,11 @@ export interface RadarChartInput {
  * @see [RadarChartService](../core/services/RadarChartService.ts)
  */
 export function useRadarChartVM({ data, config, widgetParams }: RadarChartInput): RadarChartVM {
+  const echartsTheme = useEChartsTheme();
+  // Inject explicit label/grid colors when dark mode is active so radar axis
+  // names and grid lines are always readable regardless of ECharts theme behavior.
+  const themeColors = echartsTheme === 'dark' ? DARK_THEME_COLORS : undefined;
+
   const extendedWidgetParams = useMemo(
     () => ({
       ...config.widgetParams,
@@ -39,9 +54,11 @@ export function useRadarChartVM({ data, config, widgetParams }: RadarChartInput)
       themeColors: {
         ...config.themeColors,
         ...widgetParams?.themeColors,
+        ...themeColors,
       },
     }),
-    [config, widgetParams],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [config, widgetParams, echartsTheme],
   );
 
   const context = useMemo(

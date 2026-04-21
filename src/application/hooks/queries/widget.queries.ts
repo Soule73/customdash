@@ -13,6 +13,14 @@ export function useWidgets(dataSourceId?: string) {
   });
 }
 
+export function useWidgetsByConversation(conversationId: string) {
+  return useQuery({
+    queryKey: widgetKeys.list({ conversationId }),
+    queryFn: () => widgetService.getByConversation(conversationId),
+    enabled: !!conversationId,
+  });
+}
+
 export function useWidget(id: string) {
   return useQuery({
     queryKey: widgetKeys.detail(id),

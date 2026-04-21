@@ -1,12 +1,12 @@
-import { memo, useMemo, type CSSProperties } from 'react';
+import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { XMarkIcon, Bars3Icon, PencilIcon, SwatchIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, Bars3Icon, PencilIcon } from '@heroicons/react/24/outline';
 import { Button } from '@customdash/ui';
-import type { ThemeColors } from '@customdash/visualizations';
+import type { Filter } from '@customdash/visualizations';
 import { WidgetDisplay } from '@components/widgets';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppTranslation } from '@hooks';
-import type { LayoutItem, LayoutItemStyles } from '@type/dashboard.types';
+import type { LayoutItem } from '@type/dashboard.types';
 import type { Widget } from '@type/widget.types';
 
 interface DashboardGridItemProps {
@@ -14,30 +14,7 @@ interface DashboardGridItemProps {
   widget: Widget | undefined;
   editMode: boolean;
   onRemove?: () => void;
-}
-
-function buildItemStyles(styles?: LayoutItemStyles): CSSProperties {
-  if (!styles) return {};
-  return {
-    backgroundColor: styles.backgroundColor,
-    background: styles.backgroundGradient || styles.backgroundColor,
-    borderColor: styles.borderColor,
-    borderWidth: styles.borderWidth,
-    borderRadius: styles.borderRadius,
-    boxShadow: styles.boxShadow,
-    padding: styles.padding,
-  };
-}
-
-function extractThemeColors(styles?: LayoutItemStyles): ThemeColors | undefined {
-  if (!styles) return undefined;
-  const hasColors = styles.textColor || styles.labelColor || styles.gridColor;
-  if (!hasColors) return undefined;
-  return {
-    textColor: styles.textColor,
-    labelColor: styles.labelColor,
-    gridColor: styles.gridColor,
-  };
+  dashboardGlobalFilters?: Filter[];
 }
 
 /**
@@ -49,31 +26,26 @@ export const DashboardGridItem = memo(function DashboardGridItem({
   widget,
   editMode,
   onRemove,
+  dashboardGlobalFilters,
 }: DashboardGridItemProps) {
   const { t } = useAppTranslation();
   const navigate = useNavigate();
   const selectedItemId = useDashboardFormStore(s => s.selectedItemId);
   const selectItem = useDashboardFormStore(s => s.selectItem);
-  const setStylePanelOpen = useDashboardFormStore(s => s.setStylePanelOpen);
 
-  const customStyles = useMemo(() => buildItemStyles(item.styles), [item.styles]);
-  const themeColors = useMemo(() => extractThemeColors(item.styles), [item.styles]);
   const isSelected = selectedItemId === item.widgetId;
 
+  // Only select the widget (for visual highlight)
   const handleSelect = () => {
     if (editMode && widget) {
       selectItem(item.widgetId);
-      setStylePanelOpen(true);
     }
   };
 
   if (!widget) {
     return (
-      <div
-        className="relative h-full w-full overflow-hidden transition-colors border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
-        style={customStyles}
-      >
-        <div className="h-full flex items-center justify-center text-center text-red-500 dark:text-red-400 text-sm p-4">
+      <div className="dashboard-widget-card relative h-full w-full overflow-hidden transition-colors border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
+        <div className="h-full flex items-center justify-center text-center text-red-500 text-sm p-4">
           {t('dashboards.grid.widgetNotFound')}
         </div>
       </div>
@@ -82,28 +54,25 @@ export const DashboardGridItem = memo(function DashboardGridItem({
 
   return (
     <div
-      className={`group relative h-full w-full transition-all border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md ${
+      className={`p-4 dashboard-widget-card group relative h-full w-full transition-all border shadow-sm hover:shadow-md bg-white dark:bg-gray-900 ${
         isSelected
           ? 'ring-2 ring-indigo-500 border-indigo-500'
           : 'border-gray-200 dark:border-gray-800'
       } ${editMode ? 'cursor-pointer' : ''}`}
-      style={customStyles}
       onClick={handleSelect}
     >
       {editMode && (
         <EditModeControls
           isSelected={isSelected}
           onEdit={() => navigate(`/widgets/${widget.id}/edit`)}
-          onStyleEdit={handleSelect}
           onRemove={onRemove}
           labels={{
-            customizeStyles: t('dashboards.grid.customizeStyles'),
             editWidget: t('dashboards.grid.editWidget'),
             removeWidget: t('dashboards.grid.removeWidget'),
           }}
         />
       )}
-      <WidgetDisplay widget={widget} themeColors={themeColors} />
+      <WidgetDisplay widget={widget} dashboardGlobalFilters={dashboardGlobalFilters} />
     </div>
   );
 });
@@ -111,22 +80,14 @@ export const DashboardGridItem = memo(function DashboardGridItem({
 interface EditModeControlsProps {
   isSelected: boolean;
   onEdit: () => void;
-  onStyleEdit: () => void;
   onRemove?: () => void;
   labels: {
-    customizeStyles: string;
     editWidget: string;
     removeWidget: string;
   };
 }
 
-function EditModeControls({
-  isSelected,
-  onEdit,
-  onStyleEdit,
-  onRemove,
-  labels,
-}: EditModeControlsProps) {
+function EditModeControls({ isSelected, onEdit, onRemove, labels }: EditModeControlsProps) {
   return (
     <div
       className={`absolute top-2 left-2 right-2 z-10 flex justify-between items-center gap-2 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
@@ -135,18 +96,6 @@ function EditModeControls({
         <Bars3Icon className="w-4 h-4" />
       </div>
       <div className="flex gap-1.5">
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`p-1.5 shadow-md ${isSelected ? 'bg-indigo-100 dark:bg-indigo-900' : ''}`}
-          title={labels.customizeStyles}
-          onClick={e => {
-            e.stopPropagation();
-            onStyleEdit();
-          }}
-        >
-          <SwatchIcon className="w-4 h-4" />
-        </Button>
         <Button
           variant="ghost"
           size="sm"

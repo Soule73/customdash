@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { Button, Input, Alert, Checkbox } from '@customdash/ui';
+import { Button, Input, Alert } from '@customdash/ui';
 import { useLogin } from '@hooks';
 import { Logo } from '@components/common';
 import { useAppTranslation } from '@hooks';
@@ -83,33 +83,10 @@ export function LoginPage() {
           </Button>
         </div>
 
-        <div className="flex items-center justify-between">
-          <Checkbox
-            label={t('auth.rememberMe')}
-            className="text-sm text-gray-600 dark:text-gray-400"
-          />
-          <Link
-            to="/forgot-password"
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
-          >
-            {t('auth.forgotPassword')}
-          </Link>
-        </div>
-
         <Button type="submit" variant="primary" size="lg" isLoading={isPending} className="w-full">
           {t('auth.login')}
         </Button>
       </form>
-
-      {/* <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-        {t('auth.noAccount')}{' '}
-        <Link
-          to="/register"
-          className="font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
-        >
-          {t('auth.createAccount')}
-        </Link>
-      </p> */}
     </div>
   );
 }

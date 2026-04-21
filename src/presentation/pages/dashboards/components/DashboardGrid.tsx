@@ -2,6 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { ReactGridLayout, type Layout, type LayoutItem } from 'react-grid-layout/legacy';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
+import type { Filter } from '@customdash/visualizations';
 import { useDashboardGrid } from '@hooks/dashboards';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppTranslation } from '@hooks';
@@ -11,19 +12,10 @@ import 'react-resizable/css/styles.css';
 
 interface DashboardGridProps {
   onAddWidget?: () => void;
+  dashboardGlobalFilters?: Filter[];
 }
 
-function parseGapToMargin(gap?: string): [number, number] {
-  if (!gap) return [8, 8];
-  const numericMatch = gap.match(/^(\d+(?:\.\d+)?)/);
-  if (numericMatch) {
-    const value = parseFloat(numericMatch[1]);
-    return [value, value];
-  }
-  return [8, 8];
-}
-
-export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
+export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: DashboardGridProps) {
   const { t } = useAppTranslation();
   const {
     containerRef,
@@ -35,11 +27,8 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
   } = useDashboardGrid();
 
   const layout = useDashboardFormStore(s => s.config.layout);
-  const styles = useDashboardFormStore(s => s.config.styles);
   const widgets = useDashboardFormStore(s => s.widgets);
   const editMode = useDashboardFormStore(s => s.editMode);
-
-  const gridMargin = useMemo(() => parseGapToMargin(styles?.gap), [styles?.gap]);
 
   const gridItems = useMemo(() => {
     return layout.map(item => {
@@ -51,11 +40,12 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
             widget={widget}
             editMode={editMode}
             onRemove={() => handleRemoveWidget(item.widgetId)}
+            dashboardGlobalFilters={dashboardGlobalFilters}
           />
         </div>
       );
     });
-  }, [layout, widgets, editMode, handleRemoveWidget]);
+  }, [layout, widgets, editMode, handleRemoveWidget, dashboardGlobalFilters]);
 
   const onGridLayoutChange = useCallback(
     (newLayout: Layout) => {
@@ -100,7 +90,7 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
         draggableHandle=".drag-handle"
         compactType="vertical"
         preventCollision={false}
-        margin={gridMargin}
+        margin={[8, 8]}
       >
         {gridItems}
       </ReactGridLayout>

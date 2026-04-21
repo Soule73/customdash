@@ -12,10 +12,11 @@ const OPERATOR_KEYS: FilterOperator[] = [
   'not_contains',
   'greater_than',
   'less_than',
-  'greater_equal',
-  'less_equal',
-  'starts_with',
-  'ends_with',
+  'greater_than_or_equal',
+  'less_than_or_equal',
+  'between',
+  'in',
+  'not_in',
 ];
 
 interface FilterFieldProps {
@@ -51,6 +52,23 @@ export function FilterField({ filter, index, columns, onUpdate, onRemove }: Filt
     onUpdate(index, { value: e.target.value });
   };
 
+  const handleBetweenChange = (pos: 0 | 1, val: string) => {
+    const current = Array.isArray(filter.value) ? [...filter.value] : ['', ''];
+    current[pos] = val;
+    onUpdate(index, { value: current as (string | number)[] });
+  };
+
+  const handleListChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const parts = e.target.value.split(',').map(s => s.trim());
+    onUpdate(index, { value: parts });
+  };
+
+  const isBetween = filter.operator === 'between';
+  const isList = filter.operator === 'in' || filter.operator === 'not_in';
+
+  const betweenValues = Array.isArray(filter.value) ? filter.value : ['', ''];
+  const listValue = Array.isArray(filter.value) ? filter.value.join(', ') : String(filter.value);
+
   return (
     <div className="flex items-end gap-2 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-gray-800">
       <div className="flex-1 grid grid-cols-3 gap-3">
@@ -69,12 +87,36 @@ export function FilterField({ filter, index, columns, onUpdate, onRemove }: Filt
           onChange={handleOperatorChange}
           options={operatorOptions}
         />
-        <Input
-          label={t('widgets.filters.value')}
-          value={String(filter.value)}
-          onChange={handleValueChange}
-          placeholder={t('widgets.filters.valuePlaceholder')}
-        />
+        {isBetween ? (
+          <div className="flex gap-2">
+            <Input
+              label={t('widgets.filters.from')}
+              value={String(betweenValues[0] ?? '')}
+              onChange={e => handleBetweenChange(0, e.target.value)}
+              placeholder="min"
+            />
+            <Input
+              label={t('widgets.filters.to')}
+              value={String(betweenValues[1] ?? '')}
+              onChange={e => handleBetweenChange(1, e.target.value)}
+              placeholder="max"
+            />
+          </div>
+        ) : isList ? (
+          <Input
+            label={t('widgets.filters.value')}
+            value={listValue}
+            onChange={handleListChange}
+            placeholder={t('widgets.filters.listPlaceholder')}
+          />
+        ) : (
+          <Input
+            label={t('widgets.filters.value')}
+            value={String(filter.value)}
+            onChange={handleValueChange}
+            placeholder={t('widgets.filters.valuePlaceholder')}
+          />
+        )}
       </div>
 
       <button

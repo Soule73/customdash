@@ -40,7 +40,6 @@ function createWrapper() {
 
 const mockWidget: Widget = {
   id: 'widget-1',
-  widgetId: 'widget-1',
   title: 'Test Widget',
   type: 'bar',
   dataSourceId: 'ds-1',

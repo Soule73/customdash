@@ -26,7 +26,10 @@ export const createMetricsSlice: SliceCreator<MetricsSlice> = (set, get) => ({
       config: {
         ...state.config,
         metrics: [...state.config.metrics, newMetric],
-        metricStyles: [...state.config.metricStyles, widgetFormService.createMetricStyle()],
+        metricStyles: [
+          ...state.config.metricStyles,
+          widgetFormService.createMetricStyle(state.type),
+        ],
       },
       isDirty: true,
     });

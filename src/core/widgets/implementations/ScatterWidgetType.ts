@@ -13,14 +13,9 @@ import {
   WidgetFieldBuilder,
   MetricConfigFactory,
   EChartsParamsFactory,
-  SelectOptionFactory,
+  FieldSchemaFactory,
 } from '../factories';
 import { t } from '../utils/i18nHelper';
-
-const POINT_STYLE_OPTIONS = SelectOptionFactory.createFromI18nKeys(
-  ['circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'none'],
-  'widgets.options.symbolTypes',
-);
 
 /**
  * Scatter chart widget type implementation
@@ -37,8 +32,20 @@ export class ScatterWidgetType extends AbstractChartWidgetType {
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = ScatterChartWidget as unknown as WidgetComponent;
 
-  protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
+  protected buildMetricStyles(): Record<string, FieldSchema> {
     return {
+      color: FieldSchemaFactory.createColorField({
+        label: 'widgets.styles.color',
+        defaultValue: '#6366f1',
+      }),
+      borderColor: FieldSchemaFactory.createColorField({
+        label: 'widgets.styles.borderColor',
+        defaultValue: '#4f46e5',
+      }),
+      borderWidth: FieldSchemaFactory.createNumberField({
+        label: 'widgets.styles.borderWidth',
+        defaultValue: 1,
+      }),
       pointRadius: {
         default: 4,
         inputType: 'number',
@@ -46,16 +53,12 @@ export class ScatterWidgetType extends AbstractChartWidgetType {
           return t('widgets.styles.pointRadius');
         },
       },
-      pointStyle: {
-        default: 'circle',
-        inputType: 'select',
-        get label() {
-          return t('widgets.styles.pointStyle');
-        },
-        options: POINT_STYLE_OPTIONS,
-      },
-      opacity: WidgetFieldBuilder.opacity(),
+      opacity: WidgetFieldBuilder.opacity(0.8),
     };
+  }
+
+  protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
+    return {};
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {

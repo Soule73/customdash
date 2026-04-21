@@ -47,17 +47,38 @@ export function useDashboardGrid(): UseDashboardGridReturn {
       resizeObserver.observe(containerRef.current);
     }
 
+    // Also listen for transition end on the sidebar/main elements to catch sidebar collapse
+    const handleTransitionEnd = (e: TransitionEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        (e.propertyName === 'width' || e.propertyName === 'transform') &&
+        (target.tagName === 'ASIDE' || target.tagName === 'MAIN')
+      ) {
+        // Small delay to ensure layout is settled
+        setTimeout(updateDimensions, 50);
+      }
+    };
+
     window.addEventListener('resize', updateDimensions);
+    document.addEventListener('transitionend', handleTransitionEnd);
+
     return () => {
       resizeObserver.disconnect();
       window.removeEventListener('resize', updateDimensions);
+      document.removeEventListener('transitionend', handleTransitionEnd);
     };
   }, []);
 
+  // Recalculate dimensions when layout, edit mode, or style panel changes
   useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current.offsetWidth);
-    }
+    // Small delay to allow CSS transition to complete
+    const timer = setTimeout(() => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    }, 350); // Match transition duration
+
+    return () => clearTimeout(timer);
   }, [layout.length, editMode]);
 
   const gridLayout = useMemo((): GridLayoutItem[] => {

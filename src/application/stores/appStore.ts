@@ -2,11 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import i18n from '@core/i18n';
 import { STORAGE_KEYS } from '@/core/constants';
-import type { AppStore, Theme, Language, LayoutStyles } from '@type/app.types';
-
-const DEFAULT_LAYOUT_STYLES: LayoutStyles = {
-  padding: '24px',
-};
+import type { AppStore, Theme, Language } from '@type/app.types';
 
 const applyTheme = (theme: Theme) => {
   const root = document.documentElement;
@@ -28,8 +24,6 @@ export const useAppStore = create<AppStore>()(
     (set, get) => ({
       theme: 'system',
       language: 'fr',
-      layoutStyles: DEFAULT_LAYOUT_STYLES,
-      isLayoutStylesOverridden: false,
 
       setTheme: (theme: Theme) => {
         applyTheme(theme);
@@ -41,28 +35,9 @@ export const useAppStore = create<AppStore>()(
         set({ language });
       },
 
-      setLayoutStyles: (styles: Partial<LayoutStyles>) => {
-        set(state => ({
-          layoutStyles: { ...state.layoutStyles, ...styles },
-          isLayoutStylesOverridden: true,
-        }));
-      },
-
-      resetLayoutStyles: () => {
-        set({
-          layoutStyles: DEFAULT_LAYOUT_STYLES,
-          isLayoutStylesOverridden: false,
-        });
-      },
-
       reset: () => {
         const { theme, language } = get();
-        set({
-          theme,
-          language,
-          layoutStyles: DEFAULT_LAYOUT_STYLES,
-          isLayoutStylesOverridden: false,
-        });
+        set({ theme, language });
       },
     }),
     {

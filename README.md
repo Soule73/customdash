@@ -1,6 +1,6 @@
 # CustomDash
 
-Frontend React pour la plateforme de visualisation de donnees CustomDash.
+Frontend React de la plateforme de visualisation de données CustomDash — application interne.
 
 ## Stack Technique
 
@@ -8,24 +8,24 @@ Frontend React pour la plateforme de visualisation de donnees CustomDash.
 - **Vite 7** - Build tool
 - **Tailwind CSS 4** - Styling
 - **Zustand** - State management
-- **React Query** - Data fetching
+- **TanStack React Query v5** - Data fetching & cache
 - **React Router DOM 7** - Routing
-- **Chart.js** + **react-chartjs-2** - Visualisations
-- **React Grid Layout** - Dashboard layouts
+- **ECharts** + **echarts-for-react** - Visualisations (10 types de widgets)
+- **React Grid Layout** + **@dnd-kit** - Drag & drop dashboard
+- **i18next** - Internationalisation FR/EN
+- **Storybook** - Documentation des composants
 
 ## Architecture
 
-Le projet suit une **Clean Architecture** avec separation des responsabilites :
+Le projet suit une **Clean Architecture** avec séparation stricte des responsabilités :
 
 ```
 src/
-  core/           # Types, constantes, utilitaires
-  application/    # Stores Zustand, hooks metier
-  data/           # Services HTTP, repositories
-  domain/         # Entites et regles metier
-  infrastructure/ # Implementations externes
+  core/           # Types TypeScript, constantes, widgets registry, i18n, validation
+  application/    # Stores Zustand (auth, app, dashboard, widget-form), hooks React Query
+  data/           # Services HTTP centralisés (http.client.ts + services par entité)
   presentation/   # Composants React, pages
-  styles/         # CSS et Tailwind
+  styles/         # CSS global et Tailwind
 ```
 
 ### Packages Workspace

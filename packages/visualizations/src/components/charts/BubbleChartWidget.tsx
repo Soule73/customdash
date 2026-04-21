@@ -19,10 +19,22 @@ function BubbleChartWidgetInternal({
   className = '',
   loading = false,
   editMode = false,
+  onDataPointClick,
 }: BubbleChartWidgetProps): JSX.Element {
   const { option } = useBubbleChartVM({ data, config });
+  const events = onDataPointClick
+    ? { click: onDataPointClick as (params: unknown) => void }
+    : undefined;
 
-  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
+  return (
+    <BaseChart
+      option={option}
+      className={className}
+      loading={loading}
+      editMode={editMode}
+      onEvents={events}
+    />
+  );
 }
 
 /**

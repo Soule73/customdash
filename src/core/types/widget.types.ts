@@ -29,7 +29,6 @@ export interface WidgetConfigData {
 
 export interface Widget {
   id: string;
-  widgetId: string;
   title: string;
   description?: string;
   type: WidgetType;

@@ -92,7 +92,7 @@ export class ScatterChartService {
 
     return processedMetrics.map(({ metric, scatterData, index }) => {
       const style = metricStyles[index] || {};
-      const color = style.colors?.[0] || getDefaultColor(index);
+      const color = style.color || getDefaultColor(index);
       const label = metric.label || generateScatterMetricLabel(metric);
 
       return {
@@ -105,6 +105,8 @@ export class ScatterChartService {
         largeThreshold: scatterConfig?.largeThreshold,
         itemStyle: {
           color,
+          borderColor: style.borderColor,
+          borderWidth: style.borderWidth,
           opacity: style.opacity ?? 0.8,
         },
         ...emphasisConfig,

@@ -205,10 +205,10 @@ export function getKPITrendColor(
   if (trend === null) return '';
 
   if (threshold && Math.abs(trendPercent) >= threshold) {
-    return trend === 'up' ? 'text-green-700' : 'text-red-700';
+    return trend === 'up' ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400';
   }
 
-  return trend === 'up' ? 'text-green-500' : 'text-red-500';
+  return trend === 'up' ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
 }
 
 /**

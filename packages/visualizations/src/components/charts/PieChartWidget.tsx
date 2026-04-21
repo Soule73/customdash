@@ -21,10 +21,22 @@ function PieChartWidgetInternal({
   className = '',
   loading = false,
   editMode = false,
+  onDataPointClick,
 }: PieChartWidgetProps): JSX.Element {
   const { option } = usePieChartVM({ data, config, widgetParams });
+  const events = onDataPointClick
+    ? { click: onDataPointClick as (params: unknown) => void }
+    : undefined;
 
-  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
+  return (
+    <BaseChart
+      option={option}
+      className={className}
+      loading={loading}
+      editMode={editMode}
+      onEvents={events}
+    />
+  );
 }
 
 /**

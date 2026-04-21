@@ -72,29 +72,48 @@ describe('filterUtils', () => {
       expect(result.every(r => (r.age as number) < 28)).toBe(true);
     });
 
-    it('should filter with greater_equal operator', () => {
-      const filter: Filter = { field: 'age', operator: 'greater_equal', value: 28 };
+    it('should filter with greater_than_or_equal operator', () => {
+      const filter: Filter = { field: 'age', operator: 'greater_than_or_equal', value: 28 };
       const result = applyFilter(testData, filter);
       expect(result).toHaveLength(3);
     });
 
-    it('should filter with less_equal operator', () => {
-      const filter: Filter = { field: 'age', operator: 'less_equal', value: 28 };
+    it('should filter with less_than_or_equal operator', () => {
+      const filter: Filter = { field: 'age', operator: 'less_than_or_equal', value: 28 };
       const result = applyFilter(testData, filter);
       expect(result).toHaveLength(3);
     });
 
-    it('should filter with starts_with operator', () => {
-      const filter: Filter = { field: 'name', operator: 'starts_with', value: 'a' };
-      const result = applyFilter(testData, filter);
-      expect(result).toHaveLength(1);
-      expect(result[0].name).toBe('Alice');
+    it('should filter ISO date strings with greater_than_or_equal operator', () => {
+      const dateData = [
+        { event: 'A', date: '2024-01-01' },
+        { event: 'B', date: '2024-06-15' },
+        { event: 'C', date: '2024-12-31' },
+      ];
+      const filter: Filter = {
+        field: 'date',
+        operator: 'greater_than_or_equal',
+        value: '2024-06-15',
+      };
+      const result = applyFilter(dateData, filter);
+      expect(result).toHaveLength(2);
+      expect(result.map(r => r.event)).toEqual(['B', 'C']);
     });
 
-    it('should filter with ends_with operator', () => {
-      const filter: Filter = { field: 'name', operator: 'ends_with', value: 'e' };
-      const result = applyFilter(testData, filter);
-      expect(result).toHaveLength(3);
+    it('should filter ISO datetime strings with between operator', () => {
+      const dateData = [
+        { event: 'A', ts: '2024-01-01T00:00:00Z' },
+        { event: 'B', ts: '2024-06-15T12:00:00Z' },
+        { event: 'C', ts: '2024-12-31T23:59:59Z' },
+      ];
+      const filter: Filter = {
+        field: 'ts',
+        operator: 'between',
+        value: ['2024-01-01T00:00:00Z', '2024-06-15T12:00:00Z'],
+      };
+      const result = applyFilter(dateData, filter);
+      expect(result).toHaveLength(2);
+      expect(result.map(r => r.event)).toEqual(['A', 'B']);
     });
 
     it('should exclude rows with null/undefined field values', () => {

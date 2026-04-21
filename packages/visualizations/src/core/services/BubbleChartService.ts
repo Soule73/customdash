@@ -106,7 +106,7 @@ export class BubbleChartService {
 
     return processedMetrics.map(({ metric, bubbleData, index }) => {
       const style = metricStyles[index] || {};
-      const baseColor = style.colors?.[0] || getDefaultColor(index);
+      const baseColor = style.color || getDefaultColor(index);
       const label = metric.label || generateBubbleMetricLabel(metric);
 
       const color = echartsConfig?.gradient?.enabled
@@ -127,6 +127,8 @@ export class BubbleChartService {
         largeThreshold: scatterConfig?.largeThreshold,
         itemStyle: {
           color,
+          borderColor: style.borderColor,
+          borderWidth: style.borderWidth,
           opacity: style.opacity ?? 0.7,
         },
         ...emphasisConfig,

@@ -78,10 +78,9 @@ class DashboardFormServiceImpl implements IDashboardFormService {
       description: dashboard.description || '',
       visibility: dashboard.visibility,
       layout: dashboard.layout || [],
-      styles: dashboard.styles,
       timeRange: this.createDefaultTimeRange(),
       autoRefresh: this.createDefaultAutoRefresh(),
-      globalFilters: [],
+      globalFilters: (dashboard.globalFilters || []).map(f => ({ ...f })),
       pageSize: DEFAULT_PAGE_SIZE,
     };
   }
@@ -137,7 +136,6 @@ class DashboardFormServiceImpl implements IDashboardFormService {
     const payload: DashboardSaveData = {
       title: config.title.trim(),
       layout: config.layout,
-      styles: config.styles,
       visibility: config.visibility,
     };
 
@@ -164,6 +162,10 @@ class DashboardFormServiceImpl implements IDashboardFormService {
     if (config.autoRefresh.enabled && config.autoRefresh.intervalValue) {
       payload.autoRefreshIntervalValue = config.autoRefresh.intervalValue;
       payload.autoRefreshIntervalUnit = config.autoRefresh.intervalUnit;
+    }
+
+    if (config.globalFilters.length > 0) {
+      payload.globalFilters = config.globalFilters;
     }
 
     return payload;

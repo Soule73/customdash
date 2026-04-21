@@ -64,11 +64,16 @@ export const useWidgetFormStore = create<WidgetFormStore>()(
             fields: dsType === 'multiAxis' ? metric.fields : undefined,
           }));
 
+          const updatedMetricStyles = state.config.metrics.map(() =>
+            widgetFormService.createMetricStyle(type),
+          );
+
           set({
             type,
             config: {
               ...state.config,
               metrics: updatedMetrics,
+              metricStyles: updatedMetricStyles,
               widgetParams: updatedParams as WidgetParams,
             },
             isDirty: true,

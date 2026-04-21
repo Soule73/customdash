@@ -113,5 +113,17 @@
   "include": [
     "src",
     "packages"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "e2e",
+    "src/tests",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx"
   ]
 }

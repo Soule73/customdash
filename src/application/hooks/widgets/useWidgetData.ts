@@ -1,13 +1,15 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { ChartConfig } from '@customdash/visualizations';
+import type { ChartConfig, Filter } from '@customdash/visualizations';
 import { widgetFormService } from '@core/widgets';
+import { applyAllFilters } from '@customdash/visualizations';
 import { dataSourceService } from '@services/data-source.service';
 import type { Widget } from '@type/widget.types';
 
 interface UseWidgetDataOptions {
   widget: Widget;
   enabled?: boolean;
+  dashboardGlobalFilters?: Filter[];
 }
 
 interface UseWidgetDataReturn {
@@ -28,6 +30,7 @@ const STALE_TIME = 5 * 60 * 1000;
 export function useWidgetData({
   widget,
   enabled = true,
+  dashboardGlobalFilters,
 }: UseWidgetDataOptions): UseWidgetDataReturn {
   const dataSourceId = widget.dataSourceId;
 
@@ -44,12 +47,26 @@ export function useWidgetData({
 
   const config = useMemo(() => widgetFormService.buildChartConfig(widget), [widget]);
 
-  const data = rawData ?? [];
+  const widgetFilters = useMemo<Filter[]>(
+    () =>
+      (widget.config.globalFilters ?? []).map(f => ({
+        field: f.field,
+        operator: f.operator as Filter['operator'],
+        value: f.value as Filter['value'],
+      })),
+    [widget.config.globalFilters],
+  );
+
+  const filteredData = useMemo(() => {
+    const base = rawData ?? [];
+    return applyAllFilters(base, dashboardGlobalFilters, widgetFilters);
+  }, [rawData, dashboardGlobalFilters, widgetFilters]);
+
   const hasData = Array.isArray(rawData) && rawData.length > 0;
   const isRefreshing = isLoading && hasData;
 
   return {
-    data,
+    data: filteredData,
     config,
     isLoading,
     isRefreshing,

@@ -41,3 +41,12 @@ export type {
   ModalFooterProps,
   ModalTitleProps,
 } from './components/Modal';
+export { DataGrid } from './components/DataGrid';
+export type {
+  DataGridProps,
+  DataGridColumn,
+  DataGridColumnGroup,
+  DataGridColumnDef,
+  DataGridColumnType,
+  DataGridRow,
+} from './components/DataGrid';

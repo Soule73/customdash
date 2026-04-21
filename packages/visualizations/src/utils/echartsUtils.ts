@@ -353,7 +353,9 @@ export function createAdvancedLabelConfig(
     position,
     rotate,
     fontSize: params?.labelFontSize ?? 11,
-    color: params?.labelColor ?? '#333',
+    // Do not set a default color — let the active ECharts theme (dark/light) decide.
+    // Only apply an explicit color when the user has configured one.
+    ...(params?.labelColor ? { color: params.labelColor } : {}),
   };
 
   if (echartsParams?.labelFormatter) {
@@ -391,7 +393,10 @@ export function createBaseOptions(params?: ExtendedWidgetParams): EChartsOption 
   const baseOptions: EChartsOption = {
     backgroundColor: 'transparent',
     color: DEFAULT_COLORS,
-    textStyle,
+    // Only include textStyle when a color is explicitly set.
+    // An explicit textStyle: undefined key can override the ECharts dark theme's
+    // global text color during option merging.
+    ...(textStyle ? { textStyle } : {}),
     title: params?.title
       ? {
           text: params.title,
@@ -483,9 +488,17 @@ export function createAxisConfig(
   const axisLineStyle = themeColors?.gridColor
     ? { lineStyle: { color: themeColors.gridColor } }
     : {};
-  const splitLineStyle = themeColors?.gridColor
-    ? { lineStyle: { color: themeColors.gridColor, type: axisConfig?.axisLineStyle ?? 'solid' } }
-    : { lineStyle: { type: axisConfig?.axisLineStyle ?? 'solid' } };
+  // Only set lineStyle when there is an explicit color or a non-default line type.
+  // An empty spread lets the active ECharts theme (dark/light) supply its own grid color.
+  const splitLineStyle: Record<string, unknown> =
+    themeColors?.gridColor || axisConfig?.axisLineStyle
+      ? {
+          lineStyle: {
+            ...(themeColors?.gridColor ? { color: themeColors.gridColor } : {}),
+            ...(axisConfig?.axisLineStyle ? { type: axisConfig.axisLineStyle } : {}),
+          },
+        }
+      : {};
 
   const labelRotate = axisConfig?.axisLabelRotate ?? 0;
   const categoryAxis = {
@@ -581,7 +594,7 @@ export function createLabelConfig(
     show: true,
     position: 'top',
     fontSize: params?.labelFontSize ?? 11,
-    color: params?.labelColor ?? '#333',
+    ...(params?.labelColor ? { color: params.labelColor } : {}),
   };
 }
 

@@ -233,6 +233,7 @@ export interface LineSpecificConfig {
   areaOpacity?: number;
   step?: LineStep;
   connectNulls?: boolean;
+  stack?: string;
   symbol?: SymbolType;
   symbolSize?: number;
   smooth?: boolean | number;

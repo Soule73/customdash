@@ -7,6 +7,10 @@ export const widgetService = {
     return httpClient.get<Widget[]>(url);
   },
 
+  async getByConversation(conversationId: string): Promise<Widget[]> {
+    return httpClient.get<Widget[]>(`/widgets?conversationId=${encodeURIComponent(conversationId)}`);
+  },
+
   async getById(id: string): Promise<Widget> {
     return httpClient.get<Widget>(`/widgets/${id}`);
   },

@@ -120,8 +120,6 @@ export interface WidgetParams {
   showGrid?: boolean;
   stacked?: boolean;
   horizontal?: boolean;
-  tooltipFormat?: string;
-  labelFormat?: string;
   labelColor?: string;
   labelFontSize?: number;
   borderWidth?: number;
@@ -136,8 +134,62 @@ export interface WidgetParams {
   format?: FormatType;
   currency?: string;
   decimals?: number;
+  themeColors?: ThemeColors;
   echarts?: EChartsWidgetParams;
 }
+
+/**
+ * WidgetParams specific for Radar charts.
+ * Removes non-relevant params (barThickness, cutout, tension, stacked...).
+ * Polygon appearance fields (seriesColor, seriesColors, seriesBorderWidth, seriesOpacity)
+ * are defined here instead of metricStyles — a radar metric is an axis, not a series.
+ */
+export interface RadarWidgetParams {
+  title?: string;
+  titleAlign?: TitleAlign;
+  legend?: boolean;
+  legendPosition?: LegendPosition;
+  showTooltip?: boolean;
+  labelColor?: string;
+  labelFontSize?: number;
+  showPoints?: boolean;
+  showValues?: boolean;
+  echarts?: EChartsWidgetParams;
+  /** Color of the polygon in global (non-groupBy) mode */
+  seriesColor?: string;
+  /** Color palette for groupBy mode — one color per group polygon */
+  seriesColors?: string[];
+  /** Thickness of the polygon outline */
+  seriesBorderWidth?: number;
+  /** Opacity of the filled area inside the polygon */
+  seriesOpacity?: number;
+}
+
+/**
+ * WidgetParams specifiques for Scatter charts.
+ * Includes xLabel/yLabel (axes), excludes bar/line/pie params.
+ *
+ */
+export type ScatterWidgetParams = Pick<
+  WidgetParams,
+  | 'title'
+  | 'titleAlign'
+  | 'legend'
+  | 'legendPosition'
+  | 'showTooltip'
+  | 'showGrid'
+  | 'xLabel'
+  | 'yLabel'
+  | 'labelColor'
+  | 'labelFontSize'
+  | 'showValues'
+  | 'showPoints'
+  | 'pointRadius'
+  | 'echarts'
+>;
+
+/** Alias for BubbleChart — same parameters as Scatter. */
+export type BubbleWidgetParams = ScatterWidgetParams;
 
 export interface ScatterMetricConfig extends Metric {
   x: string;
@@ -149,17 +201,20 @@ export interface BubbleMetricConfig extends ScatterMetricConfig {
   r: string;
 }
 
-export interface BubbleChartConfig extends BaseChartConfig {
+export interface BubbleChartConfig extends Omit<BaseChartConfig, 'widgetParams'> {
   metrics: BubbleMetricConfig[];
+  widgetParams?: BubbleWidgetParams;
 }
 
-export interface ScatterChartConfig extends BaseChartConfig {
+export interface ScatterChartConfig extends Omit<BaseChartConfig, 'widgetParams'> {
   metrics: ScatterMetricConfig[];
+  widgetParams?: ScatterWidgetParams;
 }
 
-export interface RadarChartConfig extends BaseChartConfig {
+export interface RadarChartConfig extends Omit<BaseChartConfig, 'widgetParams'> {
   metrics: Metric[];
   groupBy?: string;
+  widgetParams?: RadarWidgetParams;
 }
 
 export interface KPIWidgetParams extends WidgetParams {
@@ -221,7 +276,6 @@ export interface TableColumn {
 export interface TableWidgetParams extends WidgetParams {
   pageSize?: number;
   searchable?: boolean;
-  sortable?: boolean;
   striped?: boolean;
   compact?: boolean;
 }

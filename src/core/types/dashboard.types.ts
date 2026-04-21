@@ -1,24 +1,4 @@
-export interface DashboardStyles {
-  backgroundColor?: string;
-  backgroundGradient?: string;
-  padding?: string;
-  gap?: string;
-  titleFontSize?: string;
-  titleColor?: string;
-}
-
-export interface LayoutItemStyles {
-  backgroundColor?: string;
-  backgroundGradient?: string;
-  borderColor?: string;
-  borderWidth?: string;
-  borderRadius?: string;
-  boxShadow?: string;
-  padding?: string;
-  textColor?: string;
-  labelColor?: string;
-  gridColor?: string;
-}
+import type { DashboardFilter } from './dashboard-form.types';
 
 export interface Dashboard {
   id: string;
@@ -26,9 +6,9 @@ export interface Dashboard {
   description?: string;
   ownerId: string;
   layout: LayoutItem[];
-  styles?: DashboardStyles;
   visibility: 'private' | 'public' | 'shared';
   sharedWith: string[];
+  globalFilters: DashboardFilter[];
   createdAt: string;
   updatedAt: string;
 }
@@ -42,14 +22,12 @@ export interface LayoutItem {
   h: number;
   minW?: number;
   minH?: number;
-  styles?: LayoutItemStyles;
 }
 
 export interface CreateDashboardData {
   title: string;
   description?: string;
   layout?: LayoutItem[];
-  styles?: DashboardStyles;
   visibility?: 'private' | 'public' | 'shared';
 }
 
@@ -57,7 +35,7 @@ export interface UpdateDashboardData {
   title?: string;
   description?: string;
   layout?: LayoutItem[];
-  styles?: DashboardStyles;
   visibility?: 'private' | 'public' | 'shared';
   sharedWith?: string[];
+  globalFilters?: import('./dashboard-form.types').DashboardFilter[];
 }

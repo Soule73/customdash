@@ -1,16 +1,10 @@
 import { useState, useEffect } from 'react';
-import {
-  PaintBrushIcon,
-  GlobeAltIcon,
-  CalculatorIcon,
-  CheckIcon,
-  CloudArrowUpIcon,
-} from '@heroicons/react/24/outline';
+import { PaintBrushIcon, GlobeAltIcon, CalculatorIcon } from '@heroicons/react/24/outline';
 import { Card, Avatar, Input, Select, Switch } from '@customdash/ui';
 import { cn, formatNumber, formatCurrency, formatDate } from '@customdash/utils';
 import { useAuthStore } from '@stores/authStore';
 import { useAppStore } from '@stores/appStore';
-import { useFormatConfig, usePreferencesSync } from '@hooks';
+import { useFormatConfig, usePreferencesSync, useNotifications } from '@hooks';
 import { useAppTranslation } from '@hooks';
 import { LOCALE_OPTIONS, CURRENCY_OPTIONS, DATE_FORMAT_OPTIONS } from '@type/format-config.types';
 import type { Theme, Language } from '@type/app.types';
@@ -44,8 +38,7 @@ export function SettingsPage() {
   const { t } = useAppTranslation();
   const { user } = useAuthStore();
   const [activeSection, setActiveSection] = useState<SectionId>('appearance');
-  const [saved, setSaved] = useState(false);
-  const [syncing, setSyncing] = useState(false);
+  const { showSuccess } = useNotifications();
 
   // Preferences sync hook
   const { loadPreferences, saveTheme, saveLanguage, saveFormatConfigDebounced, isAuthenticated } =
@@ -80,23 +73,16 @@ export function SettingsPage() {
     setIncludeTime,
   } = useFormatConfig();
 
-  const showSavedIndicator = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-
-  const showSyncingIndicator = () => {
-    setSyncing(true);
-    setTimeout(() => setSyncing(false), 1500);
+  const notifySaved = () => {
+    showSuccess(t('settings.saved'), { duration: 2000 });
   };
 
   const handleThemeChange = (value: string) => {
     const newTheme = value as Theme;
     setTheme(newTheme);
-    showSavedIndicator();
+    notifySaved();
     // Save to server
     if (isAuthenticated) {
-      showSyncingIndicator();
       saveTheme(newTheme);
     }
   };
@@ -104,17 +90,16 @@ export function SettingsPage() {
   const handleLanguageChange = (value: string) => {
     const newLanguage = value as Language;
     setLanguage(newLanguage);
-    showSavedIndicator();
+    notifySaved();
     // Save to server
     if (isAuthenticated) {
-      showSyncingIndicator();
       saveLanguage(newLanguage);
     }
   };
 
   const handleLocaleChange = (value: string) => {
     setLocale(value);
-    showSavedIndicator();
+    notifySaved();
     // Save to server with debounce
     if (isAuthenticated) {
       saveFormatConfigDebounced({ locale: value });
@@ -123,7 +108,7 @@ export function SettingsPage() {
 
   const handleCurrencyChange = (value: string) => {
     setCurrency(value);
-    showSavedIndicator();
+    notifySaved();
     if (isAuthenticated) {
       saveFormatConfigDebounced({ currency: value });
     }
@@ -132,7 +117,7 @@ export function SettingsPage() {
   const handleDecimalsChange = (value: string) => {
     const newDecimals = parseInt(value, 10) || 2;
     setDecimals(newDecimals);
-    showSavedIndicator();
+    notifySaved();
     if (isAuthenticated) {
       saveFormatConfigDebounced({ decimals: newDecimals });
     }
@@ -141,7 +126,7 @@ export function SettingsPage() {
   const handleDateFormatChange = (value: string) => {
     const newDateFormat = value as DateFormatStyle;
     setDateFormat(newDateFormat);
-    showSavedIndicator();
+    notifySaved();
     if (isAuthenticated) {
       saveFormatConfigDebounced({ dateFormat: newDateFormat });
     }
@@ -149,7 +134,7 @@ export function SettingsPage() {
 
   const handleNullValueChange = (value: string) => {
     setNullValue(value);
-    showSavedIndicator();
+    notifySaved();
     if (isAuthenticated) {
       saveFormatConfigDebounced({ nullValue: value });
     }
@@ -157,7 +142,7 @@ export function SettingsPage() {
 
   const handleIncludeTimeChange = (checked: boolean) => {
     setIncludeTime(checked);
-    showSavedIndicator();
+    notifySaved();
     if (isAuthenticated) {
       saveFormatConfigDebounced({ includeTime: checked });
     }
@@ -170,27 +155,11 @@ export function SettingsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            {t('settings.title')}
-          </h1>
-          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.subtitle')}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          {syncing && isAuthenticated && (
-            <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400">
-              <CloudArrowUpIcon className="h-5 w-5 animate-pulse" />
-              <span className="text-sm font-medium">{t('settings.syncing')}</span>
-            </div>
-          )}
-          {saved && !syncing && (
-            <div className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-green-700 dark:bg-green-900/20 dark:text-green-400">
-              <CheckIcon className="h-5 w-5" />
-              <span className="text-sm font-medium">{t('settings.saved')}</span>
-            </div>
-          )}
-        </div>
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          {t('settings.title')}
+        </h1>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t('settings.subtitle')}</p>
       </div>
 
       {/* User Profile Card */}

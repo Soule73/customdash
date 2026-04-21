@@ -1,10 +1,20 @@
 import { useMemo } from 'react';
 import type { EChartsOption } from 'echarts';
-import type { ChartConfig, WidgetParams, ProcessedData } from '../interfaces';
+import type { ChartConfig, WidgetParams, ProcessedData, ThemeColors } from '../interfaces';
 import type { EChartsWidgetParams } from '../types/echarts.types';
 import { ChartDataService } from '../core/services/ChartDataService';
 import { PieSeriesBuilder } from '../core/abstracts/AbstractSeriesBuilder';
 import { PieChartOptionsBuilder } from '../core/abstracts/AbstractOptionsBuilder';
+import { useEChartsTheme } from './useEChartsTheme';
+
+/** Colors injected into ECharts options when dark mode is active */
+const DARK_THEME_COLORS: ThemeColors = {
+  textColor: '#e2e8f0',
+  labelColor: '#cbd5e1',
+  gridColor: '#334155',
+  tooltipBackground: '#1e293b',
+  tooltipTextColor: '#f1f5f9',
+};
 
 export interface PieChartVM {
   option: EChartsOption;
@@ -25,9 +35,19 @@ export interface PieChartInput {
  * @see [PieSeriesBuilder](../core/abstracts/AbstractSeriesBuilder.ts)
  */
 export function usePieChartVM({ data, config, widgetParams }: PieChartInput): PieChartVM {
+  const echartsTheme = useEChartsTheme();
+  // Inject explicit label colors when dark mode is active so pie slice labels
+  // are always readable regardless of ECharts built-in dark theme behavior.
+  const themeColors = echartsTheme === 'dark' ? DARK_THEME_COLORS : undefined;
+
   const dataContext = useMemo(
-    () => ChartDataService.createDataContext(data, config, widgetParams),
-    [data, config, widgetParams],
+    () =>
+      ChartDataService.createDataContext(data, config, {
+        ...widgetParams,
+        themeColors: themeColors ?? widgetParams?.themeColors,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data, config, widgetParams, echartsTheme],
   );
 
   const series = useMemo(() => {

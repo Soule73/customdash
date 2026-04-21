@@ -28,7 +28,7 @@ export type WidgetTypeEnum = z.infer<typeof widgetTypeSchema>;
 // AGGREGATION ENUM
 // =============================================================================
 
-export const aggregationTypeSchema = z.enum(['sum', 'avg', 'count', 'min', 'max', 'first', 'last']);
+export const aggregationTypeSchema = z.enum(['sum', 'avg', 'count', 'min', 'max', 'none']);
 
 export type AggregationTypeEnum = z.infer<typeof aggregationTypeSchema>;
 
@@ -59,7 +59,7 @@ export type WidgetFormBaseData = z.infer<typeof widgetFormBaseSchema>;
 export const metricConfigSchema = z.object({
   id: z.string(),
   field: z.string().min(1, 'validation.fieldRequired'),
-  aggregation: aggregationTypeSchema,
+  agg: aggregationTypeSchema,
   label: z.string().optional(),
 });
 
@@ -75,9 +75,32 @@ export type MetricConfigData = z.infer<typeof metricConfigSchema>;
 export const bucketConfigSchema = z.object({
   id: z.string(),
   field: z.string().min(1, 'validation.fieldRequired'),
-  type: z.enum(['terms', 'date_histogram', 'histogram']).default('terms'),
+  type: z
+    .enum([
+      'terms',
+      'date_histogram',
+      'histogram',
+      'range',
+      'split_series',
+      'split_rows',
+      'split_chart',
+    ])
+    .default('terms'),
   order: z.enum(['asc', 'desc']).default('desc'),
   size: z.number().min(1).max(1000).default(10),
+  dateInterval: z.enum(['minute', 'hour', 'day', 'week', 'month', 'year']).optional(),
+  interval: z.number().positive().optional(),
+  minDocCount: z.number().min(0).optional(),
+  ranges: z
+    .array(
+      z.object({
+        from: z.number().optional(),
+        to: z.number().optional(),
+        label: z.string().optional(),
+      }),
+    )
+    .optional(),
+  splitType: z.enum(['series', 'rows', 'chart']).optional(),
 });
 
 export type BucketConfigData = z.infer<typeof bucketConfigSchema>;
@@ -93,8 +116,8 @@ export const filterOperatorSchema = z.enum([
   'not_contains',
   'greater_than',
   'less_than',
-  'greater_than_or_equals',
-  'less_than_or_equals',
+  'greater_than_or_equal',
+  'less_than_or_equal',
   'between',
   'in',
   'not_in',

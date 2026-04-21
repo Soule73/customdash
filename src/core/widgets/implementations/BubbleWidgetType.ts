@@ -9,7 +9,12 @@ import type {
   WidgetCategory,
 } from '../interfaces';
 import { AbstractChartWidgetType } from '../abstracts';
-import { WidgetFieldBuilder, MetricConfigFactory, EChartsParamsFactory } from '../factories';
+import {
+  WidgetFieldBuilder,
+  MetricConfigFactory,
+  EChartsParamsFactory,
+  FieldSchemaFactory,
+} from '../factories';
 import { t } from '../utils/i18nHelper';
 
 /**
@@ -27,17 +32,26 @@ export class BubbleWidgetType extends AbstractChartWidgetType {
   protected readonly widgetCategory: WidgetCategory = 'chart';
   protected readonly widgetComponent = BubbleChartWidget as unknown as WidgetComponent;
 
-  protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
+  protected buildMetricStyles(): Record<string, FieldSchema> {
     return {
-      pointRadius: {
-        default: 5,
-        inputType: 'number',
-        get label() {
-          return t('widgets.styles.pointRadius');
-        },
-      },
-      opacity: WidgetFieldBuilder.opacity(),
+      color: FieldSchemaFactory.createColorField({
+        label: 'widgets.styles.color',
+        defaultValue: '#6366f1',
+      }),
+      borderColor: FieldSchemaFactory.createColorField({
+        label: 'widgets.styles.borderColor',
+        defaultValue: '#4f46e5',
+      }),
+      borderWidth: FieldSchemaFactory.createNumberField({
+        label: 'widgets.styles.borderWidth',
+        defaultValue: 1,
+      }),
+      opacity: WidgetFieldBuilder.opacity(0.7),
     };
+  }
+
+  protected getChartSpecificMetricStyles(): Record<string, FieldSchema> {
+    return {};
   }
 
   protected getChartSpecificParams(): Record<string, FieldSchema> {

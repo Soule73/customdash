@@ -19,6 +19,7 @@ export const widgets = {
   configureMetrics: 'Configure metrics to display preview',
   noDataAvailable: 'No data available',
   unsupportedType: 'Unsupported widget type',
+  loadError: 'Failed to load widget data',
   types: {
     kpi: 'KPI',
     kpiDescription: 'Key performance indicator',
@@ -91,6 +92,11 @@ export const widgets = {
     description: 'Description',
     showIcon: 'Show icon',
     iconColor: 'Icon color',
+    searchable: 'Search enabled',
+    striped: 'Striped rows',
+    compact: 'Compact mode',
+    showPercent: 'Show percent',
+    trendThreshold: 'Trend threshold',
   },
   bar: {
     stacked: 'Stack bars',
@@ -430,10 +436,8 @@ export const widgets = {
     not_contains: 'Does not contain',
     greater_than: 'Greater than',
     less_than: 'Less than',
-    greater_equal: 'Greater or equal',
-    less_equal: 'Less or equal',
-    starts_with: 'Starts with',
-    ends_with: 'Ends with',
+    greater_than_or_equal: 'Greater or equal',
+    less_than_or_equal: 'Less or equal',
   },
   categories: {
     chart: 'Charts',

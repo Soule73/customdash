@@ -26,7 +26,7 @@ export function WidgetSelectModal({ open, onClose }: WidgetSelectModalProps) {
     if (!allWidgets) return [];
 
     return allWidgets.filter((widget: Widget) => {
-      if (existingWidgetIds.has(widget.widgetId)) return false;
+      if (existingWidgetIds.has(widget.id)) return false;
 
       if (search) {
         const searchLower = search.toLowerCase();
@@ -42,7 +42,7 @@ export function WidgetSelectModal({ open, onClose }: WidgetSelectModalProps) {
   }, [allWidgets, existingWidgetIds, search]);
 
   const handleSelect = (widget: Widget) => {
-    addWidget(widget.widgetId, widget);
+    addWidget(widget.id, widget);
     onClose();
   };
 

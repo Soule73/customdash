@@ -3,6 +3,7 @@ import type {
   Metric,
   MetricStyle,
   RadarChartConfig,
+  RadarWidgetParams,
   ExtendedWidgetParams,
   ChartValidationResult,
   ThemeColors,
@@ -40,12 +41,20 @@ export interface RadarChartInput {
   config: RadarChartConfig & { echarts?: EChartsWidgetParams; themeColors?: ThemeColors };
 }
 
+/** ExtendedWidgetParams enriched with radar-specific polygon style fields */
+export interface RadarExtendedWidgetParams extends ExtendedWidgetParams {
+  seriesColor?: string;
+  seriesColors?: string[];
+  seriesBorderWidth?: number;
+  seriesOpacity?: number;
+}
+
 export interface RadarDataContext {
   filteredData: Record<string, unknown>[];
   metrics: Metric[];
   metricStyles: MetricStyle[];
   groupBy?: string;
-  params: ExtendedWidgetParams;
+  params: RadarExtendedWidgetParams;
   validation: ChartValidationResult;
 }
 
@@ -96,12 +105,13 @@ export class RadarChartService {
     const metricStyles = input.config.metricStyles || [];
     const groupBy = input.config.groupBy;
 
-    const params: ExtendedWidgetParams = {
+    const params: RadarExtendedWidgetParams = {
       ...input.config.widgetParams,
       ...widgetParams,
       echarts: {
         ...input.config.widgetParams?.echarts,
-        ...input.config.echarts,
+        ...((input.config as RadarChartConfig & { echarts?: unknown })
+          .echarts as RadarWidgetParams['echarts']),
         ...widgetParams?.echarts,
       },
       themeColors: {
@@ -126,7 +136,7 @@ export class RadarChartService {
    * Compute radar data - handles both global aggregation and groupBy modes
    */
   static computeRadarData(context: RadarDataContext): RadarDataResult {
-    const { metrics, filteredData, groupBy, metricStyles } = context;
+    const { metrics, filteredData, groupBy, params } = context;
 
     if (!metrics || metrics.length === 0) {
       return this.getDefaultRadarData();
@@ -140,16 +150,10 @@ export class RadarChartService {
     const labels = validMetrics.map(m => m.label || `${m.agg}(${m.field})`);
 
     if (groupBy && groupBy.trim() !== '') {
-      return this.computeGroupedRadarData(
-        filteredData,
-        validMetrics,
-        groupBy,
-        labels,
-        metricStyles,
-      );
+      return this.computeGroupedRadarData(filteredData, validMetrics, groupBy, labels, params);
     }
 
-    return this.computeGlobalRadarData(filteredData, validMetrics, labels, metricStyles);
+    return this.computeGlobalRadarData(filteredData, validMetrics, labels, params);
   }
 
   /**
@@ -159,7 +163,7 @@ export class RadarChartService {
     data: Record<string, unknown>[],
     metrics: Metric[],
     labels: string[],
-    metricStyles: MetricStyle[],
+    params: RadarExtendedWidgetParams,
   ): RadarDataResult {
     const values = metrics.map(m => aggregate(data, m.agg, m.field));
     const indicators = labels.map((name, idx) => ({
@@ -167,8 +171,7 @@ export class RadarChartService {
       max: (values[idx] || 1) * 1.2,
     }));
 
-    const style = metricStyles[0] || {};
-    const color = style.colors?.[0] || getDefaultColor(0);
+    const color = params.seriesColor || getDefaultColor(0);
 
     return {
       indicators,
@@ -184,7 +187,7 @@ export class RadarChartService {
     metrics: Metric[],
     groupBy: string,
     labels: string[],
-    metricStyles: MetricStyle[],
+    params: RadarExtendedWidgetParams,
   ): RadarDataResult {
     const groups = new Map<string, Record<string, unknown>[]>();
 
@@ -207,8 +210,7 @@ export class RadarChartService {
       const values = metrics.map(m => aggregate(groupData, m.agg, m.field));
       allValues.push(values);
 
-      const style = metricStyles[colorIndex] || {};
-      const color = style.colors?.[0] || getDefaultColor(colorIndex);
+      const color = params.seriesColors?.[colorIndex] || getDefaultColor(colorIndex);
 
       seriesData.push({ name: groupName, value: values, color });
       colorIndex++;
@@ -248,7 +250,7 @@ export class RadarChartService {
     const hasAreaStyle = radarConfig?.areaStyle !== false;
     const areaOpacity = radarConfig?.areaOpacity ?? 0.25;
 
-    const dataItems = radarData.seriesData.map(item => {
+    const dataItems = radarData.seriesData.map((item, _index) => {
       const baseColor = item.color;
       const color = echartsConfig?.gradient?.enabled
         ? createGradientColor(baseColor, { ...echartsConfig.gradient, direction: 'radial' })
@@ -258,8 +260,10 @@ export class RadarChartService {
         name: item.name,
         value: item.value,
         itemStyle: { color: baseColor },
-        lineStyle: { color: baseColor, width: 2 },
-        areaStyle: hasAreaStyle ? { color: color as string, opacity: areaOpacity } : undefined,
+        lineStyle: { color: baseColor, width: params.seriesBorderWidth ?? 2 },
+        areaStyle: hasAreaStyle
+          ? { color: color as string, opacity: params.seriesOpacity ?? areaOpacity }
+          : undefined,
         ...emphasisConfig,
       };
     });
@@ -274,7 +278,10 @@ export class RadarChartService {
           show: params.showValues ?? false,
           formatter: echartsConfig?.labelFormatter ?? '{c}',
           fontSize: params.labelFontSize ?? 11,
-          color: params.labelColor,
+          // Prioritize themeColors (dark mode injection) over user-configured labelColor
+          ...(params.themeColors?.labelColor || params.labelColor
+            ? { color: params.themeColors?.labelColor ?? params.labelColor }
+            : {}),
         },
       },
     ];
@@ -312,22 +319,24 @@ export class RadarChartService {
         radius: '65%',
         axisName: showAxisName
           ? {
-              color: themeColors?.labelColor ?? '#666',
+              show: true,
+              // Only set color when explicitly available — absence lets ECharts theme decide
+              ...(themeColors?.labelColor ? { color: themeColors.labelColor } : {}),
               fontSize: 12,
             }
           : { show: false },
-        splitLine: {
-          lineStyle: { color: themeColors?.gridColor ?? 'rgba(0, 0, 0, 0.1)' },
-        },
+        splitLine: themeColors?.gridColor
+          ? { lineStyle: { color: themeColors.gridColor } }
+          : undefined,
         splitArea: {
           show: true,
           areaStyle: {
             color: ['rgba(250,250,250,0.3)', 'rgba(200,200,200,0.3)'],
           },
         },
-        axisLine: {
-          lineStyle: { color: themeColors?.gridColor ?? 'rgba(0, 0, 0, 0.1)' },
-        },
+        axisLine: themeColors?.gridColor
+          ? { lineStyle: { color: themeColors.gridColor } }
+          : undefined,
       },
       series,
     });

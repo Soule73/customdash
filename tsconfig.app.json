@@ -118,6 +118,7 @@
     "node_modules",
     "dist",
     "e2e",
+    "src/tests",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",

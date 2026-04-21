@@ -2,6 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { ReactGridLayout, type Layout, type LayoutItem } from 'react-grid-layout/legacy';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
+import type { Filter } from '@customdash/visualizations';
 import { useDashboardGrid } from '@hooks/dashboards';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppTranslation } from '@hooks';
@@ -11,9 +12,10 @@ import 'react-resizable/css/styles.css';
 
 interface DashboardGridProps {
   onAddWidget?: () => void;
+  dashboardGlobalFilters?: Filter[];
 }
 
-export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
+export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: DashboardGridProps) {
   const { t } = useAppTranslation();
   const {
     containerRef,
@@ -38,11 +40,12 @@ export function DashboardGrid({ onAddWidget }: DashboardGridProps) {
             widget={widget}
             editMode={editMode}
             onRemove={() => handleRemoveWidget(item.widgetId)}
+            dashboardGlobalFilters={dashboardGlobalFilters}
           />
         </div>
       );
     });
-  }, [layout, widgets, editMode, handleRemoveWidget]);
+  }, [layout, widgets, editMode, handleRemoveWidget, dashboardGlobalFilters]);
 
   const onGridLayoutChange = useCallback(
     (newLayout: Layout) => {

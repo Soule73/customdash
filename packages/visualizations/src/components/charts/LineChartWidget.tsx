@@ -21,10 +21,22 @@ function LineChartWidgetInternal({
   className = '',
   loading = false,
   editMode = false,
+  onDataPointClick,
 }: LineChartWidgetProps): JSX.Element {
   const { option } = useLineChartVM({ data, config, widgetParams });
+  const events = onDataPointClick
+    ? { click: onDataPointClick as (params: unknown) => void }
+    : undefined;
 
-  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
+  return (
+    <BaseChart
+      option={option}
+      className={className}
+      loading={loading}
+      editMode={editMode}
+      onEvents={events}
+    />
+  );
 }
 
 /**

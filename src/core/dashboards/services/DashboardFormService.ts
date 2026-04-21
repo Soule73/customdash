@@ -80,7 +80,7 @@ class DashboardFormServiceImpl implements IDashboardFormService {
       layout: dashboard.layout || [],
       timeRange: this.createDefaultTimeRange(),
       autoRefresh: this.createDefaultAutoRefresh(),
-      globalFilters: [],
+      globalFilters: (dashboard.globalFilters || []).map(f => ({ ...f })),
       pageSize: DEFAULT_PAGE_SIZE,
     };
   }
@@ -162,6 +162,10 @@ class DashboardFormServiceImpl implements IDashboardFormService {
     if (config.autoRefresh.enabled && config.autoRefresh.intervalValue) {
       payload.autoRefreshIntervalValue = config.autoRefresh.intervalValue;
       payload.autoRefreshIntervalUnit = config.autoRefresh.intervalUnit;
+    }
+
+    if (config.globalFilters.length > 0) {
+      payload.globalFilters = config.globalFilters;
     }
 
     return payload;

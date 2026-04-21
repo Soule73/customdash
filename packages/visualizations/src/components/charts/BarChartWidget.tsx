@@ -21,10 +21,22 @@ function BarChartWidgetInternal({
   className = '',
   loading = false,
   editMode = false,
+  onDataPointClick,
 }: BarChartWidgetProps): JSX.Element {
   const { option } = useBarChartVM({ data, config, widgetParams });
+  const events = onDataPointClick
+    ? { click: onDataPointClick as (params: unknown) => void }
+    : undefined;
 
-  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
+  return (
+    <BaseChart
+      option={option}
+      className={className}
+      loading={loading}
+      editMode={editMode}
+      onEvents={events}
+    />
+  );
 }
 
 /**

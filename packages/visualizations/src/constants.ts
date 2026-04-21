@@ -93,6 +93,9 @@ export const FILTER_OPERATOR_OPTIONS: SelectOption<FilterOperator>[] = [
   { value: 'less_than', label: 'Less than' },
   { value: 'greater_than_or_equal', label: 'Greater or equal' },
   { value: 'less_than_or_equal', label: 'Less or equal' },
+  { value: 'between', label: 'Between' },
+  { value: 'in', label: 'In list' },
+  { value: 'not_in', label: 'Not in list' },
 ];
 
 /**
@@ -107,6 +110,9 @@ export const VALID_FILTER_OPERATORS: FilterOperator[] = [
   'less_than',
   'greater_than_or_equal',
   'less_than_or_equal',
+  'between',
+  'in',
+  'not_in',
 ];
 
 /**
@@ -314,4 +320,7 @@ export const VALID_OPERATORS: FilterOperator[] = [
   'less_than',
   'greater_than_or_equal',
   'less_than_or_equal',
+  'between',
+  'in',
+  'not_in',
 ];

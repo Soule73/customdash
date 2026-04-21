@@ -4,12 +4,24 @@ import type { ChartValidationResult } from '../interfaces';
 import { ChartDataService } from '../services/ChartDataService';
 import { VisualizationContainer } from '../../components/common';
 
+export interface EChartClickParams {
+  componentType: string;
+  seriesType?: string;
+  seriesIndex?: number;
+  seriesName?: string;
+  name: string;
+  dataIndex: number;
+  data: unknown;
+  value: unknown;
+}
+
 export interface ChartWidgetBaseProps<TConfig extends BaseChartConfig = BaseChartConfig> {
   data: Record<string, unknown>[];
   config: TConfig;
   className?: string;
   loading?: boolean;
   editMode?: boolean;
+  onDataPointClick?: (params: EChartClickParams) => void;
 }
 
 export interface ChartWrapperConfig<TConfig extends BaseChartConfig = BaseChartConfig> {

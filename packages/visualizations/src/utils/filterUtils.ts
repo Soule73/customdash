@@ -60,6 +60,23 @@ export function applyFilter(
       case 'less_than_or_equal':
         return Number(fieldValue) <= Number(filter.value);
 
+      case 'between': {
+        const range = filter.value as (string | number)[];
+        if (!Array.isArray(range) || range.length < 2) return false;
+        const num = Number(fieldValue);
+        return num >= Number(range[0]) && num <= Number(range[1]);
+      }
+
+      case 'in': {
+        const list = Array.isArray(filter.value) ? filter.value : [filter.value];
+        return list.map(String).includes(String(fieldValue));
+      }
+
+      case 'not_in': {
+        const list = Array.isArray(filter.value) ? filter.value : [filter.value];
+        return !list.map(String).includes(String(fieldValue));
+      }
+
       default:
         return String(fieldValue) === String(filter.value);
     }

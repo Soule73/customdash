@@ -5,10 +5,13 @@ import {
   PlusIcon,
   ArrowDownTrayIcon,
   ShareIcon,
+  FunnelIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Input } from '@customdash/ui';
+import type { SelectOption } from '@customdash/visualizations';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppTranslation } from '@hooks';
+import { TimeRangePicker } from '@components/dashboards/TimeRangePicker';
 
 interface DashboardHeaderProps {
   isCreateMode: boolean;
@@ -16,6 +19,9 @@ interface DashboardHeaderProps {
   onSave: () => void;
   onCancel: () => void;
   onAddWidget: () => void;
+  onToggleFilterPanel?: () => void;
+  filterCount?: number;
+  columnOptions?: SelectOption[];
   onExportPDF?: () => void;
   onShare?: () => void;
   canEdit?: boolean;
@@ -27,6 +33,9 @@ export function DashboardHeader({
   onSave,
   onCancel,
   onAddWidget,
+  onToggleFilterPanel,
+  filterCount = 0,
+  columnOptions = [],
   onExportPDF,
   onShare,
   canEdit = true,
@@ -57,6 +66,24 @@ export function DashboardHeader({
       </div>
 
       <div className="flex items-center gap-2">
+        <TimeRangePicker columnOptions={columnOptions} />
+
+        {onToggleFilterPanel && (
+          <button
+            type="button"
+            onClick={onToggleFilterPanel}
+            className="relative inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+            title={t('dashboards.filters.title')}
+          >
+            <FunnelIcon className="h-4 w-4" />
+            {filterCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+                {filterCount}
+              </span>
+            )}
+          </button>
+        )}
+
         {isEditing ? (
           <>
             <Button

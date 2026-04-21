@@ -21,10 +21,22 @@ function RadarChartWidgetInternal({
   className = '',
   loading = false,
   editMode = false,
+  onDataPointClick,
 }: RadarChartWidgetProps): JSX.Element {
   const { option } = useRadarChartVM({ data, config, widgetParams });
+  const events = onDataPointClick
+    ? { click: onDataPointClick as (params: unknown) => void }
+    : undefined;
 
-  return <BaseChart option={option} className={className} loading={loading} editMode={editMode} />;
+  return (
+    <BaseChart
+      option={option}
+      className={className}
+      loading={loading}
+      editMode={editMode}
+      onEvents={events}
+    />
+  );
 }
 
 /**

@@ -8,7 +8,10 @@ export type FilterOperator =
   | 'greater_than'
   | 'less_than'
   | 'greater_than_or_equal'
-  | 'less_than_or_equal';
+  | 'less_than_or_equal'
+  | 'between'
+  | 'in'
+  | 'not_in';
 
 export type BucketType =
   | 'terms'

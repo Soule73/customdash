@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { XMarkIcon, Bars3Icon, PencilIcon } from '@heroicons/react/24/outline';
 import { Button } from '@customdash/ui';
+import type { Filter } from '@customdash/visualizations';
 import { WidgetDisplay } from '@components/widgets';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppTranslation } from '@hooks';
@@ -13,6 +14,7 @@ interface DashboardGridItemProps {
   widget: Widget | undefined;
   editMode: boolean;
   onRemove?: () => void;
+  dashboardGlobalFilters?: Filter[];
 }
 
 /**
@@ -24,6 +26,7 @@ export const DashboardGridItem = memo(function DashboardGridItem({
   widget,
   editMode,
   onRemove,
+  dashboardGlobalFilters,
 }: DashboardGridItemProps) {
   const { t } = useAppTranslation();
   const navigate = useNavigate();
@@ -69,7 +72,7 @@ export const DashboardGridItem = memo(function DashboardGridItem({
           }}
         />
       )}
-      <WidgetDisplay widget={widget} />
+      <WidgetDisplay widget={widget} dashboardGlobalFilters={dashboardGlobalFilters} />
     </div>
   );
 });

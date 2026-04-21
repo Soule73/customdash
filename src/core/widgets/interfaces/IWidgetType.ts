@@ -5,6 +5,7 @@ import type {
   SelectOption,
   AggregationType,
   BucketType,
+  EChartClickParams,
 } from '@customdash/visualizations';
 import type { FieldSchema } from '@type/widget-form.types';
 
@@ -12,6 +13,7 @@ export interface WidgetComponentProps {
   data: Record<string, unknown>[];
   config: ChartConfig;
   editMode?: boolean;
+  onDataPointClick?: (params: EChartClickParams) => void;
 }
 
 export type WidgetComponent = ComponentType<WidgetComponentProps>;

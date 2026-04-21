@@ -141,11 +141,13 @@ export function useDashboardForm(options: UseDashboardFormOptions = {}): UseDash
     if (isCreateMode) {
       navigate('/dashboards');
     } else if (dashboard) {
-      isInitializedRef.current = false;
-      initializeForm({ dashboard, isCreateMode: false });
+      const dashboardWidgetIds = new Set(dashboard.layout?.map(item => item.widgetId) || []);
+      const dashboardWidgets =
+        allWidgets?.filter((w: Widget) => dashboardWidgetIds.has(w.id)) ?? [];
+      initializeForm({ dashboard, widgets: dashboardWidgets, isCreateMode: false });
       setEditMode(false);
     }
-  }, [isCreateMode, dashboard, navigate, initializeForm, setEditMode]);
+  }, [isCreateMode, dashboard, allWidgets, navigate, initializeForm, setEditMode]);
 
   const toggleEditMode = useCallback(() => {
     setEditMode(!editMode);

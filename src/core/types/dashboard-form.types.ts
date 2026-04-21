@@ -1,5 +1,6 @@
 import type { LayoutItem, Dashboard } from './dashboard.types';
 import type { Widget } from './widget.types';
+import type { FilterOperator } from '@customdash/visualizations';
 
 export type DashboardVisibility = 'private' | 'public' | 'shared';
 
@@ -13,6 +14,7 @@ export interface TimeRangeConfig {
   to?: string | null;
   relativeValue?: number;
   relativeUnit?: IntervalUnit;
+  dateField?: string;
 }
 
 export interface AutoRefreshConfig {
@@ -35,8 +37,8 @@ export interface DashboardFormConfig {
 export interface DashboardFilter {
   id: string;
   field: string;
-  operator: string;
-  value: unknown;
+  operator: FilterOperator;
+  value: string | number | boolean | (string | number)[];
 }
 
 export interface DashboardFormState {
@@ -106,6 +108,7 @@ export interface DashboardSaveData {
   timeRange?: TimeRangeConfig;
   autoRefreshIntervalValue?: number;
   autoRefreshIntervalUnit?: IntervalUnit;
+  globalFilters?: DashboardFilter[];
 }
 
 export type DashboardFormStore = DashboardFormState & DashboardFormActions;

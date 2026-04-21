@@ -1,3 +1,5 @@
+import type { DashboardFilter } from './dashboard-form.types';
+
 export interface Dashboard {
   id: string;
   title: string;
@@ -6,6 +8,7 @@ export interface Dashboard {
   layout: LayoutItem[];
   visibility: 'private' | 'public' | 'shared';
   sharedWith: string[];
+  globalFilters: DashboardFilter[];
   createdAt: string;
   updatedAt: string;
 }
@@ -34,4 +37,5 @@ export interface UpdateDashboardData {
   layout?: LayoutItem[];
   visibility?: 'private' | 'public' | 'shared';
   sharedWith?: string[];
+  globalFilters?: import('./dashboard-form.types').DashboardFilter[];
 }

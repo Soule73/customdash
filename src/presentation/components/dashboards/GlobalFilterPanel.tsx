@@ -6,6 +6,7 @@ import type { SelectOption } from '@customdash/visualizations';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { dashboardFormService } from '@core/dashboards';
 import { dataSourceService } from '@services/data-source.service';
+import { processingService } from '@services/processing.service';
 import { FilterField } from '@components/widgets/fields/FilterField';
 import type { DashboardFilter } from '@type/dashboard-form.types';
 
@@ -33,13 +34,25 @@ export function GlobalFilterPanel({ datasourceIds, onClose }: GlobalFilterPanelP
     const uniqueIds = [...new Set(datasourceIds)];
     let cancelled = false;
 
-    Promise.allSettled(uniqueIds.map(id => dataSourceService.getData(id))).then(results => {
+    Promise.allSettled(
+      uniqueIds.map(async id => {
+        const datasource = await dataSourceService.getById(id);
+        const result = await processingService.detectColumns({
+          type: datasource.type,
+          endpoint: datasource.type !== 'csv' ? datasource.endpoint : undefined,
+          filePath: datasource.type === 'csv' ? datasource.filePath : undefined,
+          httpMethod: datasource.type === 'json' ? datasource.httpMethod : undefined,
+          authType: datasource.authType !== 'none' ? datasource.authType : undefined,
+          authConfig: datasource.authConfig,
+          esIndex: datasource.type === 'elasticsearch' ? datasource.esIndex : undefined,
+        });
+        return result.columns;
+      }),
+    ).then(results => {
       if (cancelled) return;
       const allColumns = results
-        .filter(
-          (r): r is PromiseFulfilledResult<Record<string, unknown>[]> => r.status === 'fulfilled',
-        )
-        .flatMap(r => (r.value.length > 0 ? Object.keys(r.value[0]) : []));
+        .filter((r): r is PromiseFulfilledResult<string[]> => r.status === 'fulfilled')
+        .flatMap(r => r.value);
       setColumns([...new Set(allColumns)]);
     });
 

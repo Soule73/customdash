@@ -2,6 +2,32 @@ import { VALID_OPERATORS } from '../constants';
 import type { Filter, ValidationResult } from '../interfaces';
 
 /**
+ * Compares two values, supporting both numeric and date/datetime string comparisons.
+ * Returns a negative number if a < b, 0 if equal, positive if a > b.
+ * Falls back to numeric comparison when values are not parseable as dates.
+ */
+function compareValues(a: unknown, b: unknown): number {
+  const strA = String(a);
+  const strB = String(b);
+
+  const dateA = Date.parse(strA);
+  const dateB = Date.parse(strB);
+
+  if (!isNaN(dateA) && !isNaN(dateB)) {
+    return dateA - dateB;
+  }
+
+  const numA = Number(a);
+  const numB = Number(b);
+
+  if (!isNaN(numA) && !isNaN(numB)) {
+    return numA - numB;
+  }
+
+  return strA.localeCompare(strB);
+}
+
+/**
  * Applies a filter to a dataset.
  *
  * @param data - The dataset to filter, represented as an array of records.
@@ -49,22 +75,21 @@ export function applyFilter(
         return !String(fieldValue).toLowerCase().includes(String(filter.value).toLowerCase());
 
       case 'greater_than':
-        return Number(fieldValue) > Number(filter.value);
+        return compareValues(fieldValue, filter.value) > 0;
 
       case 'less_than':
-        return Number(fieldValue) < Number(filter.value);
+        return compareValues(fieldValue, filter.value) < 0;
 
       case 'greater_than_or_equal':
-        return Number(fieldValue) >= Number(filter.value);
+        return compareValues(fieldValue, filter.value) >= 0;
 
       case 'less_than_or_equal':
-        return Number(fieldValue) <= Number(filter.value);
+        return compareValues(fieldValue, filter.value) <= 0;
 
       case 'between': {
         const range = filter.value as (string | number)[];
         if (!Array.isArray(range) || range.length < 2) return false;
-        const num = Number(fieldValue);
-        return num >= Number(range[0]) && num <= Number(range[1]);
+        return compareValues(fieldValue, range[0]) >= 0 && compareValues(fieldValue, range[1]) <= 0;
       }
 
       case 'in': {

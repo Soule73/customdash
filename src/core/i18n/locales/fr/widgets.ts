@@ -19,6 +19,7 @@ export const widgets = {
   configureMetrics: "Configurez les métriques pour afficher l'aperçu",
   noDataAvailable: 'Aucune donnée disponible',
   unsupportedType: 'Type de widget non pris en charge',
+  loadError: 'Échec du chargement des données du widget',
   types: {
     kpi: 'KPI',
     kpiDescription: 'Indicateur de performance clé',

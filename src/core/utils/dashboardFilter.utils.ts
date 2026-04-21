@@ -24,7 +24,19 @@ export function toDashboardFilterModel(filter: DashboardFilter): Filter {
  */
 export function toVisualizationFilters(filters: DashboardFilter[]): Filter[] {
   return filters
-    .filter(f => f.field.trim() !== '' && f.value !== '' && f.value !== undefined)
+    .filter(f => {
+      if (!f.field.trim()) return false;
+
+      if (Array.isArray(f.value)) {
+        if (f.value.length === 0) return false;
+        if (f.operator === 'between') {
+          return f.value.length >= 2 && f.value[0] !== '' && f.value[1] !== '';
+        }
+        return true;
+      }
+
+      return f.value !== '' && f.value !== undefined;
+    })
     .map(toDashboardFilterModel);
 }
 

@@ -41,7 +41,7 @@ export function WidgetDisplay({ widget, className, dashboardGlobalFilters }: Wid
   if (!WidgetComponent) {
     return (
       <div className="flex h-full items-center justify-center widget-text-secondary text-gray-500 dark:text-gray-400">
-        Type non supporte: {widget.type}
+        {t('widgets.unsupportedType')}: {widget.type}
       </div>
     );
   }
@@ -57,7 +57,7 @@ export function WidgetDisplay({ widget, className, dashboardGlobalFilters }: Wid
   if (error) {
     return (
       <div className="flex h-full items-center justify-center text-red-500 text-sm">
-        Erreur de chargement
+        {t('widgets.loadError')}
       </div>
     );
   }

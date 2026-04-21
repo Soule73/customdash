@@ -19,6 +19,7 @@ export const widgets = {
   configureMetrics: 'Configure metrics to display preview',
   noDataAvailable: 'No data available',
   unsupportedType: 'Unsupported widget type',
+  loadError: 'Failed to load widget data',
   types: {
     kpi: 'KPI',
     kpiDescription: 'Key performance indicator',

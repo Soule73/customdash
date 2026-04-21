@@ -20,7 +20,7 @@ export function DashboardPage() {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
-  const dashboardContainerRef = useRef<HTMLDivElement>(null);
+  const dashboardGridRef = useRef<HTMLDivElement>(null);
 
   const { isLoading, isSaving, isCreateMode, save, cancel } = useDashboardForm({ dashboardId: id });
   useAutoRefresh();
@@ -43,12 +43,12 @@ export function DashboardPage() {
   const columnOptions = useMemo<SelectOption[]>(() => [], []);
 
   const handleExportPDF = useCallback(async () => {
-    if (!dashboardContainerRef.current || isExporting) return;
+    if (!dashboardGridRef.current || isExporting) return;
     setIsExporting(true);
     try {
       const title =
         document.querySelector<HTMLElement>('.dashboard-title')?.textContent ?? 'dashboard';
-      await exportElementToPdf(dashboardContainerRef.current, title);
+      await exportElementToPdf(dashboardGridRef.current, title);
     } finally {
       setIsExporting(false);
     }
@@ -82,7 +82,7 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 dashboard-container" ref={dashboardContainerRef}>
+    <div className="space-y-6 dashboard-container">
       <DashboardHeader
         isCreateMode={isCreateMode}
         isSaving={isSaving}
@@ -95,10 +95,12 @@ export function DashboardPage() {
         onExportPDF={handleExportPDF}
       />
 
-      <DashboardGrid
-        onAddWidget={() => setWidgetModalOpen(true)}
-        dashboardGlobalFilters={dashboardGlobalFilters}
-      />
+      <div ref={dashboardGridRef}>
+        <DashboardGrid
+          onAddWidget={() => setWidgetModalOpen(true)}
+          dashboardGlobalFilters={dashboardGlobalFilters}
+        />
+      </div>
 
       {filterPanelOpen && (
         <GlobalFilterPanel

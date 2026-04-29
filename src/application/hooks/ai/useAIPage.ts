@@ -182,7 +182,29 @@ export function useAIPage(): AIPageState {
         widgets: result.widgets,
         suggestions: result.suggestions,
       };
-      setSessionMessages(prev => [...prev, assistantMessage]);
+
+      const supersededIds = new Set(
+        result.widgets.flatMap(w => {
+          const ids: string[] = [];
+          if (w.id) ids.push(w.id);
+          if (w._id) ids.push(w._id);
+          if (w.replacesWidgetId) ids.push(w.replacesWidgetId);
+          return ids;
+        }),
+      );
+
+      setSessionMessages(prev => {
+        const cleaned = prev.map(msg => {
+          if (!msg.widgets) return msg;
+          const kept = msg.widgets.filter(
+            w => !supersededIds.has(w.id) && !supersededIds.has(w._id ?? ''),
+          );
+          return kept.length === msg.widgets.length
+            ? msg
+            : { ...msg, widgets: kept.length > 0 ? kept : undefined };
+        });
+        return [...cleaned, assistantMessage];
+      });
     } catch (err) {
       const errorMessage: SessionMessage = {
         id: `error-${Date.now()}`,

@@ -53,23 +53,26 @@ export default function KPIGroupWidget({ data, config }: KPIGroupInput) {
 
   return (
     <VisualizationContainer>
-      <div
-        className="grid gap-4 w-full h-full"
-        style={{
-          gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
-        }}
-      >
-        {metrics.map((metric: Metric, idx: number) => (
-          <KPIWidget
-            key={idx}
-            data={data}
-            config={{
-              metrics: [metric],
-              globalFilters: config.globalFilters,
-              widgetParams: widgetParamsList[idx],
-            }}
-          />
-        ))}
+      <div className="w-full h-full overflow-x-auto">
+        <div
+          className="grid gap-4 h-full"
+          style={{
+            gridTemplateColumns: `repeat(${gridColumns}, minmax(140px, 1fr))`,
+            minWidth: `${gridColumns * 140}px`,
+          }}
+        >
+          {metrics.map((metric: Metric, idx: number) => (
+            <KPIWidget
+              key={idx}
+              data={data}
+              config={{
+                metrics: [metric],
+                globalFilters: config.globalFilters,
+                widgetParams: widgetParamsList[idx],
+              }}
+            />
+          ))}
+        </div>
       </div>
     </VisualizationContainer>
   );

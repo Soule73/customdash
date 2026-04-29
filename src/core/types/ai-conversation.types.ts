@@ -63,6 +63,7 @@ export interface AIGeneratedWidget {
   description?: string;
   reasoning?: string;
   confidence?: number;
+  replacesWidgetId?: string;
 }
 
 export interface AIGenerationResult {

@@ -104,19 +104,16 @@ export default function KPIWidget({ data, config }: KPIWidgetInput) {
   return (
     <VisualizationContainer>
       <div className="flex flex-col items-center justify-center w-full h-full p-4">
-        {/* Use CSS custom properties so dark-mode adaptation works even without Tailwind
-            scanning this package. --color-muted-foreground and --color-foreground are
-            defined in index.css for both :root and .dark. */}
         <span
-          className="text-xs mb-1"
-          style={{ color: titleColor || 'rgb(var(--color-muted-foreground))' }}
+          className="text-xs mb-1 text-muted-foreground"
+          style={titleColor ? { color: titleColor } : undefined}
         >
           {title}
         </span>
         {showValue && (
           <span
-            className="text-4xl font-bold"
-            style={{ color: valueColor || 'rgb(var(--color-foreground))' }}
+            className="text-4xl font-bold text-foreground"
+            style={valueColor ? { color: valueColor } : undefined}
           >
             {value}
           </span>

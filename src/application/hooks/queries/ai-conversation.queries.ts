@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { aiConversationService, aiService } from '@services/index';
-import { aiConversationKeys } from './keys';
+import { aiConversationKeys, widgetKeys } from './keys';
 import type {
   CreateAIConversationData,
   UpdateAIConversationData,
@@ -82,6 +82,7 @@ export function useGenerateWidget() {
     mutationFn: (data: GenerateWidgetData) => aiService.generateWidget(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: aiConversationKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: widgetKeys.lists() });
     },
   });
 }

@@ -4,7 +4,6 @@ export type { User } from './user.types';
 
 export interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -22,5 +21,4 @@ export interface RegisterData {
 
 export interface AuthResponse {
   user: User;
-  accessToken: string;
 }

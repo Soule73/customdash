@@ -14,13 +14,10 @@ describe('authStore', () => {
     role: { id: 'role-1', name: 'admin', permissions: [] },
   };
 
-  const mockToken = 'jwt-token-123';
-
   beforeEach(() => {
     // Reset store to initial state before each test
     useAuthStore.setState({
       user: null,
-      token: null,
       isAuthenticated: false,
       isLoading: false,
     });
@@ -31,7 +28,6 @@ describe('authStore', () => {
       const state = useAuthStore.getState();
 
       expect(state.user).toBeNull();
-      expect(state.token).toBeNull();
       expect(state.isAuthenticated).toBe(false);
       expect(state.isLoading).toBe(false);
     });
@@ -47,11 +43,9 @@ describe('authStore', () => {
     });
 
     it('should clear user and set isAuthenticated to false when null', () => {
-      // First set a user
       useAuthStore.getState().setUser(mockUser);
       expect(useAuthStore.getState().isAuthenticated).toBe(true);
 
-      // Then clear it
       useAuthStore.getState().setUser(null);
 
       const state = useAuthStore.getState();
@@ -60,31 +54,14 @@ describe('authStore', () => {
     });
   });
 
-  describe('setToken', () => {
-    it('should set token', () => {
-      useAuthStore.getState().setToken(mockToken);
-
-      expect(useAuthStore.getState().token).toBe(mockToken);
-    });
-
-    it('should clear token when null', () => {
-      useAuthStore.getState().setToken(mockToken);
-      useAuthStore.getState().setToken(null);
-
-      expect(useAuthStore.getState().token).toBeNull();
-    });
-  });
-
   describe('login', () => {
-    it('should set user, token, isAuthenticated and clear isLoading', () => {
-      // Start with loading state
+    it('should set user, isAuthenticated and clear isLoading', () => {
       useAuthStore.getState().setLoading(true);
 
-      useAuthStore.getState().login(mockUser, mockToken);
+      useAuthStore.getState().login(mockUser);
 
       const state = useAuthStore.getState();
       expect(state.user).toEqual(mockUser);
-      expect(state.token).toBe(mockToken);
       expect(state.isAuthenticated).toBe(true);
       expect(state.isLoading).toBe(false);
     });
@@ -92,15 +69,12 @@ describe('authStore', () => {
 
   describe('logout', () => {
     it('should clear all auth state', () => {
-      // First login
-      useAuthStore.getState().login(mockUser, mockToken);
+      useAuthStore.getState().login(mockUser);
 
-      // Then logout
       useAuthStore.getState().logout();
 
       const state = useAuthStore.getState();
       expect(state.user).toBeNull();
-      expect(state.token).toBeNull();
       expect(state.isAuthenticated).toBe(false);
       expect(state.isLoading).toBe(false);
     });
@@ -122,13 +96,9 @@ describe('authStore', () => {
   });
 
   describe('persist middleware', () => {
-    it('should only persist user, token, and isAuthenticated', () => {
-      // The partialize function should exclude isLoading
-      // This is tested by checking the store configuration
+    it('should only persist user and isAuthenticated (no token)', () => {
       const storeApi = useAuthStore;
 
-      // Access the persist options if available
-      // Note: This is a structural test to ensure configuration
       expect(storeApi.getState).toBeDefined();
       expect(storeApi.setState).toBeDefined();
     });

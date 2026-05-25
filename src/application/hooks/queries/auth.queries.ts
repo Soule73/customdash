@@ -59,7 +59,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: (credentials: LoginCredentials) => authService.login(credentials),
     onSuccess: async data => {
-      setAuth(data.user, data.accessToken);
+      setAuth(data.user);
       queryClient.setQueryData(authKeys.me(), data.user);
 
       // Load preferences from server after successful login
@@ -75,7 +75,7 @@ export function useRegister() {
   return useMutation({
     mutationFn: (data: RegisterData) => authService.register(data),
     onSuccess: async data => {
-      setAuth(data.user, data.accessToken);
+      setAuth(data.user);
       queryClient.setQueryData(authKeys.me(), data.user);
 
       // Load preferences from server after successful registration

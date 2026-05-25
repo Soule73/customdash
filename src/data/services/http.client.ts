@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { CORE_API_URL, STORAGE_KEYS } from '@/core/constants';
+import { CORE_API_URL } from '@/core/constants';
 import { useAuthStore } from '@stores/authStore';
 
 interface ApiErrorResponse {
@@ -19,24 +19,11 @@ function createHttpClient(baseURL: string): AxiosInstance {
       'Content-Type': 'application/json',
     },
     timeout: 30000,
+    withCredentials: true,
   });
 
   client.interceptors.request.use(
-    config => {
-      const stored = localStorage.getItem(STORAGE_KEYS.TOKEN);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          const token = parsed?.state?.token;
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-        } catch {
-          // Invalid JSON, ignore
-        }
-      }
-      return config;
-    },
+    config => config,
     error => Promise.reject(error),
   );
 

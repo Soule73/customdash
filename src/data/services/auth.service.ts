@@ -3,22 +3,11 @@ import type { User, LoginCredentials, RegisterData, AuthResponse } from '@type/a
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await httpClient.post<{ user: User; token: string }>(
-      '/auth/login',
-      credentials,
-    );
-    return {
-      user: response.user,
-      accessToken: response.token,
-    };
+    return httpClient.post<AuthResponse>('/auth/login', credentials);
   },
 
   async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await httpClient.post<{ user: User; token: string }>('/auth/register', data);
-    return {
-      user: response.user,
-      accessToken: response.token,
-    };
+    return httpClient.post<AuthResponse>('/auth/register', data);
   },
 
   async getMe(): Promise<User> {
@@ -26,6 +15,6 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    // No server-side logout endpoint needed for JWT
+    await httpClient.post<void>('/auth/logout');
   },
 };

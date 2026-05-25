@@ -23,7 +23,7 @@ export const preferencesService = {
    * @returns User preferences or null if not authenticated
    */
   async getPreferences(): Promise<UserPreferences> {
-    return httpClient.get<UserPreferences>('/users/me/preferences');
+    return httpClient.get<UserPreferences>('/users/me/preferences', { skipAuthRedirect: true });
   },
 
   /**

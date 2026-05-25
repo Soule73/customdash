@@ -1,10 +1,15 @@
-import axios, { type AxiosInstance, type AxiosError } from 'axios';
+import axios, { type AxiosInstance, type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { CORE_API_URL, STORAGE_KEYS } from '@/core/constants';
+import { useAuthStore } from '@stores/authStore';
 
 interface ApiErrorResponse {
   message: string;
   statusCode: number;
   error?: string;
+}
+
+interface CustomAxiosConfig extends InternalAxiosRequestConfig {
+  _skipAuthRedirect?: boolean;
 }
 
 function createHttpClient(baseURL: string): AxiosInstance {
@@ -39,9 +44,12 @@ function createHttpClient(baseURL: string): AxiosInstance {
     response => response,
     (error: AxiosError<ApiErrorResponse>) => {
       if (error.response?.status === 401) {
-        localStorage.removeItem(STORAGE_KEYS.TOKEN);
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
+        const config = error.config as CustomAxiosConfig | undefined;
+        if (!config?._skipAuthRedirect) {
+          const { isAuthenticated, logout } = useAuthStore.getState();
+          if (isAuthenticated) {
+            logout();
+          }
         }
       }
       const message = error.response?.data?.message || error.message || 'Request failed';
@@ -59,8 +67,10 @@ function getClient(): AxiosInstance {
 }
 
 class HttpClient {
-  async get<T>(url: string): Promise<T> {
-    const response = await getClient().get<T>(url);
+  async get<T>(url: string, config?: { skipAuthRedirect?: boolean }): Promise<T> {
+    const response = await getClient().get<T>(url, {
+      _skipAuthRedirect: config?.skipAuthRedirect,
+    } as CustomAxiosConfig);
     return response.data;
   }
 

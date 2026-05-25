@@ -23,7 +23,6 @@ describe('authService', () => {
     it('should call /auth/login with credentials and return auth response', async () => {
       const mockResponse = {
         user: { id: '1', email: 'test@test.com', username: 'testuser' },
-        token: 'jwt-token-123',
       };
       vi.mocked(httpClient.post).mockResolvedValue(mockResponse);
 
@@ -31,10 +30,7 @@ describe('authService', () => {
       const result = await authService.login(credentials);
 
       expect(httpClient.post).toHaveBeenCalledWith('/auth/login', credentials);
-      expect(result).toEqual({
-        user: mockResponse.user,
-        accessToken: mockResponse.token,
-      });
+      expect(result).toEqual({ user: mockResponse.user });
     });
 
     it('should throw error on invalid credentials', async () => {
@@ -60,7 +56,6 @@ describe('authService', () => {
     it('should call /auth/register with user data and return auth response', async () => {
       const mockResponse = {
         user: { id: '2', email: 'new@test.com', username: 'newuser' },
-        token: 'jwt-token-456',
       };
       vi.mocked(httpClient.post).mockResolvedValue(mockResponse);
 
@@ -72,10 +67,7 @@ describe('authService', () => {
       const result = await authService.register(registerData);
 
       expect(httpClient.post).toHaveBeenCalledWith('/auth/register', registerData);
-      expect(result).toEqual({
-        user: mockResponse.user,
-        accessToken: mockResponse.token,
-      });
+      expect(result).toEqual({ user: mockResponse.user });
     });
 
     it('should throw error when email already exists', async () => {

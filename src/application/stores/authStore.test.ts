@@ -14,13 +14,10 @@ describe('authStore', () => {
     role: { id: 'role-1', name: 'admin', permissions: [] },
   };
 
-  const mockToken = 'jwt-token-123';
-
   beforeEach(() => {
     // Reset store to initial state before each test
     useAuthStore.setState({
       user: null,
-      token: null,
       isAuthenticated: false,
       isLoading: false,
     });
@@ -31,7 +28,6 @@ describe('authStore', () => {
       const state = useAuthStore.getState();
 
       expect(state.user).toBeNull();
-      expect(state.token).toBeNull();
       expect(state.isAuthenticated).toBe(false);
       expect(state.isLoading).toBe(false);
     });
@@ -60,31 +56,15 @@ describe('authStore', () => {
     });
   });
 
-  describe('setToken', () => {
-    it('should set token', () => {
-      useAuthStore.getState().setToken(mockToken);
-
-      expect(useAuthStore.getState().token).toBe(mockToken);
-    });
-
-    it('should clear token when null', () => {
-      useAuthStore.getState().setToken(mockToken);
-      useAuthStore.getState().setToken(null);
-
-      expect(useAuthStore.getState().token).toBeNull();
-    });
-  });
-
   describe('login', () => {
-    it('should set user, token, isAuthenticated and clear isLoading', () => {
+    it('should set user, isAuthenticated and clear isLoading', () => {
       // Start with loading state
       useAuthStore.getState().setLoading(true);
 
-      useAuthStore.getState().login(mockUser, mockToken);
+      useAuthStore.getState().login(mockUser);
 
       const state = useAuthStore.getState();
       expect(state.user).toEqual(mockUser);
-      expect(state.token).toBe(mockToken);
       expect(state.isAuthenticated).toBe(true);
       expect(state.isLoading).toBe(false);
     });
@@ -93,14 +73,13 @@ describe('authStore', () => {
   describe('logout', () => {
     it('should clear all auth state', () => {
       // First login
-      useAuthStore.getState().login(mockUser, mockToken);
+      useAuthStore.getState().login(mockUser);
 
       // Then logout
       useAuthStore.getState().logout();
 
       const state = useAuthStore.getState();
       expect(state.user).toBeNull();
-      expect(state.token).toBeNull();
       expect(state.isAuthenticated).toBe(false);
       expect(state.isLoading).toBe(false);
     });

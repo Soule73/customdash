@@ -31,10 +31,7 @@ describe('authService', () => {
       const result = await authService.login(credentials);
 
       expect(httpClient.post).toHaveBeenCalledWith('/auth/login', credentials);
-      expect(result).toEqual({
-        user: mockResponse.user,
-        accessToken: mockResponse.token,
-      });
+      expect(result).toEqual(mockResponse);
     });
 
     it('should throw error on invalid credentials', async () => {
@@ -72,10 +69,7 @@ describe('authService', () => {
       const result = await authService.register(registerData);
 
       expect(httpClient.post).toHaveBeenCalledWith('/auth/register', registerData);
-      expect(result).toEqual({
-        user: mockResponse.user,
-        accessToken: mockResponse.token,
-      });
+      expect(result).toEqual(mockResponse);
     });
 
     it('should throw error when email already exists', async () => {
@@ -117,7 +111,9 @@ describe('authService', () => {
 
   describe('logout', () => {
     it('should complete without error', async () => {
+      vi.mocked(httpClient.post).mockResolvedValue(undefined);
       await expect(authService.logout()).resolves.toBeUndefined();
+      expect(httpClient.post).toHaveBeenCalledWith('/auth/logout');
     });
   });
 });

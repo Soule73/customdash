@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type AxiosError } from 'axios';
-import { CORE_API_URL, STORAGE_KEYS } from '@/core/constants';
+import { CORE_API_URL } from '@/core/constants';
 
 interface ApiErrorResponse {
   message: string;
@@ -14,32 +14,13 @@ function createHttpClient(baseURL: string): AxiosInstance {
       'Content-Type': 'application/json',
     },
     timeout: 30000,
+    withCredentials: true,
   });
-
-  client.interceptors.request.use(
-    config => {
-      const stored = localStorage.getItem(STORAGE_KEYS.TOKEN);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          const token = parsed?.state?.token;
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-        } catch {
-          // Invalid JSON, ignore
-        }
-      }
-      return config;
-    },
-    error => Promise.reject(error),
-  );
 
   client.interceptors.response.use(
     response => response,
     (error: AxiosError<ApiErrorResponse>) => {
       if (error.response?.status === 401) {
-        localStorage.removeItem(STORAGE_KEYS.TOKEN);
         if (window.location.pathname !== '/login') {
           window.location.href = '/login';
         }

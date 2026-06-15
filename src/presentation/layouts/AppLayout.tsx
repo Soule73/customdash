@@ -11,6 +11,8 @@ import {
   ChatBubbleLeftRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  UserGroupIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline';
 import { Button, Avatar, Tooltip } from '@customdash/ui';
 import { cn } from '@customdash/utils';
@@ -32,6 +34,11 @@ const navigation: NavItem[] = [
   { nameKey: 'navigation.aiAssistant', href: '/ai', icon: ChatBubbleLeftRightIcon },
 ];
 
+const adminNavItems: NavItem[] = [
+  { nameKey: 'navigation.users', href: '/admin/users', icon: UserGroupIcon },
+  { nameKey: 'navigation.roles', href: '/admin/roles', icon: ShieldCheckIcon },
+];
+
 const bottomNav: NavItem[] = [
   { nameKey: 'navigation.settings', href: '/settings', icon: Cog6ToothIcon },
 ];
@@ -40,12 +47,16 @@ export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useAuthStore();
+  const { hasPermission } = useAuthStore.getState();
   const { mutate: logout } = useLogout();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useAppTranslation();
 
   const isAIPage = location.pathname.startsWith('/ai');
+  const isDashboardPage =
+    location.pathname.startsWith('/dashboards') && location.pathname !== '/dashboards';
+  const showAdminNav = hasPermission('user:canView') || hasPermission('role:canView');
 
   const effectiveCollapsed = collapsed;
 
@@ -73,7 +84,7 @@ export function AppLayout() {
       >
         <div
           className={cn(
-            'flex h-16 shrink-0 items-center border-b border-gray-200 dark:border-gray-800',
+            'flex h-12 shrink-0 items-center border-b border-gray-200 dark:border-gray-800',
             effectiveCollapsed ? 'justify-center px-2' : 'justify-between px-4',
           )}
         >
@@ -129,6 +140,54 @@ export function AppLayout() {
               </Tooltip>
             ))}
           </div>
+
+          {showAdminNav && (
+            <div className="mt-4 space-y-1">
+              {!effectiveCollapsed && (
+                <p className="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  {t('admin.title')}
+                </p>
+              )}
+              {adminNavItems.map(item => (
+                <Tooltip
+                  key={item.nameKey}
+                  content={t(item.nameKey)}
+                  position="right"
+                  disabled={!effectiveCollapsed}
+                  className={effectiveCollapsed ? '' : 'w-full'}
+                >
+                  <NavLink
+                    to={item.href}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        'group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                        effectiveCollapsed && 'justify-center px-2',
+                        isActive
+                          ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary-600 dark:bg-primary-500" />
+                        )}
+                        <item.icon
+                          className={cn(
+                            'h-5 w-5 shrink-0 transition-transform duration-200',
+                            !isActive && 'group-hover:scale-110',
+                          )}
+                        />
+                        {!effectiveCollapsed && <span>{t(item.nameKey)}</span>}
+                      </>
+                    )}
+                  </NavLink>
+                </Tooltip>
+              ))}
+            </div>
+          )}
 
           <div className="mt-auto space-y-3 border-t border-gray-200 pt-3 dark:border-gray-800">
             {bottomNav.map(item => (
@@ -242,7 +301,7 @@ export function AppLayout() {
       </aside>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 lg:hidden dark:border-gray-800 dark:bg-gray-950">
+        <header className="flex h-11 items-center justify-between border-b border-gray-200 bg-white px-4 lg:hidden dark:border-gray-800 dark:bg-gray-950">
           <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)}>
             <Bars3Icon className="h-5 w-5" />
           </Button>
@@ -257,7 +316,7 @@ export function AppLayout() {
         <main
           className={cn(
             'flex-1 overflow-auto transition-all duration-300 bg-gray-50 dark:bg-gray-900',
-            !isAIPage && 'p-6',
+            !isAIPage && !isDashboardPage && 'p-6',
           )}
         >
           <Outlet />

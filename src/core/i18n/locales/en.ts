@@ -12,6 +12,7 @@ import {
   errors,
   settings,
   ai,
+  admin,
 } from './en/index';
 
 const en = {
@@ -28,6 +29,7 @@ const en = {
   columnTypes,
   settings,
   ai,
+  admin,
 };
 
 export default en;

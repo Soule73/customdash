@@ -94,6 +94,12 @@ export const dashboards = {
     allAdded: 'All widgets are already added',
     close: 'Close',
   },
+  widgetPanel: {
+    title: 'Available widgets',
+    createNew: 'Create a new widget',
+    noWidgets: 'No widgets available. Create your first widget.',
+    added: 'Added',
+  },
   notifications: {
     createSuccess: 'Dashboard created successfully',
     updateSuccess: 'Dashboard updated successfully',

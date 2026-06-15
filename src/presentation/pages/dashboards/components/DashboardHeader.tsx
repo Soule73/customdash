@@ -19,6 +19,7 @@ interface DashboardHeaderProps {
   onSave: () => void;
   onCancel: () => void;
   onAddWidget: () => void;
+  widgetPanelOpen?: boolean;
   onToggleFilterPanel?: () => void;
   filterCount?: number;
   columnOptions?: SelectOption[];
@@ -33,6 +34,7 @@ export function DashboardHeader({
   onSave,
   onCancel,
   onAddWidget,
+  widgetPanelOpen = false,
   onToggleFilterPanel,
   filterCount = 0,
   columnOptions = [],
@@ -87,7 +89,7 @@ export function DashboardHeader({
         {isEditing ? (
           <>
             <Button
-              variant="outline"
+              variant={widgetPanelOpen ? 'primary' : 'outline'}
               size="sm"
               leftIcon={<PlusIcon className="h-4 w-4" />}
               onClick={onAddWidget}

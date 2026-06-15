@@ -8,9 +8,10 @@ interface AuthStore extends AuthState {
   login: (user: User) => void;
   logout: () => void;
   setLoading: (isLoading: boolean) => void;
+  hasPermission: (permission: string) => boolean;
 }
 
-export const useAuthStore = create<AuthStore>()(
+export const useAuthStore: any = create<AuthStore>()(
   persist(
     set => ({
       user: null,
@@ -34,6 +35,12 @@ export const useAuthStore = create<AuthStore>()(
         }),
 
       setLoading: isLoading => set({ isLoading }),
+
+      hasPermission: (permission: string) => {
+        const state = useAuthStore.getState();
+        const permissions = state.user?.role?.permissions ?? [];
+        return permissions.some((p: { name: string }) => p.name === permission);
+      },
     }),
     {
       name: STORAGE_KEYS.TOKEN,

@@ -7,16 +7,11 @@ import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { buildActiveFilters } from '@utils/dashboardFilter.utils';
 import { exportElementToPdf } from '@utils/export.utils';
 import { GlobalFilterPanel } from '@components/dashboards/GlobalFilterPanel';
-import {
-  DashboardGrid,
-  DashboardHeader,
-  WidgetSelectModal,
-  DashboardSaveModal,
-} from './components';
+import { DashboardGrid, DashboardHeader, WidgetSidePanel, DashboardSaveModal } from './components';
 
 export function DashboardPage() {
   const { id } = useParams<{ id: string }>();
-  const [widgetModalOpen, setWidgetModalOpen] = useState(false);
+  const [widgetPanelOpen, setWidgetPanelOpen] = useState(false);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -82,34 +77,44 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 dashboard-container">
-      <DashboardHeader
-        isCreateMode={isCreateMode}
-        isSaving={isSaving}
-        onSave={handleSave}
-        onCancel={cancel}
-        onAddWidget={() => setWidgetModalOpen(true)}
-        onToggleFilterPanel={() => setFilterPanelOpen(o => !o)}
-        filterCount={globalFilters.length}
-        columnOptions={columnOptions}
-        onExportPDF={handleExportPDF}
-      />
-
-      <div ref={dashboardGridRef}>
-        <DashboardGrid
-          onAddWidget={() => setWidgetModalOpen(true)}
-          dashboardGlobalFilters={dashboardGlobalFilters}
+    <div className="flex h-full flex-col dashboard-container">
+      <div className="border-b border-gray-200 px-3 py-2 dark:border-gray-800 bg-white dark:bg-gray-950">
+        <DashboardHeader
+          isCreateMode={isCreateMode}
+          isSaving={isSaving}
+          onSave={handleSave}
+          onCancel={cancel}
+          onAddWidget={() => setWidgetPanelOpen(o => !o)}
+          widgetPanelOpen={widgetPanelOpen}
+          onToggleFilterPanel={() => setFilterPanelOpen(o => !o)}
+          filterCount={globalFilters.length}
+          columnOptions={columnOptions}
+          onExportPDF={handleExportPDF}
         />
       </div>
 
-      {filterPanelOpen && (
-        <GlobalFilterPanel
-          datasourceIds={datasourceIds}
-          onClose={() => setFilterPanelOpen(false)}
-        />
-      )}
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-auto">
+          {filterPanelOpen && (
+            <GlobalFilterPanel
+              datasourceIds={datasourceIds}
+              onClose={() => setFilterPanelOpen(false)}
+            />
+          )}
+          <div ref={dashboardGridRef} className="flex-1 p-2">
+            <DashboardGrid
+              onAddWidget={() => setWidgetPanelOpen(o => !o)}
+              dashboardGlobalFilters={dashboardGlobalFilters}
+            />
+          </div>
+        </div>
 
-      <WidgetSelectModal open={widgetModalOpen} onClose={() => setWidgetModalOpen(false)} />
+        <WidgetSidePanel
+          open={widgetPanelOpen}
+          onClose={() => setWidgetPanelOpen(false)}
+          dashboardId={id}
+        />
+      </div>
 
       <DashboardSaveModal
         open={saveModalOpen}

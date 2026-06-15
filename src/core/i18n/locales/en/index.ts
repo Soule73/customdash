@@ -8,3 +8,4 @@ export { table, columnTypes } from './table';
 export { validation, errors } from './validation';
 export { settings } from './settings';
 export { ai } from './ai';
+export { admin } from './admin';

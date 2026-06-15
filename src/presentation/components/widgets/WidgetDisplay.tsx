@@ -12,6 +12,7 @@ interface WidgetDisplayProps {
   widget: Widget;
   className?: string;
   dashboardGlobalFilters?: Filter[];
+  editMode?: boolean;
 }
 
 /**
@@ -20,7 +21,12 @@ interface WidgetDisplayProps {
  * and the full-data detail view (WidgetDetailModal with DataGrid).
  * The "view data" button is always visible for every widget type.
  */
-export function WidgetDisplay({ widget, className, dashboardGlobalFilters }: WidgetDisplayProps) {
+export function WidgetDisplay({
+  widget,
+  className,
+  dashboardGlobalFilters,
+  editMode,
+}: WidgetDisplayProps) {
   const { t } = useTranslation();
   const { data, config, isLoading, hasData, error } = useWidgetData({
     widget,
@@ -67,22 +73,24 @@ export function WidgetDisplay({ widget, className, dashboardGlobalFilters }: Wid
       <div className={`relative group ${className || 'h-full w-full'}`}>
         <WidgetComponent data={data} config={config} onDataPointClick={onDataPointClick} />
 
-        <button
-          type="button"
-          onClick={openDetail}
-          title={t('dashboards.detail.buttonTitle')}
-          className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1 rounded-md bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 px-1.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white dark:hover:bg-gray-800 hover:text-indigo-600 dark:hover:text-indigo-400"
-        >
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 10h18M3 14h18M10 4v16M14 4v16"
-            />
-          </svg>
-          {t('dashboards.detail.buttonLabel')}
-        </button>
+        {!editMode && (
+          <button
+            type="button"
+            onClick={openDetail}
+            title={t('dashboards.detail.buttonTitle')}
+            className="absolute top-1.5 right-1.5 z-10 flex items-center gap-1 rounded-md bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 px-1.5 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-white dark:hover:bg-gray-800 hover:text-indigo-600 dark:hover:text-indigo-400"
+          >
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 10h18M3 14h18M10 4v16M14 4v16"
+              />
+            </svg>
+            {t('dashboards.detail.buttonLabel')}
+          </button>
+        )}
       </div>
 
       <DrillDownModal

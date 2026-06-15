@@ -94,6 +94,12 @@ export const dashboards = {
     allAdded: 'Tous les widgets sont déjà ajoutés',
     close: 'Fermer',
   },
+  widgetPanel: {
+    title: 'Widgets disponibles',
+    createNew: 'Créer un nouveau widget',
+    noWidgets: 'Aucun widget disponible. Créez votre premier widget.',
+    added: 'Ajouté',
+  },
   notifications: {
     createSuccess: 'Tableau de bord créé avec succès',
     updateSuccess: 'Tableau de bord mis à jour',

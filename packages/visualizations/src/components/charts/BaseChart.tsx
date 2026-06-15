@@ -51,7 +51,7 @@ export function BaseChart({
   return (
     <ReactECharts
       // key forces a full re-mount when the theme changes.
-      // echarts.init(dom, theme) is only called once — without re-mount the theme
+      // echarts.init(dom, theme) is only called once - without re-mount the theme
       // switch has no effect on already rendered charts.
       key={(resolvedTheme as string) ?? 'light'}
       option={option}

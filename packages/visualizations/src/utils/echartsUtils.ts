@@ -353,7 +353,7 @@ export function createAdvancedLabelConfig(
     position,
     rotate,
     fontSize: params?.labelFontSize ?? 11,
-    // Do not set a default color — let the active ECharts theme (dark/light) decide.
+    // Do not set a default color - let the active ECharts theme (dark/light) decide.
     // Only apply an explicit color when the user has configured one.
     ...(params?.labelColor ? { color: params.labelColor } : {}),
   };

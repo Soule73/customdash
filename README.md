@@ -1,6 +1,6 @@
 # CustomDash
 
-Frontend React de la plateforme de visualisation de données CustomDash — application interne.
+Frontend React de la plateforme de visualisation de données CustomDash - application interne.
 
 ## Stack Technique
 

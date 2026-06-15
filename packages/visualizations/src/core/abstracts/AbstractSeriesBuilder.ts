@@ -302,7 +302,7 @@ export class PieSeriesBuilder {
         position: labelPosition,
         formatter: this.echartsConfig?.labelFormatter ?? '{b}: {c} ({d}%)',
         fontSize: params.labelFontSize ?? 12,
-        // Only set color when explicitly configured — an absent color lets the ECharts theme decide
+        // Only set color when explicitly configured - an absent color lets the ECharts theme decide
         ...(labelColor !== undefined ? { color: labelColor } : {}),
         rotate: this.echartsConfig?.labelRotate ?? 0,
       },

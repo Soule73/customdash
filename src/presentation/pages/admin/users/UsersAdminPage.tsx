@@ -131,7 +131,7 @@ export function UsersAdminPage() {
                     )}
                   </Table.Cell>
                   <Table.Cell>
-                    <Badge variant={user.isActive ? 'success' : 'error'}>
+                    <Badge variant={user.isActive ? 'success' : 'danger'}>
                       {user.isActive
                         ? t('admin.users.status.active')
                         : t('admin.users.status.inactive')}

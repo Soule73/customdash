@@ -72,7 +72,11 @@ export const DashboardGridItem = memo(function DashboardGridItem({
           }}
         />
       )}
-      <WidgetDisplay widget={widget} dashboardGlobalFilters={dashboardGlobalFilters} />
+      <WidgetDisplay
+        widget={widget}
+        dashboardGlobalFilters={dashboardGlobalFilters}
+        editMode={editMode}
+      />
     </div>
   );
 });

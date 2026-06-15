@@ -11,7 +11,7 @@ interface AuthStore extends AuthState {
   hasPermission: (permission: string) => boolean;
 }
 
-export const useAuthStore = create<AuthStore>()(
+export const useAuthStore: any = create<AuthStore>()(
   persist(
     set => ({
       user: null,
@@ -39,7 +39,7 @@ export const useAuthStore = create<AuthStore>()(
       hasPermission: (permission: string) => {
         const state = useAuthStore.getState();
         const permissions = state.user?.role?.permissions ?? [];
-        return permissions.some(p => p.name === permission);
+        return permissions.some((p: { name: string }) => p.name === permission);
       },
     }),
     {

@@ -3,3 +3,4 @@ export { DashboardGridItem } from './DashboardGridItem';
 export { DashboardHeader } from './DashboardHeader';
 export { DashboardSaveModal } from './DashboardSaveModal';
 export { WidgetSelectModal } from './WidgetSelectModal';
+export { WidgetSidePanel } from './WidgetSidePanel';

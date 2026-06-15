@@ -5,6 +5,7 @@ import { useUserConfigStore } from '@stores/userConfigStore';
 import { preferencesService, type UserPreferences } from '@services/preferences.service';
 import type { Theme, Language } from '@type/app.types';
 import type { FormatConfig } from '@type/format-config.types';
+import type { AuthState } from '@/core/types';
 
 /**
  * Debounce delay for saving preferences (ms)
@@ -32,7 +33,7 @@ const DEBOUNCE_DELAY = 1000;
  * ```
  */
 export function usePreferencesSync() {
-  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const isAuthenticated = useAuthStore((state: AuthState) => state.isAuthenticated);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // App store setters only (avoid reading values in dependencies to prevent loops)

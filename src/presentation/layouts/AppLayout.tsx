@@ -54,6 +54,8 @@ export function AppLayout() {
   const { t } = useAppTranslation();
 
   const isAIPage = location.pathname.startsWith('/ai');
+  const isDashboardPage =
+    location.pathname.startsWith('/dashboards') && location.pathname !== '/dashboards';
   const showAdminNav = hasPermission('user:canView') || hasPermission('role:canView');
 
   const effectiveCollapsed = collapsed;
@@ -82,7 +84,7 @@ export function AppLayout() {
       >
         <div
           className={cn(
-            'flex h-16 shrink-0 items-center border-b border-gray-200 dark:border-gray-800',
+            'flex h-12 shrink-0 items-center border-b border-gray-200 dark:border-gray-800',
             effectiveCollapsed ? 'justify-center px-2' : 'justify-between px-4',
           )}
         >
@@ -299,7 +301,7 @@ export function AppLayout() {
       </aside>
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 lg:hidden dark:border-gray-800 dark:bg-gray-950">
+        <header className="flex h-11 items-center justify-between border-b border-gray-200 bg-white px-4 lg:hidden dark:border-gray-800 dark:bg-gray-950">
           <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)}>
             <Bars3Icon className="h-5 w-5" />
           </Button>
@@ -314,7 +316,7 @@ export function AppLayout() {
         <main
           className={cn(
             'flex-1 overflow-auto transition-all duration-300 bg-gray-50 dark:bg-gray-900',
-            !isAIPage && 'p-6',
+            !isAIPage && !isDashboardPage && 'p-6',
           )}
         >
           <Outlet />

@@ -23,6 +23,6 @@ export const roleService = {
   },
 
   async getAllPermissions(): Promise<Permission[]> {
-    return httpClient.get<Permission[]>('/permissions');
+    return httpClient.get<Permission[]>('/roles/permissions');
   },
 };

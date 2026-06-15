@@ -10,6 +10,7 @@ export interface User {
   username: string;
   email: string;
   role: Role | null;
+  isActive: boolean;
   preferences?: UserPreferences;
   createdAt?: string;
   updatedAt?: string;
@@ -28,5 +29,6 @@ export interface UpdateUserData {
   email?: string;
   password?: string;
   roleId?: string;
+  isActive?: boolean;
   preferences?: UserPreferences;
 }

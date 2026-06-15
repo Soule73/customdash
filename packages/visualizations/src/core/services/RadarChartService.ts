@@ -320,7 +320,7 @@ export class RadarChartService {
         axisName: showAxisName
           ? {
               show: true,
-              // Only set color when explicitly available — absence lets ECharts theme decide
+              // Only set color when explicitly available - absence lets ECharts theme decide
               ...(themeColors?.labelColor ? { color: themeColors.labelColor } : {}),
               fontSize: 12,
             }

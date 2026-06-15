@@ -37,7 +37,7 @@ export class RadarWidgetType extends AbstractChartWidgetType {
   protected readonly widgetComponent = RadarChartWidget as unknown as WidgetComponent;
 
   /**
-   * Radar metrics are axes, not series — no per-metric style.
+   * Radar metrics are axes, not series - no per-metric style.
    * Polygon appearance is configured globally via widgetParams.
    */
   protected buildMetricStyles(): Record<string, FieldSchema> {

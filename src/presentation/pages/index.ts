@@ -10,3 +10,4 @@ export {
 export { AIPage } from './ai';
 export { SettingsPage } from './settings';
 export { NotFoundPage } from './NotFoundPage';
+export { UsersAdminPage, RolesAdminPage } from './admin';

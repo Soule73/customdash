@@ -12,6 +12,7 @@ import {
   errors,
   settings,
   ai,
+  admin,
 } from './fr/index';
 
 const fr = {
@@ -28,6 +29,7 @@ const fr = {
   columnTypes,
   settings,
   ai,
+  admin,
 };
 
 export default fr;

@@ -18,6 +18,8 @@ import {
   AIPage,
   SettingsPage,
   NotFoundPage,
+  UsersAdminPage,
+  RolesAdminPage,
 } from '@pages/index';
 
 function useInitializeApp() {
@@ -93,6 +95,8 @@ function App() {
           <Route path="/datasources/:id/edit" element={<DataSourceEditPage />} />
           <Route path="/ai" element={<AIPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/admin/users" element={<UsersAdminPage />} />
+          <Route path="/admin/roles" element={<RolesAdminPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

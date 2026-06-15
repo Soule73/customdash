@@ -142,7 +142,7 @@ export interface WidgetParams {
  * WidgetParams specific for Radar charts.
  * Removes non-relevant params (barThickness, cutout, tension, stacked...).
  * Polygon appearance fields (seriesColor, seriesColors, seriesBorderWidth, seriesOpacity)
- * are defined here instead of metricStyles — a radar metric is an axis, not a series.
+ * are defined here instead of metricStyles - a radar metric is an axis, not a series.
  */
 export interface RadarWidgetParams {
   title?: string;
@@ -157,7 +157,7 @@ export interface RadarWidgetParams {
   echarts?: EChartsWidgetParams;
   /** Color of the polygon in global (non-groupBy) mode */
   seriesColor?: string;
-  /** Color palette for groupBy mode — one color per group polygon */
+  /** Color palette for groupBy mode - one color per group polygon */
   seriesColors?: string[];
   /** Thickness of the polygon outline */
   seriesBorderWidth?: number;
@@ -188,7 +188,7 @@ export type ScatterWidgetParams = Pick<
   | 'echarts'
 >;
 
-/** Alias for BubbleChart — same parameters as Scatter. */
+/** Alias for BubbleChart - same parameters as Scatter. */
 export type BubbleWidgetParams = ScatterWidgetParams;
 
 export interface ScatterMetricConfig extends Metric {

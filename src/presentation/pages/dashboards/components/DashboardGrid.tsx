@@ -1,11 +1,16 @@
 import { useMemo, useCallback } from 'react';
-import { ReactGridLayout, type Layout, type LayoutItem } from 'react-grid-layout/legacy';
+import {
+  ReactGridLayout,
+  type Layout,
+  type LayoutItem as RglLayoutItem,
+} from 'react-grid-layout/legacy';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { Button, Card } from '@customdash/ui';
 import type { Filter } from '@customdash/visualizations';
 import { useDashboardGrid } from '@hooks/dashboards';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { useAppTranslation } from '@hooks';
+import type { LayoutItem as DashboardLayoutItem } from '@type/dashboard.types';
 import { DashboardGridItem } from './DashboardGridItem';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -14,7 +19,7 @@ interface DashboardGridProps {
   onAddWidget?: () => void;
   dashboardGlobalFilters?: Filter[];
   readOnly?: boolean;
-  layout?: LayoutItem[];
+  layout?: DashboardLayoutItem[];
   widgets?: Map<string, import('@type/widget.types').Widget>;
 }
 
@@ -26,14 +31,8 @@ export function DashboardGrid({
   widgets: providedWidgets,
 }: DashboardGridProps) {
   const { t } = useAppTranslation();
-  const {
-    containerRef,
-    containerWidth,
-    isMobile,
-    gridLayout,
-    handleLayoutChange,
-    handleRemoveWidget,
-  } = useDashboardGrid();
+  const { containerRef, containerWidth, isMobile, handleLayoutChange, handleRemoveWidget } =
+    useDashboardGrid();
 
   const storeLayout = useDashboardFormStore(s => s.config.layout);
   const storeWidgets = useDashboardFormStore(s => s.widgets);
@@ -41,7 +40,20 @@ export function DashboardGrid({
 
   const layout = providedLayout ?? storeLayout;
   const widgets = providedWidgets ?? storeWidgets;
-  const isReadOnly = readOnly || !providedLayout;
+  const isReadOnly = readOnly;
+
+  const gridLayout = useMemo<RglLayoutItem[]>(() => {
+    return layout.map((item, index) => ({
+      i: item.i || item.widgetId,
+      x: isMobile ? 0 : (item.x ?? 0),
+      y: isMobile ? index * 4 : (item.y ?? 0),
+      w: isMobile ? 12 : (item.w ?? 6),
+      h: item.h ?? 4,
+      minW: isMobile ? 12 : (item.minW ?? 2),
+      minH: item.minH ?? 2,
+      static: isMobile || !editMode || isReadOnly,
+    }));
+  }, [layout, isMobile, editMode, isReadOnly]);
 
   const gridItems = useMemo(() => {
     return layout.map(item => {
@@ -64,7 +76,7 @@ export function DashboardGrid({
   const onGridLayoutChange = useCallback(
     (newLayout: Layout) => {
       handleLayoutChange(
-        newLayout.map((l: LayoutItem) => ({
+        newLayout.map((l: RglLayoutItem) => ({
           i: l.i,
           x: l.x,
           y: l.y,

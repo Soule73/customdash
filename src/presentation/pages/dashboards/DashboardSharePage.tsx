@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Spinner, Button, Badge } from '@customdash/ui';
-import { ArrowTopRightOnSquareIcon, ClipboardDocumentIcon } from '@heroicons/react/24/outline';
+import { ClipboardDocumentIcon } from '@heroicons/react/24/outline';
 import { useAppTranslation, useNotifications } from '@hooks';
 import { useDashboardShareView } from '@hooks/dashboards';
 import { toVisualizationFilters } from '@utils/dashboardFilter.utils';
-import { DashboardGrid, DashboardHeader } from './components';
+import { DashboardGrid } from './components';
 
 /**
  * Public, read-only view for a shared dashboard.
@@ -29,10 +29,6 @@ export function DashboardSharePage() {
     showSuccess(t('dashboards.sharePage.linkCopied'));
   }, [shareLink, showSuccess, t]);
 
-  const openInNewTab = useCallback(() => {
-    window.open(shareLink, '_blank', 'noopener,noreferrer');
-  }, [shareLink]);
-
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -53,13 +49,9 @@ export function DashboardSharePage() {
               </h1>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" onClick={copyLink}>
+              <Button variant="ghost" onClick={copyLink} size="sm">
                 <ClipboardDocumentIcon className="h-4 w-4" />
                 {t('dashboards.sharePage.copyLink')}
-              </Button>
-              <Button variant="primary" onClick={openInNewTab}>
-                <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-                {t('dashboards.sharePage.openLink')}
               </Button>
             </div>
           </div>
@@ -77,17 +69,30 @@ export function DashboardSharePage() {
   return (
     <div className="flex h-full flex-col dashboard-container">
       <div className="border-b border-gray-200 px-3 py-2 dark:border-gray-800 bg-white dark:bg-gray-950">
-        <DashboardHeader
-          isCreateMode={false}
-          isSaving={false}
-          onSave={() => undefined}
-          onCancel={() => undefined}
-          onAddWidget={() => undefined}
-          onToggleFilterPanel={() => undefined}
-          filterCount={dashboard.globalFilters.length}
-          columnOptions={[]}
-          canEdit={false}
-        />
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="dashboard-title text-2xl font-semibold text-gray-900 dark:text-white">
+              {dashboard.title || t('dashboards.header.untitled')}
+            </h1>
+            {dashboard.description && (
+              <p className="text-sm text-gray-600 dark:text-gray-300">{dashboard.description}</p>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="success">{t('dashboards.sharePage.publicBadge')}</Badge>
+            <Badge variant="default">{t('dashboards.sharePage.readOnlyBadge')}</Badge>
+            <Button
+              variant="ghost"
+              onClick={copyLink}
+              size="sm"
+              className="flex items-center gap-1"
+            >
+              <ClipboardDocumentIcon className="h-4 w-4 " />
+              {t('dashboards.sharePage.copyLink')}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
@@ -98,25 +103,6 @@ export function DashboardSharePage() {
             layout={dashboard.layout}
             widgets={new Map((dashboard.widgets ?? []).map(widget => [widget.id, widget]))}
           />
-        </div>
-      </div>
-
-      <div className="border-t border-gray-200 px-3 py-2 dark:border-gray-800 bg-white dark:bg-gray-950">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="success">{t('dashboards.sharePage.publicBadge')}</Badge>
-            <Badge variant="default">{t('dashboards.sharePage.readOnlyBadge')}</Badge>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" onClick={copyLink}>
-              <ClipboardDocumentIcon className="h-4 w-4" />
-              {t('dashboards.sharePage.copyLink')}
-            </Button>
-            <Button variant="primary" onClick={openInNewTab}>
-              <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-              {t('dashboards.sharePage.openLink')}
-            </Button>
-          </div>
         </div>
       </div>
     </div>

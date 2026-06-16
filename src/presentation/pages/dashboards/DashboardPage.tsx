@@ -2,23 +2,34 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Spinner } from '@customdash/ui';
 import type { SelectOption } from '@customdash/visualizations';
-import { useDashboardForm, useAutoRefresh } from '@hooks/dashboards';
+import { useDashboardForm, useAutoRefresh, useDashboardShare } from '@hooks/dashboards';
+import { useDashboard } from '@hooks';
 import { useDashboardFormStore } from '@stores/dashboardFormStore';
 import { buildActiveFilters } from '@utils/dashboardFilter.utils';
 import { exportElementToPdf } from '@utils/export.utils';
 import { GlobalFilterPanel } from '@components/dashboards/GlobalFilterPanel';
-import { DashboardGrid, DashboardHeader, WidgetSidePanel, DashboardSaveModal } from './components';
+import {
+  DashboardGrid,
+  DashboardHeader,
+  WidgetSidePanel,
+  DashboardSaveModal,
+  DashboardShareModal,
+} from './components';
 
 export function DashboardPage() {
   const { id } = useParams<{ id: string }>();
   const [widgetPanelOpen, setWidgetPanelOpen] = useState(false);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const dashboardGridRef = useRef<HTMLDivElement>(null);
 
   const { isLoading, isSaving, isCreateMode, save, cancel } = useDashboardForm({ dashboardId: id });
+  const { data: dashboard } = useDashboard(id || '');
   useAutoRefresh();
+  const { shareLink, isSharing, isShared, enableShare, disableShare, copyShareLink } =
+    useDashboardShare(id || '', dashboard?.shareId ?? null);
 
   const resetForm = useDashboardFormStore(s => s.resetForm);
   const globalFilters = useDashboardFormStore(s => s.config.globalFilters);
@@ -68,6 +79,29 @@ export function DashboardPage() {
     setSaveModalOpen(false);
   };
 
+  const handleShare = () => {
+    setShareModalOpen(true);
+  };
+
+  const handleToggleShare = async (enabled: boolean) => {
+    if (enabled === isShared) {
+      return;
+    }
+
+    if (enabled) {
+      await enableShare();
+      return;
+    }
+
+    await disableShare();
+  };
+
+  const handleOpenShareLink = () => {
+    if (shareLink) {
+      window.open(shareLink, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
@@ -90,6 +124,7 @@ export function DashboardPage() {
           filterCount={globalFilters.length}
           columnOptions={columnOptions}
           onExportPDF={handleExportPDF}
+          onShare={!isCreateMode ? handleShare : undefined}
         />
       </div>
 
@@ -121,6 +156,18 @@ export function DashboardPage() {
         onClose={() => setSaveModalOpen(false)}
         onConfirm={handleConfirmSave}
         isSaving={isSaving}
+      />
+
+      <DashboardShareModal
+        isOpen={shareModalOpen}
+        dashboardTitle={dashboard?.title || ''}
+        isShared={isShared}
+        shareLink={shareLink}
+        isSaving={isSharing}
+        onClose={() => setShareModalOpen(false)}
+        onToggleShare={handleToggleShare}
+        onCopyLink={copyShareLink}
+        onOpenLink={handleOpenShareLink}
       />
     </div>
   );

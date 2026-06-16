@@ -21,6 +21,14 @@ export function useDashboard(id: string) {
   });
 }
 
+export function useSharedDashboard(shareId: string) {
+  return useQuery({
+    queryKey: ['dashboards', 'shared', shareId],
+    queryFn: () => dashboardService.getSharedById(shareId),
+    enabled: !!shareId,
+  });
+}
+
 export function useCreateDashboard() {
   const queryClient = useQueryClient();
 

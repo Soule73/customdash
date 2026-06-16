@@ -16,7 +16,7 @@ vi.mock('./http.client', () => ({
 
 describe('authService', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   describe('login', () => {

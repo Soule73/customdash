@@ -5,20 +5,27 @@ import { useShareDashboard } from '../queries';
 interface UseDashboardShareReturn {
   shareId: string | null;
   isSharing: boolean;
+  isShared: boolean;
   shareLink: string | null;
   enableShare: () => Promise<void>;
   disableShare: () => Promise<void>;
   copyShareLink: () => void;
 }
 
-export function useDashboardShare(dashboardId: string): UseDashboardShareReturn {
+export function useDashboardShare(
+  dashboardId: string,
+  initialShareId?: string | null,
+): UseDashboardShareReturn {
   const [shareId, setShareId] = useState<string | null>(null);
   const shareMutation = useShareDashboard();
   const { showSuccess } = useNotifications();
   const { handleApiError } = useErrorHandler();
   const { t } = useAppTranslation();
 
-  const shareLink = shareId ? `${window.location.origin}/dashboards/share/${shareId}` : null;
+  const currentShareId = shareId ?? initialShareId ?? null;
+  const shareLink = currentShareId
+    ? `${window.location.origin}/dashboards/share/${currentShareId}`
+    : null;
 
   const enableShare = useCallback(async () => {
     if (!dashboardId) return;
@@ -28,7 +35,7 @@ export function useDashboardShare(dashboardId: string): UseDashboardShareReturn 
         id: dashboardId,
         shareEnabled: true,
       });
-      setShareId(result.sharedWith?.[0] || null);
+      setShareId(result.shareId ?? null);
       showSuccess(t('dashboards.share.enabled'));
     } catch (error) {
       handleApiError(error, 'update');
@@ -58,8 +65,9 @@ export function useDashboardShare(dashboardId: string): UseDashboardShareReturn 
   }, [shareLink, showSuccess, t]);
 
   return {
-    shareId,
+    shareId: currentShareId,
     isSharing: shareMutation.isPending,
+    isShared: Boolean(currentShareId),
     shareLink,
     enableShare,
     disableShare,

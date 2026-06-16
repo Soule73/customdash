@@ -1,4 +1,5 @@
 import type { DashboardFilter } from './dashboard-form.types';
+import type { Widget } from './widget.types';
 
 export interface Dashboard {
   id: string;
@@ -11,6 +12,9 @@ export interface Dashboard {
   globalFilters: DashboardFilter[];
   createdAt: string;
   updatedAt: string;
+  shareEnabled?: boolean;
+  shareId?: string | null;
+  widgets?: Widget[];
 }
 
 export interface LayoutItem {

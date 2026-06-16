@@ -42,6 +42,7 @@ export interface Widget {
   confidence?: number;
   createdAt: string;
   updatedAt: string;
+  data?: Record<string, unknown>[];
 }
 
 export interface CreateWidgetData {

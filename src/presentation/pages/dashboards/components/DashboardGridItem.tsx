@@ -15,6 +15,7 @@ interface DashboardGridItemProps {
   editMode: boolean;
   onRemove?: () => void;
   dashboardGlobalFilters?: Filter[];
+  readOnly?: boolean;
 }
 
 /**
@@ -27,6 +28,7 @@ export const DashboardGridItem = memo(function DashboardGridItem({
   editMode,
   onRemove,
   dashboardGlobalFilters,
+  readOnly = false,
 }: DashboardGridItemProps) {
   const { t } = useAppTranslation();
   const navigate = useNavigate();
@@ -76,6 +78,7 @@ export const DashboardGridItem = memo(function DashboardGridItem({
         widget={widget}
         dashboardGlobalFilters={dashboardGlobalFilters}
         editMode={editMode}
+        hideDetailButton={readOnly}
       />
     </div>
   );

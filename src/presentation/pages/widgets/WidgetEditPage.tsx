@@ -57,6 +57,8 @@ export function WidgetEditPage() {
         sources={sources}
         isSaving={isSaving}
         isEditMode={isEditMode}
+        isAIDraft={Boolean(isAIDraft)}
+        isDraft={Boolean(widget?.isDraft)}
         onSourceChange={actions.setSourceId}
         onSave={actions.save}
         onCancel={handleBack}

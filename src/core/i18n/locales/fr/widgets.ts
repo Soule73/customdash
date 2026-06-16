@@ -11,6 +11,7 @@ export const widgets = {
   confirmDelete: 'Voulez-vous vraiment supprimer ce widget ?',
   deleteWarning: 'Cette action est irréversible.',
   generatedByAI: 'Généré par IA',
+  draft: 'Brouillon',
   newWidget: 'Nouveau widget',
   noWidget: 'Aucun widget',
   createFirst: 'Créez votre premier widget de visualisation',
@@ -59,6 +60,8 @@ export const widgets = {
     widgetNamePlaceholder: 'Ex: Ventes mensuelles',
     descriptionOptional: 'Description (optionnel)',
     descriptionPlaceholder: 'Ex: Graphique des ventes par mois',
+    publishDraftLabel: 'Publier ce widget (retirer le statut brouillon)',
+    publishDraftHint: "Un widget brouillon n'apparaît pas dans le panneau d'ajout du dashboard.",
     tabs: {
       data: 'Données',
       style: 'Style',

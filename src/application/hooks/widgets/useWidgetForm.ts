@@ -21,7 +21,7 @@ interface UseWidgetFormReturn {
   isEditMode: boolean;
   actions: {
     setSourceId: (sourceId: string) => Promise<void>;
-    save: () => Promise<void>;
+    save: (options?: { publishOnSave?: boolean }) => Promise<void>;
     cancel: () => void;
   };
 }
@@ -143,68 +143,71 @@ export function useWidgetForm(options: UseWidgetFormOptions = {}): UseWidgetForm
     [store, loadSourceData],
   );
 
-  const save = useCallback(async () => {
-    setIsSaving(true);
-    try {
-      const config = {
-        metrics: store.config.metrics.map((m, index) => {
-          const metricStyle = store.config.metricStyles[index] || {};
-          return {
-            field: m.field,
-            agg: m.agg,
-            label: m.label,
-            x: m.x,
-            y: m.y,
-            r: m.r,
-            fields: m.fields,
-            width: metricStyle.width || m.width,
-            align: metricStyle.align || m.align,
-            format: metricStyle.format || m.format,
-          };
-        }),
-        buckets: store.config.buckets.map(b => ({
-          field: b.field,
-          type: b.type,
-          label: b.label,
-          size: b.size,
-          interval: b.interval,
-        })),
-        globalFilters: store.config.globalFilters.map(f => ({
-          field: f.field,
-          operator: f.operator,
-          value: f.value,
-        })),
-        widgetParams: store.config.widgetParams as Record<string, unknown>,
-        metricStyles: store.config.metricStyles as Array<Record<string, unknown>>,
-      };
+  const save = useCallback(
+    async (options?: { publishOnSave?: boolean }) => {
+      setIsSaving(true);
+      try {
+        const config = {
+          metrics: store.config.metrics.map((m, index) => {
+            const metricStyle = store.config.metricStyles[index] || {};
+            return {
+              field: m.field,
+              agg: m.agg,
+              label: m.label,
+              x: m.x,
+              y: m.y,
+              r: m.r,
+              fields: m.fields,
+              width: metricStyle.width || m.width,
+              align: metricStyle.align || m.align,
+              format: metricStyle.format || m.format,
+            };
+          }),
+          buckets: store.config.buckets.map(b => ({
+            field: b.field,
+            type: b.type,
+            label: b.label,
+            size: b.size,
+            interval: b.interval,
+          })),
+          globalFilters: store.config.globalFilters.map(f => ({
+            field: f.field,
+            operator: f.operator,
+            value: f.value,
+          })),
+          widgetParams: store.config.widgetParams as Record<string, unknown>,
+          metricStyles: store.config.metricStyles as Array<Record<string, unknown>>,
+        };
 
-      if (isEditMode && widgetId) {
-        await widgetService.update(widgetId, {
-          title: store.widgetTitle,
-          description: store.widgetDescription,
-          config,
-          isDraft: false,
-        });
-        showSuccess(t('widgets.notifications.updateSuccess'));
-      } else {
-        await widgetService.create({
-          title: store.widgetTitle,
-          type: store.type,
-          dataSourceId: store.sourceId,
-          description: store.widgetDescription,
-          config,
-        });
-        showSuccess(t('widgets.notifications.createSuccess'));
+        if (isEditMode && widgetId) {
+          await widgetService.update(widgetId, {
+            title: store.widgetTitle,
+            description: store.widgetDescription,
+            config,
+            isDraft: options?.publishOnSave === true ? false : undefined,
+          });
+          showSuccess(t('widgets.notifications.updateSuccess'));
+        } else {
+          await widgetService.create({
+            title: store.widgetTitle,
+            type: store.type,
+            dataSourceId: store.sourceId,
+            description: store.widgetDescription,
+            config,
+          });
+          showSuccess(t('widgets.notifications.createSuccess'));
+        }
+
+        store.resetForm();
+        navigate(dashboardId ? `/dashboards/${dashboardId}` : '/widgets');
+      } catch (error) {
+        handleApiError(error, 'save');
+      } finally {
+        setIsSaving(false);
       }
-
-      store.resetForm();
-      navigate(dashboardId ? `/dashboards/${dashboardId}` : '/widgets');
-    } catch (error) {
-      handleApiError(error, 'save');
-    } finally {
-      setIsSaving(false);
-    }
-  }, [isEditMode, widgetId, dashboardId, navigate, showSuccess, handleApiError, store, t]);
+    },
+    [isEditMode, widgetId, dashboardId, navigate, showSuccess, handleApiError, store, t],
+  );
 
   const cancel = useCallback(() => {
     store.resetForm();

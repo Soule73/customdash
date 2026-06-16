@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ChartBarIcon,
@@ -6,7 +7,7 @@ import {
   AdjustmentsHorizontalIcon,
   FunnelIcon,
 } from '@heroicons/react/24/outline';
-import { Card, Button, Input, Select, Modal } from '@customdash/ui';
+import { Card, Button, Input, Select, Modal, Switch } from '@customdash/ui';
 import {
   useWidgetFormType,
   useWidgetFormSourceId,
@@ -26,13 +27,15 @@ import { WidgetPreview } from '../preview/WidgetPreview';
 import { PageHeader } from '../../common';
 
 interface WidgetFormLayoutProps {
-  title: string;
+  title: ReactNode;
   subtitle: string;
   sources: Array<{ value: string; label: string }>;
   isSaving: boolean;
   isEditMode: boolean;
+  isAIDraft?: boolean;
+  isDraft?: boolean;
   onSourceChange: (sourceId: string) => void;
-  onSave: () => void;
+  onSave: (options?: { publishOnSave?: boolean }) => void;
   onCancel: () => void;
 }
 
@@ -58,6 +61,8 @@ export function WidgetFormLayout({
   sources,
   isSaving,
   isEditMode,
+  isAIDraft = false,
+  isDraft = false,
   onSourceChange,
   onSave,
   onCancel,
@@ -72,6 +77,7 @@ export function WidgetFormLayout({
   const { setWidgetTitle, setWidgetDescription, setActiveTab } = useWidgetFormActions();
 
   const [showSaveModal, setShowSaveModal] = useState(false);
+  const [publishOnSave, setPublishOnSave] = useState(!isDraft);
 
   // Hide the Style tab when the current widget type has no per-metric styles to configure
   const hasStyleTab = useMemo(() => {
@@ -99,12 +105,13 @@ export function WidgetFormLayout({
   };
 
   const handleSaveClick = () => {
+    setPublishOnSave(!isDraft);
     setShowSaveModal(true);
   };
 
   const handleConfirmSave = () => {
     setShowSaveModal(false);
-    onSave();
+    onSave({ publishOnSave });
   };
 
   return (
@@ -219,6 +226,21 @@ export function WidgetFormLayout({
               onChange={e => setWidgetDescription(e.target.value)}
               placeholder={t('widgets.form.descriptionPlaceholder')}
             />
+            {isAIDraft && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-700 dark:bg-amber-900/20">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
+                      {t('widgets.form.publishDraftLabel')}
+                    </p>
+                    <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+                      {t('widgets.form.publishDraftHint')}
+                    </p>
+                  </div>
+                  <Switch checked={publishOnSave} onChange={setPublishOnSave} />
+                </div>
+              </div>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="outline" onClick={() => setShowSaveModal(false)}>

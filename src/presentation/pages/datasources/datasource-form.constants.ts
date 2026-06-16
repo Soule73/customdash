@@ -8,6 +8,7 @@ export interface DataSourceFormState {
   type: DataSourceType;
   endpoint: string;
   filePath: string;
+  storageType?: 'local' | 'r2';
   httpMethod: HttpMethod;
   authType: AuthType;
   authToken: string;

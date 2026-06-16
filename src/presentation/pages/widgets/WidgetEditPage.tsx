@@ -1,7 +1,7 @@
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { SparklesIcon } from '@heroicons/react/24/outline';
-import { Spinner, Alert } from '@customdash/ui';
+import { Spinner, Badge } from '@customdash/ui';
 import { WidgetFormLayout } from '@components/widgets/layout';
 import { useWidgetForm } from '@hooks/widgets/useWidgetForm';
 import { useWidgetFormTitle, useWidgetFormIsLoading } from '@stores';
@@ -39,24 +39,27 @@ export function WidgetEditPage() {
 
   return (
     <div className="flex flex-col h-full">
-      {isAIDraft && (
-        <div className="px-6 pt-4">
-          <Alert variant="info" className="flex items-start gap-3">
-            <SparklesIcon className="h-5 w-5 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium">{t('ai.draftBanner.title')}</p>
-              {widget.reasoning && <p className="mt-1 text-sm opacity-90">{widget.reasoning}</p>}
-              <p className="mt-1 text-sm opacity-75">{t('ai.draftBanner.hint')}</p>
-            </div>
-          </Alert>
-        </div>
-      )}
       <WidgetFormLayout
-        title={t('widgets.form.modifyWidget')}
+        title={
+          <span className="flex items-center gap-2">
+            {t('widgets.form.modifyWidget')}
+            {isAIDraft && (
+              <>
+                <Badge variant="warning">{t('widgets.draft')}</Badge>
+                <SparklesIcon
+                  className="h-4 w-4 text-purple-500"
+                  title={t('widgets.generatedByAI')}
+                />
+              </>
+            )}
+          </span>
+        }
         subtitle={name || t('widgets.loading')}
         sources={sources}
         isSaving={isSaving}
         isEditMode={isEditMode}
+        isAIDraft={Boolean(isAIDraft)}
+        isDraft={Boolean(widget?.isDraft)}
         onSourceChange={actions.setSourceId}
         onSave={actions.save}
         onCancel={handleBack}

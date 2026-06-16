@@ -4,6 +4,7 @@ export interface DetectColumnsConfig {
   type: string;
   endpoint?: string;
   filePath?: string;
+  storageType?: 'local' | 'r2';
   httpMethod?: 'GET' | 'POST';
   authType?: AuthType;
   authConfig?: AuthConfig;

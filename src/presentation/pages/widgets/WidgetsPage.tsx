@@ -180,6 +180,7 @@ export function WidgetsPage() {
                               title={t('widgets.generatedByAI')}
                             />
                           )}
+                          {widget.isDraft && <Badge variant="warning">{t('widgets.draft')}</Badge>}
                         </div>
                         {widget.description && (
                           <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">

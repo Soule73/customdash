@@ -52,6 +52,7 @@ function createFormState(dataSource: DataSource): DataSourceFormState {
     type: dataSource.type,
     endpoint: dataSource.endpoint || '',
     filePath: dataSource.filePath || '',
+    storageType: dataSource.storageType,
     httpMethod: dataSource.httpMethod || 'GET',
     authType: dataSource.authType,
     authToken: dataSource.authConfig?.token || '',

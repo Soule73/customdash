@@ -153,6 +153,7 @@ export function DataSourceForm({
         type: form.type,
         endpoint: form.type !== 'csv' ? form.endpoint : undefined,
         filePath: form.type === 'csv' ? form.filePath : undefined,
+        storageType: form.type === 'csv' ? form.storageType : undefined,
         httpMethod: form.type === 'json' ? form.httpMethod : undefined,
         authType: form.authType !== 'none' ? form.authType : undefined,
         authConfig: buildAuthConfig(),

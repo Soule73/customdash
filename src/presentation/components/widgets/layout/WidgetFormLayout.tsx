@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ChartBarIcon,
@@ -26,7 +27,7 @@ import { WidgetPreview } from '../preview/WidgetPreview';
 import { PageHeader } from '../../common';
 
 interface WidgetFormLayoutProps {
-  title: string;
+  title: ReactNode;
   subtitle: string;
   sources: Array<{ value: string; label: string }>;
   isSaving: boolean;

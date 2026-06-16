@@ -110,6 +110,32 @@ export const dashboards = {
     disabled: 'Partage désactivé',
     linkCopied: 'Lien copié dans le presse-papiers',
   },
+  shareModal: {
+    title: 'Partager le tableau de bord',
+    enabled: 'Activé',
+    disabled: 'Désactivé',
+    enabledDescription:
+      'Toute personne disposant du lien peut consulter ce tableau de bord en lecture seule.',
+    disabledDescription:
+      'Le partage public est désactivé. Activez-le pour générer un lien partageable.',
+    toggleLabel: 'Activer le partage public',
+    linkLabel: 'Lien public',
+    noLink: 'Activez le partage pour générer un lien public.',
+    copyLink: 'Copier le lien',
+    openLink: 'Ouvrir le lien',
+  },
+  sharePage: {
+    publicBadge: 'Tableau de bord public',
+    readOnlyBadge: 'Lecture seule',
+    copyLink: 'Copier le lien',
+    openLink: 'Ouvrir dans un nouvel onglet',
+    openApp: "Ouvrir l'application",
+    linkCopied: 'Lien copié dans le presse-papiers',
+    unavailableBadge: 'Indisponible',
+    unavailableTitle: 'Ce tableau de bord partagé n’est plus disponible',
+    unavailableDescription:
+      'Le lien a peut-être été désactivé ou le tableau de bord a été supprimé.',
+  },
   validation: {
     titleRequired: 'Le titre est requis',
     titleMinLength: 'Le titre doit contenir au moins 2 caractères',

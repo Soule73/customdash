@@ -8,6 +8,7 @@ import { useUserConfigStore } from '@stores/userConfigStore';
 import {
   LoginPage,
   DashboardsPage,
+  DashboardSharePage,
   DashboardPage,
   WidgetsPage,
   WidgetCreatePage,
@@ -66,6 +67,8 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Navigate to="/dashboards" replace />} />
+
+        <Route path="/dashboards/share/:shareId" element={<DashboardSharePage />} />
 
         <Route
           element={

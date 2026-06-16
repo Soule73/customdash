@@ -13,9 +13,18 @@ import 'react-resizable/css/styles.css';
 interface DashboardGridProps {
   onAddWidget?: () => void;
   dashboardGlobalFilters?: Filter[];
+  readOnly?: boolean;
+  layout?: LayoutItem[];
+  widgets?: Map<string, import('@type/widget.types').Widget>;
 }
 
-export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: DashboardGridProps) {
+export function DashboardGrid({
+  onAddWidget,
+  dashboardGlobalFilters,
+  readOnly = false,
+  layout: providedLayout,
+  widgets: providedWidgets,
+}: DashboardGridProps) {
   const { t } = useAppTranslation();
   const {
     containerRef,
@@ -26,9 +35,13 @@ export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: Dashboard
     handleRemoveWidget,
   } = useDashboardGrid();
 
-  const layout = useDashboardFormStore(s => s.config.layout);
-  const widgets = useDashboardFormStore(s => s.widgets);
+  const storeLayout = useDashboardFormStore(s => s.config.layout);
+  const storeWidgets = useDashboardFormStore(s => s.widgets);
   const editMode = useDashboardFormStore(s => s.editMode);
+
+  const layout = providedLayout ?? storeLayout;
+  const widgets = providedWidgets ?? storeWidgets;
+  const isReadOnly = readOnly || !providedLayout;
 
   const gridItems = useMemo(() => {
     return layout.map(item => {
@@ -41,11 +54,12 @@ export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: Dashboard
             editMode={editMode}
             onRemove={() => handleRemoveWidget(item.widgetId)}
             dashboardGlobalFilters={dashboardGlobalFilters}
+            readOnly={isReadOnly}
           />
         </div>
       );
     });
-  }, [layout, widgets, editMode, handleRemoveWidget, dashboardGlobalFilters]);
+  }, [layout, widgets, editMode, handleRemoveWidget, dashboardGlobalFilters, isReadOnly]);
 
   const onGridLayoutChange = useCallback(
     (newLayout: Layout) => {
@@ -67,7 +81,7 @@ export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: Dashboard
 
   const isEmpty = layout.length === 0;
 
-  if (isEmpty && !editMode) {
+  if (isEmpty && (isReadOnly || !editMode)) {
     return (
       <Card className="py-16 text-center">
         <p className="text-gray-500 dark:text-gray-400">{t('dashboards.grid.emptyState')}</p>
@@ -79,13 +93,13 @@ export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: Dashboard
     <div ref={containerRef} className="dashboard-grid-container w-full">
       <ReactGridLayout
         key={`grid-${containerWidth}-${layout.length}`}
-        className={`layout ${editMode ? 'edit-mode' : ''}`}
+        className={`layout ${editMode && !isReadOnly ? 'edit-mode' : ''}`}
         layout={gridLayout}
         cols={12}
         rowHeight={60}
         width={containerWidth}
-        isDraggable={editMode && !isMobile}
-        isResizable={editMode && !isMobile}
+        isDraggable={editMode && !isMobile && !isReadOnly}
+        isResizable={editMode && !isMobile && !isReadOnly}
         onLayoutChange={onGridLayoutChange}
         draggableHandle=".drag-handle"
         compactType="vertical"
@@ -95,7 +109,7 @@ export function DashboardGrid({ onAddWidget, dashboardGlobalFilters }: Dashboard
         {gridItems}
       </ReactGridLayout>
 
-      {editMode && onAddWidget && (
+      {editMode && onAddWidget && !isReadOnly && (
         <div className="mt-4 flex justify-center">
           <Button
             variant="outline"

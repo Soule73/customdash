@@ -15,6 +15,10 @@ export const dashboardService = {
     return httpClient.get<Dashboard>(`/dashboards/${id}`);
   },
 
+  async getSharedById(shareId: string): Promise<Dashboard> {
+    return httpClient.get<Dashboard>(`/dashboards/shared/${shareId}`);
+  },
+
   async create(data: CreateDashboardData): Promise<Dashboard> {
     return httpClient.post<Dashboard>('/dashboards', data);
   },
